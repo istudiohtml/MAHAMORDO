@@ -1,0 +1,54 @@
+{
+  "name": "mahamordo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "DATABASE_URL=postgresql://istudiohtml@localhost:5432/mahamordo ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "prisma": {
+    "seed": "npm run db:seed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "มหาหมอดู AI Fortune Telling App",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@prisma/client": "^6.19.2",
+    "@supabase/supabase-js": "^2.98.0",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "next": "^16.1.6",
+    "pg": "^8.20.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.3.5",
+    "@types/pg": "^8.18.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.0.18",
+    "postcss": "^8.5.8",
+    "prisma": "^6.19.2",
+    "tailwindcss": "^4.2.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

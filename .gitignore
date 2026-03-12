@@ -1,0 +1,23 @@
+# Next.js
+.next/
+out/
+build/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+*.pem
+
+# Vercel
+.vercel
+
+# TypeScript build info
+tsconfig.tsbuildinfo

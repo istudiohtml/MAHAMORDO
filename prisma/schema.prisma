@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── ORACLES ──────────────────────────────────────────────
+// หมอดูแต่ละตัวละคร — จัดการได้จาก admin โดยไม่ต้อง redeploy
+model Oracle {
+  id           String   @id @default(cuid())
+  slug         String   @unique  // "yai-kham", "nang-fah", "mor-dum"
+  name         String            // "ยายขาม"
+  title        String            // "หมอดูผู้เฒ่าแห่งโหราศาสตร์ไทย"
+  description  String   @db.Text // คำอธิบายสั้นๆ แสดงใน UI
+  avatarUrl    String?           // path รูปภาพ/sprite
+  systemPrompt String   @db.Text // full system prompt ส่งให้ Claude
+  speciality   String            // "โหราศาสตร์ไทย", "ไพ่ทาโรต์", "ศาสตร์มืด"
+  creditCost   Int      @default(1) // ค่าใช้ต่อ session
+  isActive     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions     FortuneSession[]
+
+  @@map("oracles")
+}
+
+// ── USERS ──────────────────────────────────────────────────
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String   // hashed
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  credits    Int      @default(3)  // free credits on signup
+
+  sessions      FortuneSession[]
+  creditLogs    CreditLog[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+// ── FORTUNE SESSIONS ────────────────────────────────────────
+// 1 session = 1 การดูดวงครั้งนึง กับ oracle คนนึง
+model FortuneSession {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  oracleId  String
+  oracle    Oracle   @relation(fields: [oracleId], references: [id])
+
+  topic     String?   // หัวข้อ เช่น "ความรัก", "การงาน"
+  birthDate DateTime? // วันเกิดผู้ใช้
+  birthTime String?   // เวลาเกิด เช่น "14:30"
+
+  status    SessionStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages  Message[]
+
+  @@map("fortune_sessions")
+}
+
+// ── MESSAGES ────────────────────────────────────────────────
+model Message {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   FortuneSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  role      MessageRole  // USER หรือ ASSISTANT
+  content   String       @db.Text
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+// ── REFRESH TOKENS ──────────────────────────────────────────
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("refresh_tokens")
+}
+
+// ── SYSTEM SETTINGS ─────────────────────────────────────────
+// key-value store สำหรับ config ระบบ (SUPERADMIN จัดการ)
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique  // "credit_price_thb", "free_credits_on_signup"
+  value     String            // เก็บเป็น string, parse ใน app
+  label     String            // ชื่อที่อ่านง่าย เช่น "ราคา 1 credit (บาท)"
+  updatedAt DateTime @updatedAt
+  updatedBy String?           // userId ที่แก้ล่าสุด
+
+  @@map("system_settings")
+}
+
+// ── CREDIT LOGS ─────────────────────────────────────────────
+model CreditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  amount    Int      // บวก = เติม, ลบ = ใช้
+  reason    String   // "signup_bonus", "session_start", "purchase_xxx"
+  createdAt DateTime @default(now())
+
+  @@map("credit_logs")
+}
+
+// ── ENUMS ────────────────────────────────────────────────────
+enum UserRole {
+  USER        // ผู้ใช้ทั่วไป
+  ADMIN       // จัดการ oracle, ดู dashboard
+  SUPERADMIN  // จัดการทุกอย่าง รวม user และ admin
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}

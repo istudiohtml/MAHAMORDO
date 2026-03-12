@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #FDFBF7;
+  --warm: #F5F0E8;
+  --gold: #B8860B;
+  --gold2: #D4A017;
+  --ink: #1A1510;
+  --ink2: #4A3F35;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+}
