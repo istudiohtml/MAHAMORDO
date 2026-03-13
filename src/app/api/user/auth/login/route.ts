@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { rateLimit } from '@/lib/rate-limit'
+import { validateCSRF } from '@/lib/csrf'
 import bcrypt from 'bcryptjs'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
 
@@ -8,6 +9,12 @@ const loginLimiter = rateLimit(10, 15 * 60 * 1000) // 10 attempts per 15 minutes
 
 export async function POST(req: NextRequest) {
   try {
+    // CSRF validation
+    const csrfCheck = validateCSRF(req)
+    if (!csrfCheck.valid) {
+      return NextResponse.json({ error: csrfCheck.error || 'Invalid request' }, { status: 403 })
+    }
+
     // Rate limiting
     const rateLimitResult = loginLimiter(req)
     if (rateLimitResult.limited) {

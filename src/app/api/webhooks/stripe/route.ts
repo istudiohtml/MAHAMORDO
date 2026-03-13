@@ -107,22 +107,25 @@ export async function POST(req: NextRequest) {
 
       if (!userId) {
         console.warn('Missing userId in subscription metadata:', subscription.metadata)
-        return NextResponse.json(
-          { error: 'Missing metadata' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 })
       }
 
-      const planType = subscription.metadata?.planType || 'monthly'
-      const expiresAt = new Date(subscription.current_period_end * 1000)
+      const planType = subscription.metadata?.planType
+      if (!planType || !['monthly', 'yearly'].includes(planType)) {
+        console.warn('Invalid planType in subscription metadata:', planType)
+        return NextResponse.json({ error: 'Invalid plan type' }, { status: 400 })
+      }
 
-      // Update user subscription
+      const expiresAt = new Date(subscription.current_period_end * 1000)
+      const subscriptionPlan = planType === 'yearly' ? 'YEARLY' : 'MONTHLY'
+
+      // Update user subscription with unlimited credits representation
       await prisma.user.update({
         where: { id: userId },
         data: {
-          subscriptionPlan: planType === 'yearly' ? 'YEARLY' : 'MONTHLY',
+          subscriptionPlan,
           subscriptionExpiresAt: expiresAt,
-          credits: 999999, // Unlimited credits represented as max
+          credits: 1000000, // Unlimited credits representation
         },
       })
 
@@ -172,19 +175,15 @@ export async function POST(req: NextRequest) {
 
       if (!userId) {
         console.warn('Missing userId in subscription metadata:', subscription.metadata)
-        return NextResponse.json(
-          { error: 'Missing metadata' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Missing metadata' }, { status: 400 })
       }
 
-      // Cancel subscription
+      // Cancel subscription (don't reset credits, user keeps what they have)
       await prisma.user.update({
         where: { id: userId },
         data: {
           subscriptionPlan: 'NONE',
           subscriptionExpiresAt: null,
-          credits: 0, // Reset to 0 after cancellation
         },
       })
 
