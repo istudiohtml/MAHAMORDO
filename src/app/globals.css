@@ -2524,6 +2524,113 @@ body {
   border: 1px solid #fca5a5;
 }
 
+/* Package tabs */
+.dash-package-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(26,21,16,0.12);
+}
+.dash-package-tab {
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink3);
+  font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: 0.3s ease;
+}
+.dash-package-tab:hover {
+  color: var(--ink);
+}
+.dash-package-tab.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+/* Subscription packages */
+.dash-subscription-packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.dash-subscription-pkg {
+  position: relative;
+  padding: 28px 20px;
+  background: var(--cream);
+  border: 1px solid rgba(26,21,16,0.1);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: 0.3s ease;
+}
+.dash-subscription-pkg:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 12px rgba(184,134,11,0.1);
+}
+.dash-subscription-pkg.highlight {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--cream) 0%, rgba(212,160,23,0.05) 100%);
+}
+.dash-subscription-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  background: var(--gold);
+  color: white;
+  font-size: 11px;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.dash-subscription-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.dash-subscription-credits {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.dash-subscription-unit {
+  font-size: 12px;
+  color: var(--ink3);
+}
+.dash-subscription-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 4px;
+}
+.dash-subscription-period {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink3);
+}
+.dash-subscription-btn {
+  margin-top: auto;
+  padding: 12px 16px;
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.dash-subscription-btn:hover:not(:disabled) {
+  background: var(--gold2);
+}
+.dash-subscription-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Responsive dashboard */
 @media (max-width: 1000px) {
   .dash-stats { grid-template-columns: repeat(2, 1fr); }

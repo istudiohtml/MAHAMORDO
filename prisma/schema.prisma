@@ -195,4 +195,5 @@ enum MessageRole {
 enum SubscriptionPlan {
   NONE
   MONTHLY
+  YEARLY
 }

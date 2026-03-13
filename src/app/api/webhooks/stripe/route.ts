@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Handle payment_intent.payment_failed event
+    // Handle charge.failed event
     if (event.type === 'charge.failed') {
       const charge = event.data.object as Stripe.Charge
       const sessionId = charge.payment_intent as string
@@ -98,6 +98,106 @@ export async function POST(req: NextRequest) {
         })
         console.log(`Payment ${payment.id} failed`)
       }
+    }
+
+    // Handle customer.subscription.created
+    if (event.type === 'customer.subscription.created') {
+      const subscription = event.data.object as Stripe.Subscription
+      const userId = subscription.metadata?.userId
+
+      if (!userId) {
+        console.warn('Missing userId in subscription metadata:', subscription.metadata)
+        return NextResponse.json(
+          { error: 'Missing metadata' },
+          { status: 400 }
+        )
+      }
+
+      const planType = subscription.metadata?.planType || 'monthly'
+      const expiresAt = new Date(subscription.current_period_end * 1000)
+
+      // Update user subscription
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          subscriptionPlan: planType === 'yearly' ? 'YEARLY' : 'MONTHLY',
+          subscriptionExpiresAt: expiresAt,
+          credits: 999999, // Unlimited credits represented as max
+        },
+      })
+
+      // Log subscription
+      await prisma.creditLog.create({
+        data: {
+          userId,
+          amount: 0,
+          reason: `subscription_${planType}_created`,
+        },
+      })
+
+      console.log(`Subscription created for user ${userId}: ${planType}`)
+    }
+
+    // Handle customer.subscription.updated
+    if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object as Stripe.Subscription
+      const userId = subscription.metadata?.userId
+
+      if (!userId) {
+        console.warn('Missing userId in subscription metadata:', subscription.metadata)
+        return NextResponse.json(
+          { error: 'Missing metadata' },
+          { status: 400 }
+        )
+      }
+
+      const planType = subscription.metadata?.planType || 'monthly'
+      const expiresAt = new Date(subscription.current_period_end * 1000)
+
+      // Update subscription period
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          subscriptionExpiresAt: expiresAt,
+        },
+      })
+
+      console.log(`Subscription updated for user ${userId}: expires ${expiresAt}`)
+    }
+
+    // Handle customer.subscription.deleted
+    if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object as Stripe.Subscription
+      const userId = subscription.metadata?.userId
+
+      if (!userId) {
+        console.warn('Missing userId in subscription metadata:', subscription.metadata)
+        return NextResponse.json(
+          { error: 'Missing metadata' },
+          { status: 400 }
+        )
+      }
+
+      // Cancel subscription
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          subscriptionPlan: 'NONE',
+          subscriptionExpiresAt: null,
+          credits: 0, // Reset to 0 after cancellation
+        },
+      })
+
+      // Log cancellation
+      await prisma.creditLog.create({
+        data: {
+          userId,
+          amount: 0,
+          reason: 'subscription_cancelled',
+        },
+      })
+
+      console.log(`Subscription cancelled for user ${userId}`)
     }
 
     return NextResponse.json({ received: true })
