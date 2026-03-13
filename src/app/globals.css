@@ -1299,6 +1299,95 @@ body {
 }
 .auth-back-link:hover { color: var(--ink); }
 
+.auth-forgot-link {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.auth-forgot-link:hover { color: var(--gold); }
+
+/* OAuth buttons */
+.auth-oauth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.auth-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid rgba(26,21,16,0.15);
+  background: #fff;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+.auth-oauth-btn:hover {
+  border-color: var(--gold);
+  background: rgba(184,134,11,0.03);
+}
+.auth-oauth-btn--apple {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+}
+.auth-oauth-btn--apple:hover {
+  background: #333;
+  border-color: #333;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(26,21,16,0.1);
+}
+.auth-divider span {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  color: var(--ink4);
+  white-space: nowrap;
+}
+
+/* Success box (forgot password) */
+.auth-success-box {
+  text-align: center;
+  padding: 8px 0;
+}
+.auth-success-icon {
+  font-size: 32px;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.auth-success-text {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+  line-height: 1.8;
+  margin-top: 12px;
+}
+
 /* ══════════════════════════════════════
    DASHBOARD LAYOUT
 ══════════════════════════════════════ */

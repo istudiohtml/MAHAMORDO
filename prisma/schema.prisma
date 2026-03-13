@@ -39,18 +39,34 @@ model User {
   birthDate   DateTime?
   birthTime   String?   // เวลาเกิด เช่น "14:30"
   birthPlace  String?   // สถานที่เกิด เช่น "กรุงเทพมหานคร"
-  password    String   // hashed
+  password    String?   // hashed — null for OAuth users
+  provider    String   @default("email")  // "email" | "google" | "apple"
+  image       String?  // profile picture from OAuth
   role        UserRole @default(USER)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   credits    Int      @default(3)  // free credits on signup
 
-  sessions      FortuneSession[]
-  creditLogs    CreditLog[]
-  refreshTokens RefreshToken[]
+  sessions       FortuneSession[]
+  creditLogs     CreditLog[]
+  refreshTokens  RefreshToken[]
+  passwordResets PasswordReset[]
 
   @@map("users")
+}
+
+// ── PASSWORD RESETS ──────────────────────────────────────────
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("password_resets")
 }
 
 // ── FORTUNE SESSIONS ────────────────────────────────────────

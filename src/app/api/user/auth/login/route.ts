@@ -12,7 +12,13 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await prisma.user.findUnique({ where: { email } })
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      return NextResponse.json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }, { status: 401 })
+    }
+    if (!user.password) {
+      return NextResponse.json({ error: `บัญชีนี้เข้าสู่ระบบด้วย ${user.provider === 'google' ? 'Google' : 'Social Login'} กรุณาใช้ปุ่มด้านล่าง` }, { status: 401 })
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
       return NextResponse.json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }, { status: 401 })
     }
 
