@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
 import bcrypt from 'bcryptjs'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
 
+const loginLimiter = rateLimit(10, 15 * 60 * 1000) // 10 attempts per 15 minutes
+
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimitResult = loginLimiter(req)
+    if (rateLimitResult.limited) {
+      return NextResponse.json(
+        { error: 'Too many login attempts, please try again later' },
+        { status: 429, headers: { 'Retry-After': String(rateLimitResult.retryAfter) } }
+      )
+    }
+
     const { email, password } = await req.json()
 
     if (!email || !password) {
@@ -16,7 +28,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }, { status: 401 })
     }
     if (!user.password) {
-      return NextResponse.json({ error: `บัญชีนี้เข้าสู่ระบบด้วย ${user.provider === 'google' ? 'Google' : 'Social Login'} กรุณาใช้ปุ่มด้านล่าง` }, { status: 401 })
+      return NextResponse.json({ error: 'บัญชีนี้ไม่สามารถเข้าสู่ระบบด้วยรหัสผ่านได้ กรุณาลองวิธีเข้าสู่ระบบอื่น' }, { status: 401 })
     }
     if (!(await bcrypt.compare(password, user.password))) {
       return NextResponse.json({ error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' }, { status: 401 })
@@ -37,7 +49,7 @@ export async function POST(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 15,
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     })
     res.cookies.set('user_refresh', refreshToken, {

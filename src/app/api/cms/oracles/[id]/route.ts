@@ -21,9 +21,23 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   const body = await req.json();
 
+  // Whitelist allowed fields
+  const allowedFields = ['name', 'title', 'description', 'avatarUrl', 'systemPrompt', 'speciality', 'isActive', 'sortOrder'];
+  const updateData: any = {};
+
+  for (const field of allowedFields) {
+    if (field in body) {
+      updateData[field] = body[field];
+    }
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+  }
+
   const oracle = await prisma.oracle.update({
     where: { id },
-    data: body,
+    data: updateData,
   });
   return NextResponse.json(oracle);
 }

@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { verifyAccessToken } from "@/lib/jwt";
 import { anthropic, CLAUDE_MODEL, MAX_TOKENS } from "@/lib/anthropic";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
+    // Verify authentication
+    const cookieStore = await cookies();
+    const token = cookieStore.get("user_token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const payload = await verifyAccessToken(token);
+    if (!payload?.userId) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
     const { sessionId, message } = await req.json();
 
     if (!sessionId || !message) {
@@ -21,6 +35,11 @@ export async function POST(req: NextRequest) {
 
     if (!session) {
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    }
+
+    // Verify session ownership
+    if (session.userId !== payload.userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     // บันทึก user message

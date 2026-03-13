@@ -53,10 +53,14 @@ export default function DetailView({
                   {o.subtitle}
                 </p>
                 <div className={`detail-divider${contentVisible ? ' visible' : ''}`} />
-                <p
-                  className={`detail-desc${contentVisible ? ' visible' : ''}`}
-                  dangerouslySetInnerHTML={{ __html: o.desc.replace(/\n/g, '<br>') }}
-                />
+                <p className={`detail-desc${contentVisible ? ' visible' : ''}`}>
+                  {o.desc.split('\n').map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      {i < o.desc.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
+                </p>
                 <button className={`detail-btn${contentVisible ? ' visible' : ''}`} onClick={() => onStartFortune(oracleId)}>
                   เริ่มดูดวงเลย &nbsp;✦
                 </button>
@@ -85,10 +89,14 @@ export default function DetailView({
                         ))}
                       </div>
                     ) : (
-                      <div
-                        className="profile-value"
-                        dangerouslySetInnerHTML={{ __html: row.value }}
-                      />
+                      <div className="profile-value">
+                        {row.value.split('\n').map((line, j) => (
+                          <span key={j}>
+                            {line}
+                            {j < row.value.split('\n').length - 1 && <br />}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
                 ))}
