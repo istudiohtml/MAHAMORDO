@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
+import CreditPackages from '@/components/dashboard/CreditPackages'
 
 export default async function CreditsPage() {
   const cookieStore = await cookies()
@@ -41,25 +42,10 @@ export default async function CreditsPage() {
         </div>
       </div>
 
-      {/* Buy packages — placeholder */}
+      {/* Buy packages */}
       <div className="dash-section">
         <h2 className="dash-section-title">ซื้อเครดิตเพิ่ม</h2>
-        <div className="dash-credit-packages">
-          {[
-            { credits: 5, price: 49, label: 'Starter' },
-            { credits: 15, price: 129, label: 'Popular', highlight: true },
-            { credits: 30, price: 239, label: 'Value' },
-          ].map((pkg) => (
-            <div key={pkg.credits} className={`dash-credit-pkg${pkg.highlight ? ' highlight' : ''}`}>
-              {pkg.highlight && <span className="dash-credit-pkg-badge">แนะนำ</span>}
-              <p className="dash-credit-pkg-label">{pkg.label}</p>
-              <p className="dash-credit-pkg-count">{pkg.credits}</p>
-              <p className="dash-credit-pkg-unit">เครดิต</p>
-              <p className="dash-credit-pkg-price">฿{pkg.price}</p>
-              <button className="dash-credit-pkg-btn" disabled>เร็วๆ นี้</button>
-            </div>
-          ))}
-        </div>
+        <CreditPackages />
       </div>
 
       {/* Log */}

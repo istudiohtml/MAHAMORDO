@@ -48,8 +48,13 @@ model User {
 
   credits    Int      @default(3)  // free credits on signup
 
+  // Subscription (เช่น รายเดือน ดูได้ไม่จำกัด)
+  subscriptionPlan      SubscriptionPlan @default(NONE)
+  subscriptionExpiresAt DateTime?
+
   sessions       FortuneSession[]
   creditLogs     CreditLog[]
+  payments       Payment[]
   refreshTokens  RefreshToken[]
   passwordResets PasswordReset[]
 
@@ -143,6 +148,32 @@ model CreditLog {
   @@map("credit_logs")
 }
 
+// ── PAYMENTS ────────────────────────────────────────────────
+model Payment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeSessionId String @unique
+  stripePaymentId String?
+
+  status    PaymentStatus @default(PENDING)
+  amount    Int           // ราคาเป็นสตางค์ (baht * 100)
+  credits   Int           // จำนวนเครดิตที่ซื้อ
+
+  createdAt DateTime @default(now())
+  completedAt DateTime?
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+}
+
 // ── ENUMS ────────────────────────────────────────────────────
 enum UserRole {
   USER        // ผู้ใช้ทั่วไป
@@ -159,4 +190,9 @@ enum SessionStatus {
 enum MessageRole {
   USER
   ASSISTANT
+}
+
+enum SubscriptionPlan {
+  NONE
+  MONTHLY
 }
