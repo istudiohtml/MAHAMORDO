@@ -7,9 +7,10 @@ interface Props {
   slideUp: boolean
   animated: boolean
   onOpenOracle: (id: OracleId) => void
+  onStartFortune: () => void
 }
 
-export default function HomeView({ slideUp, animated, onOpenOracle }: Props) {
+export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortune }: Props) {
   const [previewId, setPreviewId] = useState<0 | OracleId>(0)
   const prevPreviewRef = useRef<0 | OracleId>(0)
 
@@ -38,7 +39,7 @@ export default function HomeView({ slideUp, animated, onOpenOracle }: Props) {
             โหราศาสตร์ไทย &nbsp;·&nbsp; ซาจูเกาหลี &nbsp;·&nbsp; ไพ่ทาโรต์
           </p>
           <div className={`hero-buttons${animated ? ' animate' : ''}`}>
-            <button className="btn-primary" onClick={() => onOpenOracle(1)}>
+            <button className="btn-primary" onClick={onStartFortune}>
               เริ่มดูดวง &nbsp;✦
             </button>
             <button className="btn-outline">เรียนรู้เพิ่ม</button>

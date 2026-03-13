@@ -76,6 +76,7 @@ export default function Home() {
         slideUp={homeSlideUp}
         animated={homeAnimated}
         onOpenOracle={openOracle}
+        onStartFortune={handleStartFortune}
       />
       <DetailView
         slideIn={detailSlideIn}
