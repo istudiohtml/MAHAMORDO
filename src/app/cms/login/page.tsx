@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function CmsLoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") ?? "/cms";
@@ -13,7 +13,6 @@ export default function CmsLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ถ้ามี token อยู่แล้ว → ไปหน้า CMS เลย
   useEffect(() => {
     fetch("/api/auth/refresh", { method: "POST" }).then((res) => {
       if (res.ok) router.replace(redirect);
@@ -45,14 +44,12 @@ export default function CmsLoginPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
           <p className="text-xs text-slate-400 font-medium tracking-widest uppercase mb-1">CMS</p>
           <h1 className="text-2xl font-semibold text-slate-900">มหาหมอดู</h1>
           <p className="text-slate-500 text-sm mt-1">เข้าสู่ระบบจัดการ</p>
         </div>
 
-        {/* Form */}
         <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -95,5 +92,13 @@ export default function CmsLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CmsLoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

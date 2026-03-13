@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAHAMORDO — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600&family=Prompt:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --cream: #FDFBF7;
+  --warm: #F5F0E8;
+  --gold: #B8860B;
+  --gold2: #D4A017;
+  --ink: #1A1510;
+  --ink2: #4A3F35;
+  --ink3: #8A7A6A;
+  --ink4: #BFB5AA;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* ════════ FULL-SCREEN LAYOUT ════════ */
+.dash-layout {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ════════ SIDEBAR ════════ */
+.dash-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  overflow-y: auto;
+  position: relative;
+}
+.dash-sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.dash-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--cream);
+  text-transform: uppercase;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 36px;
+  position: relative;
+  z-index: 2;
+}
+.dash-logo-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  flex-shrink: 0;
+}
+
+.dash-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(253,251,247,0.07);
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+.dash-user-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dash-user-info { min-width: 0; }
+.dash-user-name {
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dash-user-email {
+  font-size: 11px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.dash-credits {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(184,134,11,0.08);
+  border: 1px solid rgba(184,134,11,0.2);
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 2;
+}
+.dash-credits-icon { font-size: 20px; color: var(--gold); line-height: 1; }
+.dash-credits-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--gold);
+  line-height: 1;
+}
+.dash-credits-label {
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  letter-spacing: 3px;
+  color: rgba(184,134,11,0.6);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.dash-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+.dash-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.45);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.dash-nav-item:hover { color: var(--cream); background: rgba(253,251,247,0.04); }
+.dash-nav-item.active { color: var(--cream); border-left-color: var(--gold); background: rgba(253,251,247,0.05); }
+.dash-nav-icon { font-size: 14px; color: var(--gold); opacity: 0.7; flex-shrink: 0; }
+.dash-nav-item.active .dash-nav-icon { opacity: 1; }
+
+.dash-start-btn {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 20px;
+  position: relative;
+  z-index: 2;
+}
+.dash-start-btn:hover { background: var(--gold2); }
+
+.dash-logout {
+  text-align: left;
+  padding: 12px 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(253,251,247,0.2);
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: 12px;
+  position: relative;
+  z-index: 2;
+}
+.dash-logout:hover { color: rgba(253,251,247,0.6); }
+
+/* ════════ CONTENT ════════ */
+.dash-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--cream);
+}
+
+.dash-page { display: none; padding: 56px 60px; max-width: 960px; margin: 0 auto; width: 100%; }
+.dash-page.active { display: block; }
+
+.dash-page-header { margin-bottom: 48px; }
+.dash-page-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.dash-page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1;
+  letter-spacing: 2px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.dash-page-sub {
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink3);
+}
+
+/* Stats */
+.dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+.dash-stat-card { padding: 28px 24px; border: 1px solid rgba(26,21,16,0.08); background: #fff; }
+.dash-stat-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; color: var(--ink3); text-transform: uppercase; margin-bottom: 12px; }
+.dash-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; color: var(--ink); }
+.dash-stat-unit { font-family: 'Prompt', sans-serif; font-size: 12px; font-weight: 300; color: var(--ink3); margin-top: 4px; }
+
+/* Sections */
+.dash-section { margin-bottom: 48px; }
+.dash-section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(26,21,16,0.08); }
+.dash-section-title { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 5px; color: var(--ink); text-transform: uppercase; }
+.dash-section-link { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 3px; color: var(--gold); text-decoration: none; text-transform: uppercase; cursor: pointer; }
+
+/* Sessions */
+.dash-session-list { display: flex; flex-direction: column; gap: 1px; background: rgba(26,21,16,0.06); }
+.dash-session-item {
+  display: grid; grid-template-columns: 1fr 2fr auto auto;
+  align-items: center; gap: 16px; padding: 16px 20px;
+  background: var(--cream); transition: background 0.2s;
+}
+.dash-session-item:hover { background: var(--warm); }
+.dash-session-oracle { font-family: 'Prompt', sans-serif; font-size: 14px; font-weight: 400; color: var(--ink); }
+.dash-session-meta { display: flex; gap: 8px; font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; color: var(--ink3); text-transform: uppercase; }
+.dash-session-topic { color: var(--gold); border: 1px solid rgba(184,134,11,0.3); padding: 1px 6px; }
+.dash-session-date { font-family: 'Cinzel', serif; font-size: 8px; color: var(--ink4); white-space: nowrap; }
+.dash-session-status { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; border: 1px solid; white-space: nowrap; }
+.status-completed { color: var(--ink3); border-color: rgba(26,21,16,0.2); }
+.status-active { color: #059669; border-color: #059669; }
+
+/* Oracle cards */
+.dash-oracle-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dash-oracle-card {
+  padding: 28px 24px; background: var(--ink);
+  text-decoration: none; display: block; position: relative; overflow: hidden; cursor: pointer; transition: transform 0.2s;
+}
+.dash-oracle-card::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.1) 1px, transparent 1px);
+  background-size: 24px 24px; pointer-events: none;
+}
+.dash-oracle-card:hover { transform: translateY(-2px); }
+.dash-oracle-icon { display: block; font-size: 28px; color: var(--gold); margin-bottom: 16px; position: relative; }
+.dash-oracle-num { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; color: rgba(184,134,11,0.5); text-transform: uppercase; margin-bottom: 6px; position: relative; }
+.dash-oracle-name { font-family: 'Prompt', sans-serif; font-size: 16px; font-weight: 400; color: var(--cream); margin-bottom: 4px; position: relative; }
+.dash-oracle-sub { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; color: rgba(253,251,247,0.3); text-transform: uppercase; margin-bottom: 16px; position: relative; }
+.dash-oracle-cost { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; border-top: 1px solid rgba(253,251,247,0.07); padding-top: 12px; position: relative; }
+
+/* Credit balance */
+.dash-credit-balance {
+  display: flex; align-items: center; gap: 24px; padding: 32px 36px;
+  background: var(--ink); margin-bottom: 48px; position: relative; overflow: hidden;
+}
+.dash-credit-balance::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.1) 1px, transparent 1px);
+  background-size: 28px 28px; pointer-events: none;
+}
+.dash-credit-balance-icon { font-size: 40px; color: var(--gold); position: relative; }
+.dash-credit-balance-count { font-family: 'Bebas Neue', sans-serif; font-size: 80px; line-height: 1; color: var(--cream); letter-spacing: 2px; position: relative; }
+.dash-credit-balance-label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 5px; color: rgba(253,251,247,0.3); text-transform: uppercase; position: relative; margin-top: 4px; }
+
+.dash-credit-packages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dash-credit-pkg { padding: 28px 24px; border: 1px solid rgba(26,21,16,0.08); background: #fff; text-align: center; position: relative; }
+.dash-credit-pkg.highlight { border-color: var(--gold); background: rgba(184,134,11,0.03); }
+.dash-credit-pkg-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--ink); font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 2px; text-transform: uppercase; padding: 3px 10px; white-space: nowrap; }
+.dash-credit-pkg-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; color: var(--ink3); text-transform: uppercase; margin-bottom: 16px; }
+.dash-credit-pkg-count { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 1; color: var(--ink); }
+.dash-credit-pkg-unit { font-family: 'Prompt', sans-serif; font-size: 12px; font-weight: 300; color: var(--ink3); margin-bottom: 16px; }
+.dash-credit-pkg-price { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--gold); margin-bottom: 16px; }
+.dash-credit-pkg-btn { width: 100%; padding: 10px; background: var(--ink); color: var(--cream); font-family: 'Prompt', sans-serif; font-size: 12px; font-weight: 300; border: none; cursor: not-allowed; opacity: 0.4; }
+
+.dash-credit-log { display: flex; flex-direction: column; gap: 1px; background: rgba(26,21,16,0.06); }
+.dash-credit-log-item { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 24px; padding: 14px 20px; background: var(--cream); }
+.dash-credit-log-reason { font-family: 'Prompt', sans-serif; font-size: 13px; font-weight: 300; color: var(--ink2); }
+.dash-credit-log-date { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 1px; color: var(--ink4); }
+.dash-credit-log-amount { font-family: 'Bebas Neue', sans-serif; font-size: 22px; min-width: 48px; text-align: right; }
+.log-positive { color: #059669; }
+.log-negative { color: #dc2626; }
+
+/* ── PROFILE PAGE ── */
+.profile-section { margin-bottom: 24px; padding: 32px 36px; border: 1px solid rgba(26,21,16,0.08); background: #fff; }
+.profile-section-title {
+  font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 5px; color: var(--ink);
+  text-transform: uppercase; margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid rgba(26,21,16,0.06);
+}
+.profile-section-sub { font-family: 'Prompt', sans-serif; font-size: 12px; font-weight: 300; color: var(--ink3); margin-top: -16px; margin-bottom: 24px; }
+.profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.profile-field { display: flex; flex-direction: column; gap: 8px; }
+.profile-label { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 4px; color: var(--ink3); text-transform: uppercase; }
+.profile-input {
+  padding: 12px 16px; border: 1px solid rgba(26,21,16,0.15);
+  background: var(--cream); font-family: 'Prompt', sans-serif;
+  font-size: 14px; font-weight: 300; color: var(--ink); outline: none;
+  transition: border-color 0.2s; width: 100%;
+}
+.profile-input:focus { border-color: var(--gold); }
+.profile-input::placeholder { color: var(--ink4); }
+.profile-field-hint { font-family: 'Prompt', sans-serif; font-size: 11px; font-weight: 300; color: var(--ink4); line-height: 1.5; }
+
+.profile-preview {
+  padding: 20px 24px; background: rgba(184,134,11,0.04);
+  border: 1px solid rgba(184,134,11,0.18); margin-bottom: 28px;
+}
+.profile-preview-label { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+.profile-preview-text { font-family: 'Prompt', sans-serif; font-size: 13px; font-weight: 300; color: var(--ink2); line-height: 1.6; }
+
+.profile-actions { display: flex; align-items: center; gap: 20px; }
+.profile-save-btn {
+  padding: 14px 44px; background: var(--ink); color: var(--cream);
+  font-family: 'Prompt', sans-serif; font-size: 14px; font-weight: 300;
+  letter-spacing: 1px; border: none; cursor: pointer; transition: background 0.3s;
+}
+.profile-save-btn:hover { background: var(--gold); }
+.profile-saved-msg { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px; color: #059669; text-transform: uppercase; display: none; }
+.profile-saved-msg.show { display: block; }
+
+/* ── Empty ── */
+.dash-empty { padding: 48px 24px; text-align: center; border: 1px dashed rgba(26,21,16,0.12); }
+.dash-empty-icon { font-size: 32px; color: var(--gold); margin-bottom: 12px; opacity: 0.5; }
+.dash-empty-text { font-family: 'Prompt', sans-serif; font-size: 14px; font-weight: 300; color: var(--ink3); margin-bottom: 20px; }
+
+/* History full width */
+.dash-session-list.full .dash-session-item { grid-template-columns: 160px 1fr auto auto; }
+
+</style>
+</head>
+<body>
+
+<div class="dash-layout">
+
+  <!-- ════ SIDEBAR ════ -->
+  <aside class="dash-sidebar">
+    <div class="dash-logo">
+      <span class="dash-logo-dot"></span>
+      Mahamordo
+    </div>
+    <div class="dash-user">
+      <div class="dash-user-avatar">ส</div>
+      <div class="dash-user-info">
+        <p class="dash-user-name">สมชาย ใจดี</p>
+        <p class="dash-user-email">somchai@email.com</p>
+      </div>
+    </div>
+    <div class="dash-credits">
+      <span class="dash-credits-icon">✦</span>
+      <div>
+        <p class="dash-credits-count">3 เครดิต</p>
+        <p class="dash-credits-label">คงเหลือ</p>
+      </div>
+    </div>
+    <nav class="dash-nav">
+      <div class="dash-nav-item active" onclick="go('overview')"><span class="dash-nav-icon">◈</span>หน้าหลัก</div>
+      <div class="dash-nav-item" onclick="go('history')"><span class="dash-nav-icon">◎</span>ประวัติดูดวง</div>
+      <div class="dash-nav-item" onclick="go('credits')"><span class="dash-nav-icon">✦</span>เครดิต</div>
+      <div class="dash-nav-item" onclick="go('profile')"><span class="dash-nav-icon">○</span>ข้อมูลส่วนตัว</div>
+    </nav>
+    <button class="dash-start-btn">เริ่มดูดวง &nbsp;✦</button>
+    <button class="dash-logout">ออกจากระบบ</button>
+  </aside>
+
+  <!-- ════ CONTENT ════ -->
+  <main class="dash-content">
+
+    <!-- ── OVERVIEW ── -->
+    <div class="dash-page active" id="page-overview">
+      <div class="dash-page-header">
+        <p class="dash-page-eyebrow">Overview</p>
+        <h1 class="dash-page-title">สวัสดี, สมชาย</h1>
+        <p class="dash-page-sub">พร้อมรับรู้ชะตากรรมของคุณแล้วหรือยัง?</p>
+      </div>
+      <div class="dash-stats">
+        <div class="dash-stat-card">
+          <p class="dash-stat-label">เครดิตคงเหลือ</p>
+          <p class="dash-stat-value">3</p>
+          <p class="dash-stat-unit">เครดิต</p>
+        </div>
+        <div class="dash-stat-card">
+          <p class="dash-stat-label">การดูดวงทั้งหมด</p>
+          <p class="dash-stat-value">2</p>
+          <p class="dash-stat-unit">ครั้ง</p>
+        </div>
+        <div class="dash-stat-card">
+          <p class="dash-stat-label">สมาชิกตั้งแต่</p>
+          <p class="dash-stat-value" style="font-size:32px;">มี.ค. 69</p>
+          <p class="dash-stat-unit">&nbsp;</p>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-header">
+          <h2 class="dash-section-title">การดูดวงล่าสุด</h2>
+          <span class="dash-section-link" onclick="go('history')">ดูทั้งหมด →</span>
+        </div>
+        <div class="dash-session-list">
+          <div class="dash-session-item">
+            <div class="dash-session-oracle">แม่หมอจันทร์</div>
+            <div class="dash-session-meta"><span>โหราศาสตร์ไทย</span><span class="dash-session-topic">ความรัก</span></div>
+            <div class="dash-session-date">12 มี.ค. 69</div>
+            <span class="dash-session-status status-completed">เสร็จสิ้น</span>
+          </div>
+          <div class="dash-session-item">
+            <div class="dash-session-oracle">อาจารย์ราหู</div>
+            <div class="dash-session-meta"><span>ไพ่ทาโรต์</span><span class="dash-session-topic">การงาน</span></div>
+            <div class="dash-session-date">10 มี.ค. 69</div>
+            <span class="dash-session-status status-completed">เสร็จสิ้น</span>
+          </div>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-header"><h2 class="dash-section-title">หมอดูของเรา</h2></div>
+        <div class="dash-oracle-cards">
+          <div class="dash-oracle-card"><span class="dash-oracle-icon">☽</span><p class="dash-oracle-num">Oracle I</p><p class="dash-oracle-name">แม่หมอจันทร์</p><p class="dash-oracle-sub">Thai Astrology</p><p class="dash-oracle-cost">1 เครดิต</p></div>
+          <div class="dash-oracle-card"><span class="dash-oracle-icon">☯</span><p class="dash-oracle-num">Oracle II</p><p class="dash-oracle-name">พ่อหมอซอน</p><p class="dash-oracle-sub">Korean Saju</p><p class="dash-oracle-cost">1 เครดิต</p></div>
+          <div class="dash-oracle-card"><span class="dash-oracle-icon">✦</span><p class="dash-oracle-num">Oracle III</p><p class="dash-oracle-name">อาจารย์ราหู</p><p class="dash-oracle-sub">Tarot</p><p class="dash-oracle-cost">2 เครดิต</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ── -->
+    <div class="dash-page" id="page-history">
+      <div class="dash-page-header">
+        <p class="dash-page-eyebrow">History</p>
+        <h1 class="dash-page-title">ประวัติดูดวง</h1>
+        <p class="dash-page-sub">บันทึกการดูดวงทั้งหมดของคุณ</p>
+      </div>
+      <div class="dash-session-list full">
+        <div class="dash-session-item">
+          <div class="dash-session-oracle">แม่หมอจันทร์</div>
+          <div class="dash-session-meta"><span>โหราศาสตร์ไทย</span><span class="dash-session-topic">ความรัก</span><span>8 ข้อความ</span></div>
+          <div class="dash-session-date">12 มีนาคม 2569</div>
+          <span class="dash-session-status status-completed">เสร็จสิ้น</span>
+        </div>
+        <div class="dash-session-item">
+          <div class="dash-session-oracle">อาจารย์ราหู</div>
+          <div class="dash-session-meta"><span>ไพ่ทาโรต์</span><span class="dash-session-topic">การงาน</span><span>12 ข้อความ</span></div>
+          <div class="dash-session-date">10 มีนาคม 2569</div>
+          <span class="dash-session-status status-completed">เสร็จสิ้น</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CREDITS ── -->
+    <div class="dash-page" id="page-credits">
+      <div class="dash-page-header">
+        <p class="dash-page-eyebrow">Credits</p>
+        <h1 class="dash-page-title">เครดิตของฉัน</h1>
+        <p class="dash-page-sub">ดูยอดเครดิตและประวัติการใช้งาน</p>
+      </div>
+      <div class="dash-credit-balance">
+        <span class="dash-credit-balance-icon">✦</span>
+        <div>
+          <p class="dash-credit-balance-count">3</p>
+          <p class="dash-credit-balance-label">เครดิตคงเหลือ</p>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-header"><h2 class="dash-section-title">ซื้อเครดิตเพิ่ม</h2></div>
+        <div class="dash-credit-packages">
+          <div class="dash-credit-pkg"><p class="dash-credit-pkg-label">Starter</p><p class="dash-credit-pkg-count">5</p><p class="dash-credit-pkg-unit">เครดิต</p><p class="dash-credit-pkg-price">฿49</p><button class="dash-credit-pkg-btn">เร็วๆ นี้</button></div>
+          <div class="dash-credit-pkg highlight"><span class="dash-credit-pkg-badge">แนะนำ</span><p class="dash-credit-pkg-label">Popular</p><p class="dash-credit-pkg-count">15</p><p class="dash-credit-pkg-unit">เครดิต</p><p class="dash-credit-pkg-price">฿129</p><button class="dash-credit-pkg-btn">เร็วๆ นี้</button></div>
+          <div class="dash-credit-pkg"><p class="dash-credit-pkg-label">Value</p><p class="dash-credit-pkg-count">30</p><p class="dash-credit-pkg-unit">เครดิต</p><p class="dash-credit-pkg-price">฿239</p><button class="dash-credit-pkg-btn">เร็วๆ นี้</button></div>
+        </div>
+      </div>
+      <div class="dash-section">
+        <div class="dash-section-header"><h2 class="dash-section-title">ประวัติการใช้เครดิต</h2></div>
+        <div class="dash-credit-log">
+          <div class="dash-credit-log-item"><div class="dash-credit-log-reason">โบนัสสมาชิกใหม่</div><div class="dash-credit-log-date">12 มี.ค. 69</div><div class="dash-credit-log-amount log-positive">+3</div></div>
+          <div class="dash-credit-log-item"><div class="dash-credit-log-reason">เริ่มการดูดวง (แม่หมอจันทร์)</div><div class="dash-credit-log-date">12 มี.ค. 69</div><div class="dash-credit-log-amount log-negative">-1</div></div>
+          <div class="dash-credit-log-item"><div class="dash-credit-log-reason">เริ่มการดูดวง (อาจารย์ราหู)</div><div class="dash-credit-log-date">10 มี.ค. 69</div><div class="dash-credit-log-amount log-negative">-2</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="dash-page" id="page-profile">
+      <div class="dash-page-header">
+        <p class="dash-page-eyebrow">Profile</p>
+        <h1 class="dash-page-title">ข้อมูลส่วนตัว</h1>
+        <p class="dash-page-sub">ข้อมูลเหล่านี้ช่วยให้หมอดูวิเคราะห์ดวงชะตาได้แม่นยำขึ้น</p>
+      </div>
+
+      <!-- ข้อมูลพื้นฐาน -->
+      <div class="profile-section">
+        <div class="profile-section-title">ข้อมูลพื้นฐาน</div>
+        <div class="profile-grid">
+          <div class="profile-field">
+            <label class="profile-label">ชื่อ</label>
+            <input type="text" placeholder="ชื่อจริง" value="สมชาย" class="profile-input">
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">นามสกุล</label>
+            <input type="text" placeholder="นามสกุล" value="ใจดี" class="profile-input">
+          </div>
+        </div>
+      </div>
+
+      <!-- ข้อมูลการเกิด -->
+      <div class="profile-section">
+        <div class="profile-section-title">ข้อมูลการเกิด</div>
+        <p class="profile-section-sub">ใช้สำหรับคำนวณดวงชะตา — ยิ่งครบถ้วนยิ่งแม่น</p>
+        <div class="profile-grid">
+          <div class="profile-field">
+            <label class="profile-label">วันเกิด</label>
+            <input type="date" value="1995-07-14" class="profile-input">
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">เวลาที่เกิด</label>
+            <input type="time" value="14:30" class="profile-input">
+            <p class="profile-field-hint">ถ้าไม่ทราบเวลาเกิดสามารถเว้นว่างไว้ได้</p>
+          </div>
+        </div>
+        <div class="profile-field" style="margin-top: 20px;">
+          <label class="profile-label">สถานที่เกิด</label>
+          <input type="text" placeholder="เช่น กรุงเทพมหานคร, เชียงใหม่" value="กรุงเทพมหานคร" class="profile-input">
+          <p class="profile-field-hint">จังหวัด หรือเมืองที่เกิด ใช้สำหรับคำนวณดาวตาม timezone</p>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="profile-preview">
+        <p class="profile-preview-label">ตัวอย่างข้อมูลที่หมอดูจะได้รับ</p>
+        <p class="profile-preview-text">ชื่อ: สมชาย ใจดี · เกิด: 14 กรกฎาคม 2538 เวลา 14:30 น. · กรุงเทพมหานคร</p>
+      </div>
+
+      <!-- Actions -->
+      <div class="profile-actions">
+        <button class="profile-save-btn" onclick="mockSave()">บันทึกข้อมูล ✦</button>
+        <span class="profile-saved-msg" id="savedMsg">✓ บันทึกแล้ว</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const pages = ['overview', 'history', 'credits', 'profile']
+const navIdx = { overview: 0, history: 1, credits: 2, profile: 3 }
+
+function go(id) {
+  pages.forEach(p => document.getElementById('page-' + p).classList.remove('active'))
+  document.getElementById('page-' + id).classList.add('active')
+  document.querySelectorAll('.dash-nav-item').forEach((el, i) => {
+    el.classList.toggle('active', i === navIdx[id])
+  })
+  // scroll to top when switching pages
+  document.querySelector('.dash-content').scrollTop = 0
+}
+
+function mockSave() {
+  const msg = document.getElementById('savedMsg')
+  msg.classList.add('show')
+  setTimeout(() => msg.classList.remove('show'), 2500)
+}
+</script>
+</body>
+</html>

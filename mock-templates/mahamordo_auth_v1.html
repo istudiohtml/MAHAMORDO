@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAHAMORDO — เข้าสู่ระบบ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400;600&family=Prompt:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+
+:root {
+  --cream: #FDFBF7;
+  --warm: #F5F0E8;
+  --gold: #B8860B;
+  --gold2: #D4A017;
+  --gold-light: #E8C84A;
+  --ink: #1A1510;
+  --ink2: #4A3F35;
+  --ink3: #8A7A6A;
+  --ink4: #BFB5AA;
+}
+
+body {
+  font-family: 'Prompt', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+}
+
+/* ── AUTH PAGE ── */
+.auth-page {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* LEFT dark panel */
+.auth-left {
+  width: 480px;
+  flex-shrink: 0;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 48px 56px;
+  overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.12) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.auth-brand {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: var(--cream);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  text-decoration: none;
+}
+.auth-brand-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+  flex-shrink: 0;
+}
+
+.auth-hero-text {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  margin-bottom: 40px;
+}
+.auth-tagline {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.auth-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 10vw, 120px);
+  line-height: 0.9;
+  color: var(--cream);
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.auth-subtitle {
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(253,251,247,0.5);
+}
+
+.auth-oracles-hint {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(253,251,247,0.07);
+  padding-top: 24px;
+  font-family: 'Prompt', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.35);
+}
+
+.auth-bonus-hint {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-top: 1px solid rgba(253,251,247,0.07);
+  padding-top: 24px;
+}
+.auth-bonus-icon { font-size: 28px; color: var(--gold); line-height: 1; }
+.auth-bonus-title {
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--cream);
+}
+.auth-bonus-sub {
+  font-family: 'Prompt', sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.4);
+  margin-top: 2px;
+}
+
+/* RIGHT cream panel */
+.auth-right {
+  flex: 1;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.auth-card { width: 100%; max-width: 400px; }
+
+.auth-card-header { margin-bottom: 36px; }
+.auth-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.auth-card-sub {
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink3);
+}
+.auth-link { color: var(--gold); text-decoration: none; font-weight: 400; cursor: pointer; }
+.auth-link:hover { text-decoration: underline; }
+
+.auth-form { display: flex; flex-direction: column; gap: 20px; }
+.auth-field { display: flex; flex-direction: column; gap: 8px; }
+.auth-label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: var(--ink3);
+  text-transform: uppercase;
+}
+.auth-input {
+  padding: 12px 16px;
+  border: 1px solid rgba(26,21,16,0.15);
+  background: #fff;
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.auth-input:focus { border-color: var(--gold); }
+.auth-input::placeholder { color: var(--ink4); }
+
+.auth-error {
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  font-family: 'Prompt', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #dc2626;
+  display: none;
+}
+
+.auth-submit {
+  padding: 14px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: 'Prompt', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  width: 100%;
+  margin-top: 4px;
+}
+.auth-submit:hover { background: var(--gold); }
+
+.auth-back { margin-top: 28px; text-align: center; }
+.auth-back-link {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--ink4);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+.auth-back-link:hover { color: var(--ink); }
+
+/* ── PAGE SWITCHER ── */
+.page { display: none; }
+.page.active { display: flex; height: 100vh; }
+
+/* ── SWITCHER TABS (demo nav) ── */
+.demo-nav {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 999;
+  display: flex;
+  gap: 8px;
+}
+.demo-tab {
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.5);
+  color: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.demo-tab:hover, .demo-tab.active { background: var(--gold); border-color: var(--gold); color: #0a0a0a; }
+
+</style>
+</head>
+<body>
+
+<!-- Demo nav -->
+<div class="demo-nav">
+  <div class="demo-tab active" onclick="showPage('login')">Login</div>
+  <div class="demo-tab" onclick="showPage('register')">Register</div>
+</div>
+
+<!-- ════════════ LOGIN PAGE ════════════ -->
+<div class="page active" id="page-login">
+  <div class="auth-left">
+    <a class="auth-brand">
+      <span class="auth-brand-dot"></span>
+      Mahamordo
+    </a>
+    <div class="auth-hero-text">
+      <p class="auth-tagline">✦ &nbsp; The Grand Oracle &nbsp; ✦</p>
+      <h1 class="auth-title">MAHA<br>MORDO</h1>
+      <p class="auth-subtitle">มหาหมอดู — เข้าสู่โลกแห่งโชคชะตา</p>
+    </div>
+    <div class="auth-oracles-hint">
+      <span>☽ &nbsp; แม่หมอจันทร์</span>
+      <span>☯ &nbsp; พ่อหมอซอน</span>
+      <span>✦ &nbsp; อาจารย์ราหู</span>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h2 class="auth-card-title">เข้าสู่ระบบ</h2>
+        <p class="auth-card-sub">ยังไม่มีบัญชี? <span class="auth-link" onclick="showPage('register')">สมัครสมาชิก</span></p>
+      </div>
+
+      <div class="auth-form">
+        <div class="auth-field">
+          <label class="auth-label">อีเมล</label>
+          <input type="email" placeholder="your@email.com" class="auth-input">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">รหัสผ่าน</label>
+          <input type="password" placeholder="••••••••" class="auth-input">
+        </div>
+        <div class="auth-error" id="login-error">อีเมลหรือรหัสผ่านไม่ถูกต้อง</div>
+        <button class="auth-submit" onclick="mockLogin()">เข้าสู่ระบบ &nbsp;✦</button>
+      </div>
+
+      <div class="auth-back">
+        <span class="auth-back-link">← กลับหน้าหลัก</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ REGISTER PAGE ════════════ -->
+<div class="page" id="page-register">
+  <div class="auth-left">
+    <a class="auth-brand">
+      <span class="auth-brand-dot"></span>
+      Mahamordo
+    </a>
+    <div class="auth-hero-text">
+      <p class="auth-tagline">✦ &nbsp; The Grand Oracle &nbsp; ✦</p>
+      <h1 class="auth-title">MAHA<br>MORDO</h1>
+      <p class="auth-subtitle">เริ่มต้นเส้นทางโชคชะตาของคุณ</p>
+    </div>
+    <div class="auth-bonus-hint">
+      <span class="auth-bonus-icon">✦</span>
+      <div>
+        <p class="auth-bonus-title">รับ 3 เครดิตฟรีทันที</p>
+        <p class="auth-bonus-sub">สำหรับสมาชิกใหม่ทุกคน</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <h2 class="auth-card-title">สมัครสมาชิก</h2>
+        <p class="auth-card-sub">มีบัญชีแล้ว? <span class="auth-link" onclick="showPage('login')">เข้าสู่ระบบ</span></p>
+      </div>
+
+      <div class="auth-form">
+        <div class="auth-field">
+          <label class="auth-label">ชื่อ (ไม่บังคับ)</label>
+          <input type="text" placeholder="ชื่อของคุณ" class="auth-input">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">อีเมล</label>
+          <input type="email" placeholder="your@email.com" class="auth-input">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label">รหัสผ่าน</label>
+          <input type="password" placeholder="อย่างน้อย 6 ตัวอักษร" class="auth-input">
+        </div>
+        <button class="auth-submit">สมัครสมาชิก &nbsp;✦</button>
+      </div>
+
+      <div class="auth-back">
+        <span class="auth-back-link">← กลับหน้าหลัก</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+  document.getElementById('page-' + id).classList.add('active')
+  document.querySelectorAll('.demo-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && id === 'login') || (i === 1 && id === 'register'))
+  })
+}
+
+function mockLogin() {
+  const err = document.getElementById('login-error')
+  err.style.display = 'block'
+  setTimeout(() => err.style.display = 'none', 2000)
+}
+</script>
+</body>
+</html>

@@ -31,13 +31,18 @@ model Oracle {
 
 // ── USERS ──────────────────────────────────────────────────
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String   // hashed
-  role      UserRole @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  firstName   String?
+  lastName    String?
+  birthDate   DateTime?
+  birthTime   String?   // เวลาเกิด เช่น "14:30"
+  birthPlace  String?   // สถานที่เกิด เช่น "กรุงเทพมหานคร"
+  password    String   // hashed
+  role        UserRole @default(USER)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   credits    Int      @default(3)  // free credits on signup
 
