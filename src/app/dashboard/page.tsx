@@ -87,11 +87,11 @@ export default async function DashboardPage() {
         <h2 className="dash-section-title">หมอดูของเรา</h2>
         <div className="dash-oracle-cards">
           {[
-            { num: 'I', name: 'แม่หมอจันทร์', sub: 'Thai Astrology', icon: '☽', cost: 1 },
-            { num: 'II', name: 'พ่อหมอซอน', sub: 'Korean Saju', icon: '☯', cost: 1 },
-            { num: 'III', name: 'อาจารย์ราหู', sub: 'Tarot', icon: '✦', cost: 2 },
+            { num: 'I', name: 'แม่หมอจันทร์', sub: 'Thai Astrology', icon: '☽', cost: 1, id: 1 },
+            { num: 'II', name: 'พ่อหมอซอน', sub: 'Korean Saju', icon: '☯', cost: 1, id: 2 },
+            { num: 'III', name: 'อาจารย์ราหู', sub: 'Tarot', icon: '✦', cost: 2, id: 3 },
           ].map((o) => (
-            <Link key={o.num} href="/" className="dash-oracle-card">
+            <Link key={o.num} href={`/fortune/${o.id}`} className="dash-oracle-card">
               <span className="dash-oracle-icon">{o.icon}</span>
               <p className="dash-oracle-num">Oracle {o.num}</p>
               <p className="dash-oracle-name">{o.name}</p>

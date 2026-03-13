@@ -1379,6 +1379,444 @@ body {
 }
 
 /* ══════════════════════════════════════
+   FORTUNE SELECT PAGE
+══════════════════════════════════════ */
+.fortune-select-page {
+  min-height: 100vh;
+  overflow-y: auto;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.fortune-select-page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+.fortune-select-header {
+  position: relative;
+  z-index: 2;
+  padding: 40px 56px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.fortune-select-back {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(253,251,247,0.3);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.fortune-select-back:hover { color: var(--cream); }
+.fortune-select-hero {
+  position: relative;
+  z-index: 2;
+  padding: 60px 56px 48px;
+  text-align: center;
+}
+.fortune-select-eyebrow {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 6px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.fortune-select-title {
+  font-family: var(--font-bebas), sans-serif;
+  font-size: 72px;
+  line-height: 0.9;
+  color: var(--cream);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+}
+.fortune-select-sub {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(253,251,247,0.45);
+}
+.fortune-oracle-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(253,251,247,0.05);
+  margin: 0 56px 80px;
+}
+.fortune-oracle-card {
+  background: var(--ink);
+  padding: 48px 40px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.fortune-oracle-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(184,134,11,0);
+  transition: background 0.3s;
+}
+.fortune-oracle-card:hover::before { background: rgba(184,134,11,0.04); }
+.fortune-oracle-card:hover .fortune-oracle-card-avatar { color: var(--gold-light); }
+.fortune-oracle-card-num {
+  font-family: var(--font-cinzel), serif;
+  font-size: 7px;
+  letter-spacing: 5px;
+  color: rgba(184,134,11,0.5);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.fortune-oracle-card-avatar {
+  font-size: 48px;
+  color: var(--gold);
+  margin-bottom: 20px;
+  transition: color 0.3s;
+  line-height: 1;
+}
+.fortune-oracle-card-name {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.fortune-oracle-card-sub {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba(253,251,247,0.3);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.fortune-oracle-card-desc {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.4);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  flex: 1;
+}
+.fortune-oracle-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(253,251,247,0.07);
+  padding-top: 20px;
+}
+.fortune-oracle-card-cost {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.fortune-oracle-card-arrow {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: rgba(253,251,247,0.2);
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.fortune-oracle-card:hover .fortune-oracle-card-arrow { color: var(--gold); }
+
+/* ══════════════════════════════════════
+   FORTUNE CHAT PAGE
+══════════════════════════════════════ */
+.fortune-chat-layout {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ink);
+}
+.fortune-chat-left {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 32px;
+  border-right: 1px solid rgba(253,251,247,0.06);
+  overflow: hidden;
+}
+.fortune-chat-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(184,134,11,0.1) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.fortune-chat-back {
+  font-family: var(--font-cinzel), serif;
+  font-size: 7px;
+  letter-spacing: 3px;
+  color: rgba(253,251,247,0.25);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+.fortune-chat-back:hover { color: rgba(253,251,247,0.6); }
+.fortune-chat-oracle-avatar {
+  font-size: 64px;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
+}
+.fortune-chat-oracle-num {
+  font-family: var(--font-cinzel), serif;
+  font-size: 7px;
+  letter-spacing: 4px;
+  color: rgba(184,134,11,0.5);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 2;
+}
+.fortune-chat-oracle-name {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 4px;
+  position: relative;
+  z-index: 2;
+}
+.fortune-chat-oracle-sub {
+  font-family: var(--font-cinzel), serif;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: rgba(253,251,247,0.3);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 2;
+}
+.fortune-chat-oracle-desc {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(253,251,247,0.35);
+  line-height: 1.7;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+.fortune-chat-credits {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(253,251,247,0.07);
+  padding-top: 20px;
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+/* Right: chat area */
+.fortune-chat-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  overflow: hidden;
+}
+.fortune-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.fortune-chat-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%;
+}
+.fortune-chat-message.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.fortune-chat-message.oracle {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+.fortune-chat-message-label {
+  font-family: var(--font-cinzel), serif;
+  font-size: 7px;
+  letter-spacing: 3px;
+  color: var(--ink4);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.fortune-chat-message-bubble {
+  padding: 16px 20px;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.8;
+}
+.fortune-chat-message.oracle .fortune-chat-message-bubble {
+  background: var(--ink);
+  color: var(--cream);
+}
+.fortune-chat-message.user .fortune-chat-message-bubble {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid rgba(26,21,16,0.1);
+}
+/* Typing indicator */
+.fortune-chat-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--ink);
+}
+.fortune-chat-typing-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(253,251,247,0.4);
+  animation: typingPulse 1.2s infinite;
+}
+.fortune-chat-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.fortune-chat-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingPulse {
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}
+/* Input area */
+.fortune-chat-input-area {
+  border-top: 1px solid rgba(26,21,16,0.08);
+  padding: 20px 48px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  background: var(--cream);
+}
+.fortune-chat-textarea {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid rgba(26,21,16,0.15);
+  background: #fff;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink);
+  outline: none;
+  resize: none;
+  min-height: 48px;
+  max-height: 120px;
+  transition: border-color 0.2s;
+}
+.fortune-chat-textarea:focus { border-color: var(--gold); }
+.fortune-chat-textarea::placeholder { color: var(--ink4); }
+.fortune-chat-send {
+  padding: 12px 28px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  white-space: nowrap;
+  height: 48px;
+}
+.fortune-chat-send:hover:not(:disabled) { background: var(--gold); }
+.fortune-chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Starting / loading state */
+.fortune-chat-starting {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.fortune-chat-starting-symbol {
+  font-size: 40px;
+  color: var(--gold);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+.fortune-chat-starting-text {
+  font-family: var(--font-cinzel), serif;
+  font-size: 9px;
+  letter-spacing: 5px;
+  color: var(--ink3);
+  text-transform: uppercase;
+}
+.fortune-chat-error {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 40px;
+}
+.fortune-chat-error-title {
+  font-family: var(--font-bebas), sans-serif;
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: 2px;
+}
+.fortune-chat-error-text {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink3);
+}
+.fortune-chat-error-btn {
+  padding: 12px 32px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+@media (max-width: 768px) {
+  .fortune-oracle-grid { grid-template-columns: 1fr; margin: 0 24px 60px; }
+  .fortune-select-hero { padding: 40px 24px 32px; }
+  .fortune-select-header { padding: 32px 24px 0; }
+  .fortune-chat-left { display: none; }
+}
+
+/* ══════════════════════════════════════
    DASHBOARD LAYOUT
 ══════════════════════════════════════ */
 .dash-layout {

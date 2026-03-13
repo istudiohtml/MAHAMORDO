@@ -60,11 +60,12 @@ export default function Home() {
     document.querySelector('.view-detail')?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
-  const handleStartFortune = useCallback(() => {
+  const handleStartFortune = useCallback((id?: OracleId) => {
     if (isLoggedIn) {
-      router.push('/dashboard')
+      router.push(id ? `/fortune/${id}` : '/fortune')
     } else {
-      router.push('/auth/login')
+      const redirect = id ? `/fortune/${id}` : '/fortune'
+      router.push(`/auth/login?redirect=${redirect}`)
     }
   }, [isLoggedIn, router])
 

@@ -15,6 +15,8 @@ export interface Oracle {
   subtitle: string
   desc: string
   avatar: string
+  slug: string
+  creditCost: number
   profile: OracleProfile
 }
 
@@ -28,6 +30,8 @@ export const oracles: Record<OracleId, Oracle> = {
     subtitle: 'Mother Moon Oracle',
     desc: 'อบอุ่น เมตตา เหมือนแม่พูด ใช้ศาสตร์โหราศาสตร์ไทยแท้\nวิเคราะห์ดาวประจำตัว ทิศมงคล ฤกษ์งามยามดี\nและดาวนพเคราะห์ในชาตาของคุณ',
     avatar: '☽',
+    slug: 'mae-mor-jan',
+    creditCost: 1,
     profile: {
       id: 'Oracle I · โหราศาสตร์ไทย',
       name: 'แม่หมอจันทร์',
@@ -48,6 +52,8 @@ export const oracles: Record<OracleId, Oracle> = {
     subtitle: 'Father Son Oracle',
     desc: 'ตรงไปตรงมา กวนนิดๆ แต่แม่นเรื่องซาจู 4 เสา\nวิเคราะห์ธาตุ 5 ในดวงชะตา ทำนายชีวิต 10 ปี\nและแผนภูมิดวงชะตาเกาหลีแบบดั้งเดิม',
     avatar: '☯',
+    slug: 'por-mor-son',
+    creditCost: 1,
     profile: {
       id: 'Oracle II · ซาจูเกาหลี',
       name: 'พ่อหมอซอน',
@@ -68,6 +74,8 @@ export const oracles: Record<OracleId, Oracle> = {
     subtitle: 'Master Rahu Oracle',
     desc: 'เย็นชา ลึกลับ ทุกคำมีความหมาย ใช้ไพ่ทาโรต์ 22 ใบ\nผนวกกับตำแหน่งดาวราหูและเกตุในชาตา\nเพื่อเปิดเผยสิ่งที่ซ่อนอยู่ในชะตากรรม',
     avatar: '✦',
+    slug: 'ajarn-rahu',
+    creditCost: 2,
     profile: {
       id: 'Oracle III · ไพ่ทาโรต์',
       name: 'อาจารย์ราหู',
