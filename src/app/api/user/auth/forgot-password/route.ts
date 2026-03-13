@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendPasswordResetEmail } from '@/lib/email'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
@@ -26,12 +27,17 @@ export async function POST(req: NextRequest) {
       data: { userId: user.id, token, expiresAt },
     })
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/auth/reset-password?token=${token}`
+    // Send reset email
+    const emailResult = await sendPasswordResetEmail(email, token)
 
-    // TODO: Send email with resetUrl using your email service (Resend, Nodemailer, etc.)
-    // Example: await resend.emails.send({ to: email, subject: 'รีเซ็ตรหัสผ่าน', html: `...` })
+    if (!emailResult.success) {
+      console.error('Failed to send password reset email:', emailResult.error)
+      // Still return success to not reveal whether email service works
+    }
 
+    // Dev logging
     if (process.env.NODE_ENV !== 'production') {
+      const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'}/auth/reset-password?token=${token}`
       console.log(`[DEV] Password reset link for ${email}:\n${resetUrl}`)
     }
 

@@ -42,6 +42,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
+    // Check session expiry
+    const now = new Date();
+    if (session.expiresAt && session.expiresAt < now) {
+      // Mark session as expired
+      await prisma.fortuneSession.update({
+        where: { id: sessionId },
+        data: { status: "EXPIRED" },
+      });
+      return NextResponse.json({ error: "Session expired" }, { status: 410 });
+    }
+
     // บันทึก user message
     await prisma.message.create({
       data: { sessionId, role: "USER", content: message },

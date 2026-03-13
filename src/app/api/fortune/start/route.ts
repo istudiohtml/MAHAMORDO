@@ -31,42 +31,61 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Oracle not found' }, { status: 404 })
     }
 
-    // Get user credits
+    // Get user credits + subscription
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { credits: true },
+      select: { credits: true, subscriptionPlan: true, subscriptionExpiresAt: true },
     })
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
-    if (user.credits < oracle.creditCost) {
+
+    const now = new Date()
+    const hasActiveSubscription =
+      user.subscriptionPlan !== 'NONE' &&
+      user.subscriptionExpiresAt !== null &&
+      user.subscriptionExpiresAt > now
+
+    // ถ้าไม่มี subscription ที่ยัง active → ใช้เครดิตตามเดิม
+    if (!hasActiveSubscription && user.credits < oracle.creditCost) {
       return NextResponse.json({ error: 'Insufficient credits' }, { status: 402 })
     }
 
     // Create session + deduct credits in a transaction
+    const sessionExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000) // 24 hours from now
+
     const [session, updatedUser] = await prisma.$transaction([
       prisma.fortuneSession.create({
         data: {
           userId,
           oracleId: oracle.id,
           status: 'ACTIVE',
+          expiresAt: sessionExpiresAt,
         },
       }),
-      prisma.user.update({
-        where: { id: userId },
-        data: { credits: { decrement: oracle.creditCost } },
-        select: { credits: true },
-      }),
+      // ถ้ามี subscription ไม่ต้องหักเครดิต
+      hasActiveSubscription
+        ? prisma.user.findUnique({
+            where: { id: userId },
+            select: { credits: true },
+          })
+        : prisma.user.update({
+            where: { id: userId },
+            data: { credits: { decrement: oracle.creditCost } },
+            select: { credits: true },
+          }),
     ])
 
-    // Log credit usage
-    await prisma.creditLog.create({
-      data: {
-        userId,
-        amount: -oracle.creditCost,
-        reason: `session_start:${session.id}`,
-      },
-    })
+    // Log credit usage (เฉพาะกรณีใช้เครดิตจริง ๆ)
+    if (!hasActiveSubscription) {
+      await prisma.creditLog.create({
+        data: {
+          userId,
+          amount: -oracle.creditCost,
+          reason: `session_start:${session.id}`,
+        },
+      })
+    }
 
     return NextResponse.json({
       sessionId: session.id,
