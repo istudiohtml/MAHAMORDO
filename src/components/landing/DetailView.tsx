@@ -9,6 +9,7 @@ interface Props {
   oracleId: OracleId
   onNavigate: (dir: -1 | 1) => void
   onScrollTop: () => void
+  onStartFortune: () => void
 }
 
 export default function DetailView({
@@ -17,6 +18,7 @@ export default function DetailView({
   oracleId,
   onNavigate,
   onScrollTop,
+  onStartFortune,
 }: Props) {
   const viewRef = useRef<HTMLDivElement>(null)
   const o = oracles[oracleId]
@@ -55,7 +57,7 @@ export default function DetailView({
                   className={`detail-desc${contentVisible ? ' visible' : ''}`}
                   dangerouslySetInnerHTML={{ __html: o.desc.replace(/\n/g, '<br>') }}
                 />
-                <button className={`detail-btn${contentVisible ? ' visible' : ''}`}>
+                <button className={`detail-btn${contentVisible ? ' visible' : ''}`} onClick={onStartFortune}>
                   เริ่มดูดวงเลย &nbsp;✦
                 </button>
               </div>
@@ -93,7 +95,7 @@ export default function DetailView({
               </div>
 
               <div className="profile-cta">
-                <button className="profile-cta-btn">เริ่มดูดวงกับหมอดูนี้ &nbsp;✦</button>
+                <button className="profile-cta-btn" onClick={onStartFortune}>เริ่มดูดวงกับหมอดูนี้ &nbsp;✦</button>
               </div>
             </div>
 
@@ -108,8 +110,8 @@ export default function DetailView({
                   hello@mahamordo.com
                 </a>
                 <div className="footer-btns">
-                  <button className="footer-btn footer-btn-primary">→ &nbsp;เริ่มดูดวง</button>
-                  <button className="footer-btn footer-btn-outline">✦ &nbsp;สมัครสมาชิก</button>
+                  <button className="footer-btn footer-btn-primary" onClick={onStartFortune}>→ &nbsp;เริ่มดูดวง</button>
+                  <a href="/auth/register" className="footer-btn footer-btn-outline">✦ &nbsp;สมัครสมาชิก</a>
                 </div>
               </div>
               <div className="footer-socials">

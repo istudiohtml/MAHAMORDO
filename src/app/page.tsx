@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { OracleId } from '@/data/oracles'
 import LoadingScreen from '@/components/landing/LoadingScreen'
 import Nav, { NavMode } from '@/components/landing/Nav'
@@ -8,6 +9,7 @@ import HomeView from '@/components/landing/HomeView'
 import DetailView from '@/components/landing/DetailView'
 
 export default function Home() {
+  const router = useRouter()
   const [navReady, setNavReady] = useState(false)
   const [homeAnimated, setHomeAnimated] = useState(false)
   const [homeSlideUp, setHomeSlideUp] = useState(false)
@@ -15,7 +17,12 @@ export default function Home() {
   const [detailContentVisible, setDetailContentVisible] = useState(false)
   const [navMode, setNavMode] = useState<NavMode>('home')
   const [oracleId, setOracleId] = useState<OracleId>(1)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const detailViewRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    fetch('/api/user/me').then(r => setIsLoggedIn(r.ok)).catch(() => {})
+  }, [])
 
   const handleLoadingComplete = useCallback(() => {
     setNavReady(true)
@@ -53,6 +60,14 @@ export default function Home() {
     document.querySelector('.view-detail')?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [])
 
+  const handleStartFortune = useCallback(() => {
+    if (isLoggedIn) {
+      router.push('/dashboard')
+    } else {
+      router.push('/auth/login')
+    }
+  }, [isLoggedIn, router])
+
   return (
     <>
       <LoadingScreen onComplete={handleLoadingComplete} />
@@ -68,6 +83,7 @@ export default function Home() {
         oracleId={oracleId}
         onNavigate={navigateOracle}
         onScrollTop={scrollDetailTop}
+        onStartFortune={handleStartFortune}
       />
     </>
   )
