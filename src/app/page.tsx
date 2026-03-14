@@ -20,11 +20,8 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const detailViewRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    fetch('/api/user/me').then(r => setIsLoggedIn(r.ok)).catch(() => {})
-  }, [])
-
-  const handleLoadingComplete = useCallback(() => {
+  const handleLoadingComplete = useCallback((loggedIn: boolean) => {
+    setIsLoggedIn(loggedIn)
     setNavReady(true)
     setTimeout(() => setHomeAnimated(true), 400)
   }, [])
@@ -62,7 +59,11 @@ export default function Home() {
 
   const handleStartFortune = useCallback((id?: OracleId) => {
     if (isLoggedIn) {
-      router.push(id ? `/fortune/${id}` : '/fortune')
+      // Show confirmation: 1 credit will be deducted
+      const confirmed = window.confirm('การดูดวงแต่ละครั้งจะใช้ 1 เครดิต\nคุณต้องการเริ่มต้นหรือไม่?')
+      if (confirmed) {
+        router.push(id ? `/fortune/${id}` : '/fortune')
+      }
     } else {
       const redirect = id ? `/fortune/${id}` : '/fortune'
       router.push(`/auth/login?redirect=${redirect}`)

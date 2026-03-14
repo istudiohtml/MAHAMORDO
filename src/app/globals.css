@@ -1753,6 +1753,18 @@ body {
 }
 @keyframes vnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+.fortune-vn-loading-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(212, 168, 83, 0.3);
+  border-top-color: #D4A853;
+  border-radius: 50%;
+  animation: vnSpin 0.8s linear infinite;
+  vertical-align: middle;
+}
+@keyframes vnSpin { to { transform: rotate(360deg); } }
+
 /* Input zone — spring-in animation */
 .fortune-vn-input-zone {
   display: flex; flex-direction: column; gap: 8px;
@@ -1833,6 +1845,16 @@ body {
   text-decoration: none; transition: all 0.25s;
 }
 .fortune-vn-back-link:hover { background: rgba(212,168,83,0.15); color: #D4A853; }
+
+.fortune-vn-buy-link {
+  padding: 10px 24px; border-radius: 4px;
+  background: #D4A853;
+  color: #1A1510;
+  font-family: var(--font-prompt), sans-serif; font-size: 12px; font-weight: 600;
+  text-decoration: none; transition: all 0.25s;
+  display: inline-block;
+}
+.fortune-vn-buy-link:hover { background: #E0B866; }
 
 /* Oracle card avatar (select page) — เปลี่ยนเป็นกรอบสี่เหลี่ยม */
 .fortune-oracle-card-avatar {
