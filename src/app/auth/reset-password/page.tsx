@@ -61,11 +61,12 @@ function ResetPasswordForm() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="อย่างน้อย 6 ตัวอักษร"
+            placeholder="8+ ตัวอักษร (ใหญ่ เล็ก ตัวเลข)"
             required
-            minLength={6}
+            minLength={8}
             className="auth-input"
           />
+          <small className="auth-hint">ต้องมี: 8+ ตัวอักษร, อักษรใหญ่, อักษรเล็ก, ตัวเลข</small>
         </div>
         <div className="auth-field">
           <label className="auth-label">ยืนยันรหัสผ่าน</label>

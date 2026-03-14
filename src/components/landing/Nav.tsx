@@ -18,8 +18,8 @@ export default function Nav({ mode, ready, onHome }: Props) {
         Mahamordo
       </div>
       <div className="nav-right">
-        <a href="#" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
-        <a href="#" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
+        <a href="/fortune" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
+        <a href="/dashboard/credits" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
         {isDetail && (
           <button className="nav-back visible" onClick={onHome}>
             <span className="nav-back-line" />

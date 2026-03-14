@@ -1084,6 +1084,7 @@ body {
   position: fixed;
   inset: 0;
   overflow: hidden;
+  flex-direction: row;
 }
 
 /* Left: dark editorial panel */
@@ -1260,6 +1261,15 @@ body {
 }
 .auth-input:focus { border-color: var(--gold); }
 .auth-input::placeholder { color: var(--ink4); }
+
+.auth-hint {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 12px;
+  color: var(--ink3);
+  font-weight: 300;
+}
 
 .auth-error {
   padding: 10px 14px;
@@ -1703,12 +1713,7 @@ body {
   display: flex; flex-direction: column;
   padding: 0 16px 16px; gap: 10px;
   overflow-y: auto; scrollbar-width: none;
-  background: radial-gradient(
-    circle at top,
-    rgba(212,168,83,0.10) 0%,
-    rgba(8,4,0,0.75) 40%,
-    rgba(5,2,3,0.60) 100%
-  );
+  background: transparent;
 }
 .fortune-vn-dialog::-webkit-scrollbar { display: none; }
 
@@ -1790,8 +1795,11 @@ body {
 }
 
 /* Switch oracle link */
+.fortune-vn-nav {
+  position: absolute; top: 10px; left: 12px; right: 12px; z-index: 20;
+  display: flex; justify-content: space-between; gap: 8px;
+}
 .fortune-vn-switch {
-  position: absolute; top: 10px; right: 16px; z-index: 20;
   padding: 5px 12px; border-radius: 20px;
   background: rgba(212,168,83,0.07);
   border: 1px solid rgba(212,168,83,0.18);
@@ -2638,7 +2646,23 @@ body {
   .dash-credit-packages { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 768px) {
-  .auth-left { display: none; }
+  /* Auth Pages Mobile */
+  .auth-page { flex-direction: column; }
+  .auth-left {
+    display: none;
+  }
+  .auth-right {
+    flex: 1;
+    padding: 24px 16px;
+    overflow-y: auto;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px;
+  }
+
+  /* Dashboard Mobile */
   .dash-sidebar { width: 240px; }
   .dash-page { padding: 32px 24px; }
   .dash-stats { grid-template-columns: 1fr 1fr; }
