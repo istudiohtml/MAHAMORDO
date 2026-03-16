@@ -1654,55 +1654,49 @@ body {
 .fortune-vn-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid var(--vn-ring, rgba(212,168,83,0.35));
-  animation: vnRingPulse 3s ease-out infinite;
+  border: 1px solid rgba(212,168,83,0.2);
+  pointer-events: none;
 }
-.fortune-vn-ring:nth-child(1) { width: 190px; height: 190px; animation-delay: 0s; }
-.fortune-vn-ring:nth-child(2) { width: 230px; height: 230px; animation-delay: 1s; }
-.fortune-vn-ring:nth-child(3) { width: 268px; height: 268px; animation-delay: 2s; }
+.fortune-vn-ring:nth-child(1) { width: 220px; height: 220px; }
+.fortune-vn-ring:nth-child(2) { width: 290px; height: 290px; }
+.fortune-vn-ring:nth-child(3) { width: 360px; height: 360px; }
 
 @media (min-width: 1024px) {
-  .fortune-vn-ring:nth-child(1) { width: 270px; height: 270px; }
-  .fortune-vn-ring:nth-child(2) { width: 330px; height: 330px; }
-  .fortune-vn-ring:nth-child(3) { width: 390px; height: 390px; }
-}
-@keyframes vnRingPulse {
-  0% { transform: scale(0.85); opacity: 0.7; }
-  100% { transform: scale(1.15); opacity: 0; }
+  .fortune-vn-ring:nth-child(1) { width: 320px; height: 320px; }
+  .fortune-vn-ring:nth-child(2) { width: 420px; height: 420px; }
+  .fortune-vn-ring:nth-child(3) { width: 520px; height: 520px; }
 }
 
 /* Circular avatar portrait */
 .fortune-vn-avatar {
   position: relative;
   z-index: 5;
-  width: 210px;
-  height: 210px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  border: 2.5px solid var(--vn-accent, #D4A853);
-  box-shadow: 0 0 50px var(--vn-glow, rgba(212,168,83,0.4));
+  border: 3px solid var(--vn-accent, #D4A853);
+  box-shadow: 0 0 60px var(--vn-glow, rgba(212,168,83,0.5));
   overflow: hidden;
-  animation: vnBreathe 4s ease-in-out infinite;
-  background: rgba(60, 30, 10, 0.5);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.fortune-vn-avatar.talking {
-  animation: vnBreathe 4s ease-in-out infinite, vnTalking 0.18s ease-in-out infinite;
+
+.fortune-vn-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 @media (min-width: 1024px) {
   .fortune-vn-avatar {
-    width: 280px;
-    height: 280px;
+    width: 260px;
+    height: 260px;
     border-width: 3px;
-    box-shadow: 0 0 80px var(--vn-glow, rgba(212,168,83,0.5));
   }
-}
-@keyframes vnBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-@keyframes vnTalking { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.18) saturate(1.1); } }
-.fortune-vn-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center;
 }
 
 /* Speaking glows */
