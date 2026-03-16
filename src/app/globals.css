@@ -1632,18 +1632,19 @@ body {
 /* Stage — oracle portrait */
 .fortune-vn-stage {
   position: relative;
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   width: 100%;
-  height: 100vh;
+  min-height: 52vh;
+  flex-basis: auto;
 }
 
 @media (min-width: 1024px) {
   .fortune-vn-stage {
     width: 50%;
+    min-height: auto;
     height: 100vh;
     flex: 0 0 50%;
   }
