@@ -1686,6 +1686,21 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  animation: vnBreathe 4s ease-in-out infinite;
+}
+
+.fortune-vn-avatar.talking {
+  animation: vnBreathe 4s ease-in-out infinite, vnTalking 0.18s ease-in-out infinite;
+}
+
+@keyframes vnBreathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes vnTalking {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.2) saturate(1.1); }
 }
 
 @media (min-width: 1024px) {
