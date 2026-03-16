@@ -1739,19 +1739,6 @@ body {
 }
 @keyframes vnLip { 0% { transform: translateX(-50%) scaleY(0.4); } 100% { transform: translateX(-50%) scaleY(1.4); } }
 
-.fortune-vn-hand {
-  position: absolute; z-index: 6;
-  bottom: 20%; left: 50%; transform: translateX(-50%);
-  width: 55px; height: 26px; border-radius: 50%;
-  pointer-events: none; opacity: 0; transition: opacity 0.15s;
-}
-.fortune-vn-hand.on {
-  opacity: 1;
-  animation: vnHand 0.22s ease-in-out infinite;
-  background: radial-gradient(ellipse, var(--vn-hand, rgba(255,210,80,0.55)) 0%, transparent 100%);
-}
-@keyframes vnHand { 0%, 100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(1.35); } }
-
 /* Name tag */
 .fortune-vn-nametag {
   position: absolute; bottom: 10px; left: 50%;
@@ -2031,7 +2018,7 @@ body {
   --vn-accent: #C8860A; --vn-accent-dark: #7A4F00;
   --vn-gold: #F5C842; --vn-glow: rgba(200,134,10,0.45);
   --vn-ring: rgba(200,134,10,0.4); --vn-border: rgba(200,134,10,0.35);
-  --vn-choice-border: rgba(200,134,10,0.25); --vn-hand: rgba(255,200,60,0.6);
+  --vn-choice-border: rgba(200,134,10,0.25);
 }
 .theme-maemor .fortune-vn-stage::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -2041,7 +2028,7 @@ body {
   --vn-accent: #C8960A; --vn-accent-dark: #7A5800;
   --vn-gold: #E8B830; --vn-glow: rgba(200,150,10,0.38);
   --vn-ring: rgba(200,150,10,0.3); --vn-border: rgba(200,150,10,0.25);
-  --vn-choice-border: rgba(200,150,10,0.2); --vn-hand: rgba(240,190,50,0.55);
+  --vn-choice-border: rgba(200,150,10,0.2);
 }
 .theme-son .fortune-vn-stage::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -2051,7 +2038,7 @@ body {
   --vn-accent: #9B59D0; --vn-accent-dark: #5B2090;
   --vn-gold: #C89AF0; --vn-glow: rgba(155,89,208,0.4);
   --vn-ring: rgba(155,89,208,0.3); --vn-border: rgba(155,89,208,0.28);
-  --vn-choice-border: rgba(155,89,208,0.22); --vn-hand: rgba(180,100,255,0.5);
+  --vn-choice-border: rgba(155,89,208,0.22);
 }
 .theme-rahu .fortune-vn-stage::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;

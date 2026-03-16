@@ -218,7 +218,6 @@ export default function FortuneChatPage() {
 
           {/* Speaking glows */}
           <div className={`fortune-vn-lip${isTalking ? ' on' : ''}`} />
-          <div className={`fortune-vn-hand${isTalking ? ' on' : ''}`} />
 
           {/* Name tag */}
           <div className="fortune-vn-nametag">
