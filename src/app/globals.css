@@ -1682,6 +1682,7 @@ body {
   box-shadow: 0 0 50px var(--vn-glow, rgba(212,168,83,0.4));
   overflow: hidden;
   animation: vnBreathe 4s ease-in-out infinite;
+  background: rgba(60, 30, 10, 0.5);
 }
 .fortune-vn-avatar.talking {
   animation: vnBreathe 4s ease-in-out infinite, vnTalking 0.18s ease-in-out infinite;
