@@ -17,6 +17,9 @@ const ORACLE_BG: Record<OracleId, string> = {
 }
 
 const TEMPLATE_AVATAR_BY_SLUG: Record<string, string> = {
+  'yai-kham': '/avatars/template-mae-mor-jan.jpg',
+  'nang-fah': '/avatars/template-por-mor-son.jpg',
+  'mor-dum': '/avatars/template-ajarn-rahu.jpg',
   'mae-mor-jan': '/avatars/template-mae-mor-jan.jpg',
   'por-mor-son': '/avatars/template-por-mor-son.jpg',
   'ajarn-rahu': '/avatars/template-ajarn-rahu.jpg',
