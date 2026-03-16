@@ -143,6 +143,27 @@ body {
 }
 .nav-logo.light { color: var(--cream); }
 
+.nav-logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.2;
+}
+
+.nav-logo-en {
+  font-family: var(--font-cinzel), serif;
+  font-size: 13px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+
+.nav-logo-th {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 300;
+}
+
 .nav-logo-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
@@ -1578,6 +1599,7 @@ body {
   overflow: hidden;
   transition: background 1.2s ease;
   background: #080400;
+  padding: 0 20px;
 }
 /* Stars */
 .fortune-vn-stars { position: absolute; inset: 0; pointer-events: none; }
@@ -1603,6 +1625,14 @@ body {
   overflow: hidden;
 }
 
+@media (min-width: 1024px) {
+  .fortune-vn-frame {
+    width: 900px;
+    max-height: 640px;
+    flex-direction: row;
+  }
+}
+
 /* Stage — top 52% — oracle portrait */
 .fortune-vn-stage {
   position: relative;
@@ -1611,6 +1641,13 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .fortune-vn-stage {
+    flex: 0 0 45%;
+    border-right: 1px solid rgba(212,168,83,0.15);
+  }
 }
 
 /* Animated concentric rings */
@@ -1623,6 +1660,12 @@ body {
 .fortune-vn-ring:nth-child(1) { width: 190px; height: 190px; animation-delay: 0s; }
 .fortune-vn-ring:nth-child(2) { width: 230px; height: 230px; animation-delay: 1s; }
 .fortune-vn-ring:nth-child(3) { width: 268px; height: 268px; animation-delay: 2s; }
+
+@media (min-width: 1024px) {
+  .fortune-vn-ring:nth-child(1) { width: 165px; height: 165px; }
+  .fortune-vn-ring:nth-child(2) { width: 205px; height: 205px; }
+  .fortune-vn-ring:nth-child(3) { width: 243px; height: 243px; }
+}
 @keyframes vnRingPulse {
   0% { transform: scale(0.85); opacity: 0.7; }
   100% { transform: scale(1.15); opacity: 0; }
@@ -1642,6 +1685,15 @@ body {
 }
 .fortune-vn-avatar.talking {
   animation: vnBreathe 4s ease-in-out infinite, vnTalking 0.18s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .fortune-vn-avatar {
+    width: 180px;
+    height: 180px;
+    border-width: 2px;
+    box-shadow: 0 0 40px var(--vn-glow, rgba(212,168,83,0.35));
+  }
 }
 @keyframes vnBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
 @keyframes vnTalking { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.18) saturate(1.1); } }
@@ -1695,11 +1747,30 @@ body {
   font-size: 9px; color: rgba(212,168,83,0.45); letter-spacing: 5px; margin-top: 2px;
 }
 
+@media (min-width: 1024px) {
+  .fortune-vn-nametag {
+    bottom: 8px;
+  }
+  .fortune-vn-name {
+    font-size: 13px;
+    letter-spacing: 3px;
+  }
+  .fortune-vn-sub {
+    font-size: 8px;
+  }
+}
+
 /* Thai decorative banner (Mae Mor) */
 .fortune-vn-thai-banner {
   width: 100%; height: 18px; flex-shrink: 0;
   background: repeating-linear-gradient(90deg, transparent 0px, transparent 8px, rgba(200,134,10,0.25) 8px, rgba(200,134,10,0.25) 9px);
   position: relative; overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .fortune-vn-thai-banner {
+    height: 16px;
+  }
 }
 .fortune-vn-thai-banner::before {
   content: "❧ ✿ ❧ ✿ ❧ ✿ ❧ ✿ ❧ ✿ ❧ ✿ ❧ ✿ ❧ ✿";
@@ -1717,6 +1788,14 @@ body {
 }
 .fortune-vn-dialog::-webkit-scrollbar { display: none; }
 
+@media (min-width: 1024px) {
+  .fortune-vn-dialog {
+    flex: 0 0 55%;
+    padding: 20px 20px;
+    gap: 12px;
+  }
+}
+
 /* Speech box with arrow pointer */
 .fortune-vn-speech {
   position: relative;
@@ -1727,6 +1806,14 @@ body {
   min-height: 80px;
   box-shadow: 0 6px 30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(212,168,83,0.08);
   flex-shrink: 0; transition: border-color 0.8s; margin-top: 12px;
+}
+
+@media (min-width: 1024px) {
+  .fortune-vn-speech {
+    min-height: 100px;
+    padding: 16px 20px;
+    border-radius: 8px 20px 20px 20px;
+  }
 }
 .fortune-vn-speech::before {
   content: ""; position: absolute; top: -10px; left: 20px;
@@ -1788,6 +1875,13 @@ body {
 .fortune-vn-text-input::placeholder { color: rgba(212,168,83,0.25); }
 .fortune-vn-text-input:focus { border-color: rgba(212,168,83,0.5); }
 
+@media (min-width: 1024px) {
+  .fortune-vn-text-input {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+}
+
 .fortune-vn-send-btn {
   width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
   background: linear-gradient(135deg, var(--vn-accent, #D4A853), var(--vn-accent-dark, #8B6914));
@@ -1810,6 +1904,16 @@ body {
 .fortune-vn-nav {
   position: absolute; top: 10px; left: 12px; right: 12px; z-index: 20;
   display: flex; justify-content: space-between; gap: 8px;
+}
+
+@media (min-width: 1024px) {
+  .fortune-vn-nav {
+    top: 12px;
+    left: 16px;
+    right: auto;
+    width: auto;
+    gap: 10px;
+  }
 }
 .fortune-vn-switch {
   padding: 5px 12px; border-radius: 20px;
@@ -2493,6 +2597,41 @@ body {
 .dash-credit-pkg-btn:hover:not(:disabled) { background: var(--gold); }
 .dash-credit-pkg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+/* Subscription info */
+.dash-subscription-info {
+  padding: 20px;
+  background: rgba(184,134,11,0.08);
+  border: 1px solid rgba(184,134,11,0.2);
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+.dash-subscription-info p {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  color: var(--ink2);
+  margin: 0 0 8px 0;
+}
+.dash-subscription-info p:last-child { margin-bottom: 0; }
+
+/* Cancel subscription button */
+.dash-cancel-subscription-btn {
+  width: 100%;
+  padding: 10px;
+  background: rgba(220,38,38,0.1);
+  border: 1px solid rgba(220,38,38,0.3);
+  color: #dc2626;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.dash-cancel-subscription-btn:hover:not(:disabled) {
+  background: rgba(220,38,38,0.2);
+  border-color: rgba(220,38,38,0.5);
+}
+.dash-cancel-subscription-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Credit log */
 .dash-credit-log {
   display: flex;
@@ -2831,4 +2970,447 @@ body {
 @media (max-width: 768px) {
   .profile-grid { grid-template-columns: 1fr; }
   .profile-section { padding: 24px 20px; }
+}
+
+/* ══════════════════════════════════════
+   PRICING PAGE
+══════════════════════════════════════ */
+.pricing-layout {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pricing-page {
+  min-height: 100%;
+  background: var(--cream);
+  padding: 80px 64px 120px;
+}
+
+.pricing-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.pricing-title {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.pricing-subtitle {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--ink2);
+  letter-spacing: 0.5px;
+}
+
+.pricing-section {
+  max-width: 1200px;
+  margin: 0 auto 100px;
+}
+
+.pricing-section-title {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.pricing-section-desc {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--ink2);
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+/* How Credits Work Section */
+.pricing-explanation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+.pricing-explain-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.pricing-explain-number {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.pricing-explain-content h3 {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.pricing-explain-content p {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+
+/* Pricing Cards */
+.pricing-packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  margin-bottom: 60px;
+}
+
+.pricing-card {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(26, 21, 16, 0.1);
+  padding: 40px 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.pricing-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 12px 32px rgba(184, 134, 11, 0.12);
+  transform: translateY(-4px);
+}
+
+.pricing-card.highlight {
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.06) 0%, rgba(184, 134, 11, 0.02) 100%);
+  border: 2px solid var(--gold);
+}
+
+.pricing-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--cream);
+  padding: 6px 16px;
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-radius: 20px;
+}
+
+.pricing-card-header {
+  margin-bottom: 24px;
+}
+
+.pricing-card-label {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.pricing-card-count {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+}
+
+.pricing-card-price {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.pricing-card-desc {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink2);
+  margin-bottom: 32px;
+}
+
+.pricing-card-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+
+.pricing-card-btn:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+.pricing-card-features {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--ink2);
+  text-align: left;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(26, 21, 16, 0.1);
+}
+
+.pricing-card-features p {
+  margin: 6px 0;
+  line-height: 1.6;
+}
+
+/* Subscription Cards */
+.pricing-subscription {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(26, 21, 16, 0.1);
+  padding: 48px 40px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.pricing-subscription:hover {
+  border-color: var(--gold);
+  box-shadow: 0 12px 32px rgba(184, 134, 11, 0.12);
+  transform: translateY(-4px);
+}
+
+.pricing-subscription.highlight {
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.06) 0%, rgba(184, 134, 11, 0.02) 100%);
+  border: 2px solid var(--gold);
+}
+
+.pricing-sub-header {
+  margin-bottom: 24px;
+}
+
+.pricing-sub-name {
+  font-family: var(--font-cinzel), serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.pricing-sub-credits {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+}
+
+.pricing-sub-unit {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--ink2);
+  margin-bottom: 12px;
+}
+
+.pricing-sub-price {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.pricing-sub-period {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+}
+
+.pricing-sub-desc {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--ink2);
+  margin-bottom: 32px;
+}
+
+.pricing-sub-btn {
+  display: inline-block;
+  padding: 12px 40px;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-decoration: none;
+}
+
+.pricing-sub-btn:hover {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+/* FAQ Section */
+.pricing-faq {
+  background: rgba(184, 134, 11, 0.03);
+  border: 1px solid rgba(184, 134, 11, 0.1);
+  padding: 60px 48px;
+  border-radius: 2px;
+}
+
+.pricing-faq-item {
+  margin-bottom: 40px;
+}
+
+.pricing-faq-item:last-child {
+  margin-bottom: 0;
+}
+
+.pricing-faq-item h3 {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.pricing-faq-item p {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--ink2);
+  line-height: 1.8;
+}
+
+/* CTA Section */
+.pricing-cta {
+  text-align: center;
+  padding: 80px 40px;
+  margin-top: 100px;
+}
+
+.pricing-cta h2 {
+  font-family: var(--font-prompt), sans-serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: var(--ink);
+  margin-bottom: 32px;
+  letter-spacing: -0.5px;
+}
+
+.pricing-cta-btn {
+  display: inline-block;
+  padding: 16px 48px;
+  background: var(--gold);
+  color: var(--cream);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.pricing-cta-btn:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .pricing-page { padding: 60px 48px 100px; }
+  .pricing-explanation { gap: 30px; }
+  .pricing-packages { gap: 24px; }
+  .pricing-faq { padding: 48px 36px; }
+  .pricing-cta { padding: 60px 30px; }
+}
+
+@media (max-width: 768px) {
+  .pricing-page { padding: 40px 20px 80px; }
+
+  .pricing-header { margin-bottom: 60px; }
+  .pricing-title { font-size: 32px; margin-bottom: 12px; }
+  .pricing-subtitle { font-size: 14px; }
+
+  .pricing-section { margin-bottom: 80px; }
+  .pricing-section-title { font-size: 28px; }
+  .pricing-section-desc { font-size: 14px; margin-bottom: 40px; }
+
+  .pricing-explanation {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .pricing-packages {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .pricing-card,
+  .pricing-subscription {
+    padding: 32px 24px;
+  }
+
+  .pricing-faq {
+    padding: 36px 24px;
+  }
+
+  .pricing-faq-item {
+    margin-bottom: 28px;
+  }
+
+  .pricing-cta {
+    padding: 40px 20px;
+    margin-top: 60px;
+  }
+
+  .pricing-cta h2 {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .pricing-cta-btn {
+    padding: 12px 36px;
+    font-size: 14px;
+  }
 }
