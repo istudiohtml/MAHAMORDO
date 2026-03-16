@@ -1681,6 +1681,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #1a0f00;
 }
 
 .fortune-vn-avatar img {
@@ -1689,6 +1690,7 @@ body {
   object-fit: cover;
   object-position: center;
   display: block;
+  flex-shrink: 0;
 }
 
 @media (min-width: 1024px) {
