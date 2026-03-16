@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 import CreditPackages from '@/components/dashboard/CreditPackages'
+import CancelSubscriptionButton from '@/components/dashboard/CancelSubscriptionButton'
 
 export default async function CreditsPage() {
   const cookieStore = await cookies()
@@ -10,8 +11,29 @@ export default async function CreditsPage() {
 
   const user = await prisma.user.findUnique({
     where: { id: payload!.userId },
-    select: { credits: true },
+    select: {
+      credits: true,
+      subscriptionPlan: true,
+      subscriptionExpiresAt: true,
+      stripeCustomerId: true,
+    },
   })
+
+  // Check if subscription is scheduled for cancellation
+  const lastSubscriptionLog = await prisma.subscriptionLog.findFirst({
+    where: { userId: payload!.userId },
+    orderBy: { createdAt: 'desc' },
+    select: { event: true },
+  })
+
+  const isCancelledAtPeriodEnd = lastSubscriptionLog?.event === 'cancel_requested'
+
+  const now = new Date()
+  const hasActiveSubscription =
+    user &&
+    user.subscriptionPlan !== 'NONE' &&
+    user.subscriptionExpiresAt !== null &&
+    user.subscriptionExpiresAt > now
 
   const logs = await prisma.creditLog.findMany({
     where: { userId: payload!.userId },
@@ -23,6 +45,15 @@ export default async function CreditsPage() {
     signup_bonus: 'โบนัสสมาชิกใหม่',
     session_start: 'เริ่มการดูดวง',
     purchase: 'ซื้อเครดิต',
+    'session_start:subscription': 'เริ่มการดูดวง (สมาชิก)',
+  }
+
+  // Extract purchase prefix for dynamic labels
+  const getReasonLabel = (reason: string) => {
+    if (reasonLabel[reason]) return reasonLabel[reason]
+    if (reason.startsWith('purchase_stripe_')) return 'ซื้อเครดิต'
+    if (reason.startsWith('subscription_')) return `สมาชิก - ${reason.split('_').slice(1).join(' ')}`
+    return reason
   }
 
   return (
@@ -33,20 +64,48 @@ export default async function CreditsPage() {
         <p className="dash-page-sub">ดูยอดเครดิตและประวัติการใช้งาน</p>
       </div>
 
-      {/* Balance */}
-      <div className="dash-credit-balance">
-        <span className="dash-credit-balance-icon">✦</span>
-        <div>
-          <p className="dash-credit-balance-count">{user?.credits ?? 0}</p>
-          <p className="dash-credit-balance-label">เครดิตคงเหลือ</p>
+      {/* Balance or Subscription */}
+      {hasActiveSubscription ? (
+        <div className="dash-credit-balance subscription">
+          <span className="dash-credit-balance-icon">✦</span>
+          <div>
+            <p className="dash-credit-balance-count">
+              {user?.subscriptionPlan === 'YEARLY' ? 'รายปี' : 'รายเดือน'}
+            </p>
+            <p className="dash-credit-balance-label">
+              หมดอายุวันที่ {user?.subscriptionExpiresAt?.toLocaleDateString('th-TH')}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="dash-credit-balance">
+          <span className="dash-credit-balance-icon">✦</span>
+          <div>
+            <p className="dash-credit-balance-count">{user?.credits ?? 0}</p>
+            <p className="dash-credit-balance-label">เครดิตคงเหลือ</p>
+          </div>
+        </div>
+      )}
 
-      {/* Buy packages */}
-      <div className="dash-section">
-        <h2 className="dash-section-title">ซื้อเครดิตเพิ่ม</h2>
-        <CreditPackages />
-      </div>
+      {/* Subscription Cancel Button */}
+      {hasActiveSubscription && (
+        <div className="dash-section">
+          <h2 className="dash-section-title">การสมัครสมาชิก</h2>
+          <div className="dash-subscription-info">
+            <p>คุณกำลังใช้สมาชิก {user?.subscriptionPlan === 'YEARLY' ? 'รายปี' : 'รายเดือน'}</p>
+            <p>หมดอายุวันที่ {user?.subscriptionExpiresAt?.toLocaleDateString('th-TH')}</p>
+          </div>
+          <CancelSubscriptionButton userId={payload!.userId} isCancelledAtPeriodEnd={isCancelledAtPeriodEnd} />
+        </div>
+      )}
+
+      {/* Buy packages - only show if no active subscription */}
+      {!hasActiveSubscription && (
+        <div className="dash-section">
+          <h2 className="dash-section-title">ซื้อเครดิตเพิ่ม</h2>
+          <CreditPackages />
+        </div>
+      )}
 
       {/* Log */}
       <div className="dash-section">
@@ -60,7 +119,7 @@ export default async function CreditsPage() {
             {logs.map((log) => (
               <div key={log.id} className="dash-credit-log-item">
                 <div className="dash-credit-log-reason">
-                  {reasonLabel[log.reason] ?? log.reason}
+                  {getReasonLabel(log.reason)}
                 </div>
                 <div className="dash-credit-log-date">
                   {log.createdAt.toLocaleDateString('th-TH')}

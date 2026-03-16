@@ -48,15 +48,25 @@ model User {
 
   credits    Int      @default(3)  // free credits on signup
 
+  // User Plan (FREE with limited features, or PAID)
+  userPlan         UserPlan @default(FREE)
+
   // Subscription (เช่น รายเดือน ดูได้ไม่จำกัด)
   subscriptionPlan      SubscriptionPlan @default(NONE)
   subscriptionExpiresAt DateTime?
+  stripeCustomerId      String?          @unique // Stripe customer ID for webhook lookups
 
-  sessions       FortuneSession[]
-  creditLogs     CreditLog[]
-  payments       Payment[]
-  refreshTokens  RefreshToken[]
-  passwordResets PasswordReset[]
+  // Free tier quotas (reset daily)
+  aiOverviewQuotaUsed Int      @default(0)     // AI overview usage today (max 2 for free)
+  aiOverviewQuotaResetAt DateTime @default(now()) // when quota resets
+
+  sessions           FortuneSession[]
+  creditLogs         CreditLog[]
+  payments           Payment[]
+  refreshTokens      RefreshToken[]
+  passwordResets     PasswordReset[]
+  quotaUsages        QuotaUsage[]
+  subscriptionLogs   SubscriptionLog[]
 
   @@map("users")
 }
@@ -199,4 +209,43 @@ enum SubscriptionPlan {
   NONE
   MONTHLY
   YEARLY
+}
+
+enum UserPlan {
+  FREE   // limited features
+  PAID   // unlimited (when subscribed or has credits)
+}
+
+// ── QUOTA USAGE ──────────────────────────────────────────
+// Track daily quota usage for free tier users
+model QuotaUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  quotaType String   // "ai_overview", "daily_fortune_aspect"
+  usedCount Int      @default(0)
+  date      DateTime @default(now()) @db.Date // YYYY-MM-DD
+  createdAt DateTime @default(now())
+
+  @@unique([userId, quotaType, date]) // one record per user per quota type per day
+  @@map("quota_usages")
+}
+
+// ── SUBSCRIPTION LOGS ────────────────────────
+// Track subscription lifecycle events
+model SubscriptionLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  event     String   // "created", "updated", "cancel_requested", "cancelled"
+  planType  String?  // "monthly" or "yearly"
+  expiresAt DateTime?
+  reason    String?  // optional reason
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("subscription_logs")
 }

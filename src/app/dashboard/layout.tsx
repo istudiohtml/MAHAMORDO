@@ -15,7 +15,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
-    select: { id: true, email: true, name: true, credits: true },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      credits: true,
+      subscriptionPlan: true,
+      subscriptionExpiresAt: true,
+    },
   })
   if (!user) redirect('/auth/login')
 

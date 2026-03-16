@@ -76,6 +76,10 @@ export async function POST(req: NextRequest) {
           }),
     ])
 
+    if (!updatedUser) {
+      return NextResponse.json({ error: 'Failed to update user' }, { status: 500 })
+    }
+
     // Log credit usage (เฉพาะกรณีใช้เครดิตจริง ๆ)
     if (!hasActiveSubscription) {
       await prisma.creditLog.create({

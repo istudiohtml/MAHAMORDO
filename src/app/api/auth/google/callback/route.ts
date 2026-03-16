@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 15,
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     })
     res.cookies.set('user_refresh', refreshToken, {

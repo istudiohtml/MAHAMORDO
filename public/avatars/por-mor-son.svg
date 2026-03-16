@@ -1,0 +1,95 @@
+<svg width="600" height="900" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#1E0F04"/>
+      <stop offset="100%" stop-color="#0C0804"/>
+    </radialGradient>
+    <radialGradient id="aura" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#2A4A80" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#2A4A80" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="face" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#C8A882"/>
+      <stop offset="100%" stop-color="#8B6844"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="900" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+    <circle cx="14" cy="14" r="0.8" fill="#4169E1" opacity="0.12"/>
+  </pattern>
+  <rect width="600" height="900" fill="url(#dots)"/>
+  <circle cx="300" cy="210" r="200" fill="url(#aura)"/>
+  <!-- Yin-Yang background -->
+  <g transform="translate(300,210)" opacity="0.1">
+    <circle r="130" fill="#87CEEB"/>
+    <path d="M0,-130 A130,130 0 0,1 0,130 A65,65 0 0,1 0,0 A65,65 0 0,0 0,-130 Z" fill="#0C0804"/>
+    <circle cy="-65" r="22" fill="#87CEEB"/>
+    <circle cy="65" r="22" fill="#0C0804"/>
+  </g>
+  <!-- Ring decoration -->
+  <circle cx="300" cy="210" r="155" fill="none" stroke="#4169E1" stroke-width="0.8" opacity="0.3"/>
+  <!-- Stars -->
+  <g fill="#87CEEB" opacity="0.4">
+    <circle cx="80" cy="80" r="1.5"/><circle cx="520" cy="60" r="2"/>
+    <circle cx="60" cy="200" r="1"/><circle cx="540" cy="180" r="1.5"/>
+    <circle cx="100" cy="320" r="1"/><circle cx="490" cy="300" r="1"/>
+  </g>
+  <!-- Body -->
+  <ellipse cx="300" cy="700" rx="175" ry="225" fill="#060E1C"/>
+  <ellipse cx="300" cy="720" rx="155" ry="205" fill="#0D1E38"/>
+  <path d="M225 565 Q300 610 375 565 L388 598 Q300 652 212 598 Z" fill="#162844"/>
+  <path d="M225 565 Q300 610 375 565" fill="none" stroke="#4169E1" stroke-width="1.5" opacity="0.5"/>
+  <path d="M155 665 Q300 695 445 665 L448 682 Q300 714 152 682 Z" fill="#1A3060" opacity="0.8"/>
+  <!-- Hair -->
+  <ellipse cx="300" cy="408" rx="100" ry="28" fill="#0A0804"/>
+  <path d="M220 400 Q300 372 380 400 L370 436 Q300 420 230 436 Z" fill="#0A0804"/>
+  <ellipse cx="300" cy="372" rx="55" ry="18" fill="#0D0A04"/>
+  <!-- Hair sides -->
+  <ellipse cx="212" cy="448" rx="28" ry="52" fill="#0A0804"/>
+  <ellipse cx="388" cy="448" rx="28" ry="52" fill="#0A0804"/>
+  <!-- Face -->
+  <ellipse cx="300" cy="462" rx="88" ry="98" fill="url(#face)"/>
+  <!-- Beard -->
+  <path d="M248 512 Q300 548 352 512 Q342 558 300 572 Q258 558 248 512 Z" fill="#3A2810" opacity="0.85"/>
+  <!-- Mustache -->
+  <path d="M266 504 Q283 496 300 499 Q317 496 334 504" stroke="#2A1A08" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Eyes (alert) -->
+  <ellipse cx="268" cy="450" rx="12" ry="8" fill="#E8D8C0" opacity="0.85"/>
+  <ellipse cx="332" cy="450" rx="12" ry="8" fill="#E8D8C0" opacity="0.85"/>
+  <circle cx="268" cy="450" r="5" fill="#1A0D02"/>
+  <circle cx="332" cy="450" r="5" fill="#1A0D02"/>
+  <circle cx="270" cy="448" r="1.5" fill="white" opacity="0.7"/>
+  <circle cx="334" cy="448" r="1.5" fill="white" opacity="0.7"/>
+  <path d="M256 444 Q268 438 280 444" stroke="#2A1A08" stroke-width="1.5" fill="none"/>
+  <path d="M320 444 Q332 438 344 444" stroke="#2A1A08" stroke-width="1.5" fill="none"/>
+  <!-- Eyebrows (strong) -->
+  <path d="M253 432 Q268 424 282 430" stroke="#2A1A08" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M318 430 Q332 424 347 432" stroke="#2A1A08" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Nose -->
+  <path d="M293 464 Q300 478 307 464" stroke="#8B6030" stroke-width="2" fill="none" opacity="0.7"/>
+  <!-- Smile (slight smirk) -->
+  <path d="M275 498 Q300 510 322 498" stroke="#7A4A20" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Cheeks -->
+  <ellipse cx="248" cy="468" rx="18" ry="11" fill="#C08050" opacity="0.1"/>
+  <ellipse cx="352" cy="468" rx="18" ry="11" fill="#C08050" opacity="0.1"/>
+  <!-- Scholar hat -->
+  <ellipse cx="300" cy="388" rx="75" ry="18" fill="#0C0804"/>
+  <rect x="252" y="368" width="96" height="26" rx="4" fill="#0D1E38"/>
+  <line x1="300" y1="368" x2="300" y2="340" stroke="#4169E1" stroke-width="1" opacity="0.6"/>
+  <circle cx="300" cy="333" r="8" fill="#0D1E38" stroke="#4169E1" stroke-width="1" opacity="0.6"/>
+  <circle cx="300" cy="378" r="6" fill="#4169E1" opacity="0.7"/>
+  <!-- Border frame -->
+  <rect x="16" y="16" width="568" height="868" rx="4" fill="none" stroke="#4169E1" stroke-width="1" opacity="0.45"/>
+  <!-- Corner ornaments -->
+  <g stroke="#4169E1" stroke-width="1.5" fill="none" opacity="0.6">
+    <path d="M16,50 L16,16 L50,16"/><path d="M30,50 L30,30 L50,30"/>
+    <path d="M584,50 L584,16 L550,16"/><path d="M570,50 L570,30 L550,30"/>
+    <path d="M16,850 L16,884 L50,884"/><path d="M30,850 L30,870 L50,870"/>
+    <path d="M584,850 L584,884 L550,884"/><path d="M570,850 L570,870 L550,870"/>
+  </g>
+  <!-- Bottom label -->
+  <rect x="60" y="800" width="480" height="80" rx="2" fill="#040810" opacity="0.7"/>
+  <line x1="80" y1="818" x2="520" y2="818" stroke="#4169E1" stroke-width="0.5" opacity="0.5"/>
+  <text x="300" y="845" text-anchor="middle" font-family="serif" font-size="26" letter-spacing="6" fill="#87CEEB" opacity="0.95">พ่อหมอซอน</text>
+  <text x="300" y="865" text-anchor="middle" font-family="serif" font-size="10" letter-spacing="4" fill="#4169E1" opacity="0.7">ORACLE II - KOREAN SAJU</text>
+</svg>

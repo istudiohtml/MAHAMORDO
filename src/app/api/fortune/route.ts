@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/jwt";
 import { anthropic, CLAUDE_MODEL, MAX_TOKENS } from "@/lib/anthropic";
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,17 +11,21 @@ export async function POST(req: NextRequest) {
     const cookieStore = await cookies();
     const token = cookieStore.get("user_token")?.value;
     if (!token) {
+      logger.error("No auth token provided");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const payload = await verifyAccessToken(token);
     if (!payload?.userId) {
+      logger.error("Invalid token");
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const { sessionId, message } = await req.json();
+    logger.info("Fortune request", payload.userId, { sessionId, messageLength: message?.length });
 
     if (!sessionId || !message) {
+      logger.warn("Missing required params", payload.userId, { sessionId, message });
       return NextResponse.json({ error: "sessionId and message required" }, { status: 400 });
     }
 
@@ -74,15 +79,19 @@ export async function POST(req: NextRequest) {
     });
 
     const reply = response.content[0].type === "text" ? response.content[0].text : "";
+    logger.debug("Claude response received", payload?.userId, { replyLength: reply.length });
 
     // บันทึก assistant message
     await prisma.message.create({
       data: { sessionId, role: "ASSISTANT", content: reply },
     });
 
+    logger.info("Message saved to DB", payload?.userId, { sessionId });
     return NextResponse.json({ reply });
   } catch (error) {
-    console.error("Fortune API error:", error);
+    logger.error("Fortune API error", payload?.userId, {
+      error: error instanceof Error ? error.message : String(error),
+    });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

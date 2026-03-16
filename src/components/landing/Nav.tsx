@@ -15,11 +15,14 @@ export default function Nav({ mode, ready, onHome }: Props) {
     <nav className={`site-nav${ready ? ' ready' : ''}`}>
       <div className={`nav-logo${isDetail ? ' light' : ''}`} onClick={onHome}>
         <span className="nav-logo-dot" />
-        Mahamordo
+        <div className="nav-logo-text">
+          <div className="nav-logo-en">Mahamordo</div>
+          <div className="nav-logo-th">มหาหมอดู</div>
+        </div>
       </div>
       <div className="nav-right">
         <a href="/fortune" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
-        <a href="/dashboard/credits" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
+        <a href="/pricing" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
         {isDetail && (
           <button className="nav-back visible" onClick={onHome}>
             <span className="nav-back-line" />

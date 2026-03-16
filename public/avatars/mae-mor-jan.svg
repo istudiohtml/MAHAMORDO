@@ -1,0 +1,160 @@
+<svg width="600" height="900" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#2A1A04"/>
+      <stop offset="100%" stop-color="#0C0804"/>
+    </radialGradient>
+    <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D4A017" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#D4A017" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#C8955A"/>
+      <stop offset="100%" stop-color="#8B5E2A"/>
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="blur4">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="900" fill="url(#bg)"/>
+
+  <!-- Subtle dot grid -->
+  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+    <circle cx="14" cy="14" r="0.8" fill="#B8860B" opacity="0.18"/>
+  </pattern>
+  <rect width="600" height="900" fill="url(#dots)"/>
+
+  <!-- Moon glow aura -->
+  <circle cx="300" cy="200" r="220" fill="url(#moonGlow)"/>
+
+  <!-- Moon (crescent) -->
+  <circle cx="310" cy="190" r="140" fill="#C9943A" opacity="0.12"/>
+  <circle cx="360" cy="165" r="128" fill="#0C0804"/>
+  <!-- Moon highlight ring -->
+  <circle cx="310" cy="190" r="140" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.3"/>
+
+  <!-- Stars scattered -->
+  <g opacity="0.7" fill="#E8C84A">
+    <polygon points="80,120 83,130 93,130 85,136 88,146 80,140 72,146 75,136 67,130 77,130" transform="scale(0.5) translate(80,80)"/>
+    <circle cx="120" cy="80" r="2"/>
+    <circle cx="480" cy="100" r="1.5"/>
+    <circle cx="520" cy="60" r="2.5"/>
+    <circle cx="60" cy="200" r="1.5"/>
+    <circle cx="540" cy="200" r="2"/>
+    <circle cx="80" cy="300" r="1"/>
+    <circle cx="510" cy="280" r="1.5"/>
+    <circle cx="150" cy="50" r="1"/>
+    <circle cx="450" cy="50" r="1"/>
+    <circle cx="30" cy="150" r="1.5"/>
+    <circle cx="560" cy="150" r="1"/>
+  </g>
+
+  <!-- Thai astrological symbols (navagraha dots ring) -->
+  <g opacity="0.25" stroke="#D4A017" stroke-width="0.5" fill="none">
+    <circle cx="300" cy="190" r="160"/>
+    <circle cx="300" cy="190" r="162"/>
+  </g>
+  <!-- 9 planet dots -->
+  <g fill="#D4A017" opacity="0.5">
+    <circle cx="300" cy="32" r="3"/>
+    <circle cx="394" cy="62" r="2.5"/>
+    <circle cx="446" cy="148" r="2.5"/>
+    <circle cx="420" cy="250" r="2.5"/>
+    <circle cx="340" cy="322" r="3"/>
+    <circle cx="240" cy="318" r="2.5"/>
+    <circle cx="168" cy="248" r="2.5"/>
+    <circle cx="152" cy="146" r="2.5"/>
+    <circle cx="208" cy="62" r="2.5"/>
+  </g>
+
+  <!-- Body / silhouette -->
+  <!-- Neck -->
+  <rect x="272" y="490" width="56" height="80" rx="8" fill="#C8955A"/>
+  <!-- Shoulders/body -->
+  <ellipse cx="300" cy="680" rx="170" ry="220" fill="#1A0F03"/>
+  <!-- Robe/clothing detail - warm tone -->
+  <ellipse cx="300" cy="700" rx="150" ry="200" fill="#2A1A06"/>
+  <!-- Traditional collar/neckline -->
+  <path d="M230 570 Q300 610 370 570 L380 600 Q300 650 220 600 Z" fill="#3D2510"/>
+  <path d="M230 570 Q300 610 370 570" fill="none" stroke="#B8860B" stroke-width="1.5" opacity="0.6"/>
+  <!-- Gold trim on robe -->
+  <path d="M200 640 Q300 680 400 640 L410 660 Q300 705 190 660 Z" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.4"/>
+
+  <!-- Hair (bun / traditional updo) -->
+  <ellipse cx="300" cy="410" rx="95" ry="25" fill="#1A0D02"/>
+  <ellipse cx="300" cy="400" rx="80" ry="20" fill="#241204"/>
+  <!-- Hair pin gold -->
+  <line x1="260" y1="398" x2="340" y2="398" stroke="#D4A017" stroke-width="2.5" opacity="0.8"/>
+  <circle cx="260" cy="398" r="4" fill="#D4A017" opacity="0.8"/>
+  <circle cx="340" cy="398" r="4" fill="#D4A017" opacity="0.8"/>
+  <!-- Hair flowing down sides -->
+  <ellipse cx="215" cy="450" rx="30" ry="55" fill="#1A0D02"/>
+  <ellipse cx="385" cy="450" rx="30" ry="55" fill="#1A0D02"/>
+
+  <!-- Head / face -->
+  <ellipse cx="300" cy="460" rx="90" ry="100" fill="url(#faceGrad)"/>
+
+  <!-- Facial features -->
+  <!-- Eyes (closed/wise) -->
+  <path d="M260 450 Q275 443 290 450" stroke="#3D1A05" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M310 450 Q325 443 340 450" stroke="#3D1A05" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Eyebrows (arched) -->
+  <path d="M255 436 Q275 428 292 434" stroke="#5A2D0A" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M308 434 Q325 428 345 436" stroke="#5A2D0A" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <!-- Nose -->
+  <path d="M295 462 Q300 475 305 462" stroke="#A0622A" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <!-- Smile (kind) -->
+  <path d="M272 490 Q300 505 328 490" stroke="#8B4A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <!-- Cheek blush subtle -->
+  <ellipse cx="245" cy="470" rx="20" ry="12" fill="#D4703A" opacity="0.12"/>
+  <ellipse cx="355" cy="470" rx="20" ry="12" fill="#D4703A" opacity="0.12"/>
+
+  <!-- Wrinkle lines (wisdom) -->
+  <path d="M255 438 Q248 445 252 453" stroke="#8B5E2A" stroke-width="0.8" fill="none" opacity="0.4"/>
+  <path d="M345 438 Q352 445 348 453" stroke="#8B5E2A" stroke-width="0.8" fill="none" opacity="0.4"/>
+
+  <!-- Headdress / crown element -->
+  <path d="M210 415 Q300 375 390 415" fill="none" stroke="#D4A017" stroke-width="2" opacity="0.7"/>
+  <!-- Crown jewels -->
+  <circle cx="300" cy="380" r="8" fill="#D4A017" opacity="0.8"/>
+  <circle cx="260" cy="395" r="5" fill="#B8860B" opacity="0.7"/>
+  <circle cx="340" cy="395" r="5" fill="#B8860B" opacity="0.7"/>
+  <!-- Small lotus motif above head -->
+  <g transform="translate(300,362)" fill="#D4A017" opacity="0.6">
+    <ellipse cx="0" cy="-8" rx="5" ry="10"/>
+    <ellipse cx="-7" cy="-4" rx="5" ry="9" transform="rotate(-25)"/>
+    <ellipse cx="7" cy="-4" rx="5" ry="9" transform="rotate(25)"/>
+  </g>
+
+  <!-- Decorative border frame -->
+  <rect x="16" y="16" width="568" height="868" rx="4" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.5"/>
+  <rect x="24" y="24" width="552" height="852" rx="2" fill="none" stroke="#B8860B" stroke-width="0.5" opacity="0.25"/>
+
+  <!-- Corner ornaments -->
+  <g stroke="#D4A017" stroke-width="1.5" fill="none" opacity="0.6">
+    <!-- TL -->
+    <path d="M16,50 L16,16 L50,16"/>
+    <path d="M30,50 L30,30 L50,30"/>
+    <!-- TR -->
+    <path d="M584,50 L584,16 L550,16"/>
+    <path d="M570,50 L570,30 L550,30"/>
+    <!-- BL -->
+    <path d="M16,850 L16,884 L50,884"/>
+    <path d="M30,850 L30,870 L50,870"/>
+    <!-- BR -->
+    <path d="M584,850 L584,884 L550,884"/>
+    <path d="M570,850 L570,870 L550,870"/>
+  </g>
+
+  <!-- Bottom text area -->
+  <rect x="60" y="800" width="480" height="80" rx="2" fill="#0C0804" opacity="0.6"/>
+  <line x1="80" y1="818" x2="520" y2="818" stroke="#B8860B" stroke-width="0.5" opacity="0.5"/>
+  <text x="300" y="845" text-anchor="middle" font-family="serif" font-size="26" letter-spacing="6" fill="#E8C84A" opacity="0.95">แม่หมอจันทร์</text>
+  <text x="300" y="865" text-anchor="middle" font-family="serif" font-size="10" letter-spacing="4" fill="#B8860B" opacity="0.7">ORACLE I · THAI ASTROLOGY</text>
+</svg>

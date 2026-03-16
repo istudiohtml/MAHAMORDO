@@ -222,10 +222,10 @@ export default function FortuneChatPage() {
             <div className="fortune-vn-name">{oracle.name}</div>
             <div className="fortune-vn-sub">{oracle.subtitle.toUpperCase()}</div>
           </div>
-        </div>
 
-        {/* Thai decorative banner — Mae Mor only */}
-        {oracleId === 1 && <div className="fortune-vn-thai-banner" />}
+          {/* Thai decorative banner — Mae Mor only */}
+          {oracleId === 1 && <div className="fortune-vn-thai-banner" />}
+        </div>
 
         {/* DIALOG — chat area */}
         <div className="fortune-vn-dialog">

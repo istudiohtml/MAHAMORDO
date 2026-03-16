@@ -1,19 +1,17 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const ONE_TIME_PACKAGES = [
-  { id: 5, credits: 5, price: 49, label: 'Starter' },
-  { id: 15, credits: 15, price: 129, label: 'Popular', highlight: true },
-  { id: 30, credits: 30, price: 239, label: 'Value' },
+  { id: 5, credits: 5, price: 39, label: 'ทดลองใช้', highlight: true },
 ]
 
 const SUBSCRIPTIONS = [
   {
     id: 'monthly',
     name: 'รายเดือน',
-    price: 99,
+    price: 129,
     credits: 'ไม่จำกัด',
     period: '/เดือน',
     highlight: false,
@@ -25,7 +23,7 @@ const SUBSCRIPTIONS = [
     credits: 'ไม่จำกัด',
     period: '/ปี',
     highlight: true,
-    save: 'ประหยัด 15%',
+    save: 'ประหยัด 36%',
   },
 ]
 
@@ -38,6 +36,19 @@ export default function CreditPackages() {
 
   // Show success/cancelled message from Stripe redirect
   const paymentStatus = searchParams.get('payment')
+
+  // Refresh page data when payment succeeds
+  useEffect(() => {
+    if (paymentStatus === 'success') {
+      console.log('Payment success detected, refreshing in 3 seconds...')
+      // Wait for webhook to process, then refresh
+      const timer = setTimeout(() => {
+        console.log('Refreshing page data...')
+        router.refresh()
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [paymentStatus, router])
 
   const handlePurchase = useCallback(
     async (packageId: string | number, type: 'one-time' | 'subscription' = 'one-time') => {

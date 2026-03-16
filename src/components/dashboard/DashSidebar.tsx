@@ -7,6 +7,8 @@ interface User {
   name?: string | null
   email: string
   credits: number
+  subscriptionPlan?: string | null
+  subscriptionExpiresAt?: Date | null
 }
 
 interface Props {
@@ -48,14 +50,30 @@ export default function DashSidebar({ user }: Props) {
         </div>
       </div>
 
-      {/* Credits */}
-      <div className="dash-credits">
-        <span className="dash-credits-icon">✦</span>
-        <div>
-          <p className="dash-credits-count">{user.credits} เครดิต</p>
-          <p className="dash-credits-label">คงเหลือ</p>
+      {/* Credits or Subscription */}
+      {user.subscriptionPlan && user.subscriptionPlan !== 'NONE' ? (
+        <div className="dash-credits subscription">
+          <span className="dash-credits-icon">✦</span>
+          <div>
+            <p className="dash-credits-count">
+              {user.subscriptionPlan === 'YEARLY' ? 'รายปี' : 'รายเดือน'}
+            </p>
+            <p className="dash-credits-label">
+              หมดวันที่ {user.subscriptionExpiresAt?.toLocaleDateString('th-TH')}
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="dash-credits">
+          <span className="dash-credits-icon">✦</span>
+          <div>
+            <p className="dash-credits-count">
+              {user.credits >= 1000000 ? '∞' : user.credits}
+            </p>
+            <p className="dash-credits-label">เครดิต</p>
+          </div>
+        </div>
+      )}
 
       {/* Nav */}
       <nav className="dash-nav">

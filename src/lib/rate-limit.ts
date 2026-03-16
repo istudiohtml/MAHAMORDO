@@ -5,7 +5,7 @@ const limits = new Map<string, { count: number; resetAt: number }>()
 
 function getClientId(req: NextRequest): string {
   const forwarded = req.headers.get('x-forwarded-for')
-  const ip = forwarded ? forwarded.split(',')[0] : req.ip || 'unknown'
+  const ip = forwarded ? forwarded.split(',')[0].trim() : req.headers.get('x-real-ip') || 'unknown'
   return ip
 }
 

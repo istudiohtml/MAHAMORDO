@@ -1,0 +1,72 @@
+<svg width="600" height="900" viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#0F0A0C"/>
+      <stop offset="100%" stop-color="#060404"/>
+    </radialGradient>
+    <radialGradient id="rahuGlow" cx="50%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#8B7355" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#B8860B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="faceGrad" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#9A7B5A"/>
+      <stop offset="100%" stop-color="#5C4033"/>
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="600" height="900" fill="url(#bg)"/>
+  <pattern id="dots" x="0" y="0" width="28" height="28" patternUnits="userSpaceOnUse">
+    <circle cx="14" cy="14" r="0.8" fill="#B8860B" opacity="0.12"/>
+  </pattern>
+  <rect width="600" height="900" fill="url(#dots)"/>
+
+  <!-- Rahu / Tarot star motif -->
+  <g transform="translate(300,200)" fill="none" stroke="#B8860B" stroke-width="1.2" opacity="0.5">
+    <circle r="130"/>
+    <polygon points="0,-130 38,-105 120,-40 105,25 65,95 0,120 -65,95 -105,25 -120,-40 -38,-105" stroke-opacity="0.6"/>
+  </g>
+  <g transform="translate(300,200)" fill="#D4A017" opacity="0.15">
+    <circle r="45"/>
+  </g>
+  <circle cx="300" cy="200" r="160" fill="url(#rahuGlow)"/>
+
+  <!-- Body / dark robe -->
+  <rect x="270" y="492" width="60" height="82" rx="6" fill="#9A7B5A"/>
+  <ellipse cx="300" cy="678" rx="165" ry="215" fill="#0A0608"/>
+  <ellipse cx="300" cy="695" rx="145" ry="195" fill="#120C0E"/>
+  <path d="M232 568 Q300 612 368 568 L378 598 Q300 648 222 598 Z" fill="#1A1012"/>
+  <path d="M232 568 Q300 612 368 568" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.4"/>
+
+  <!-- Hood / cloak shadow -->
+  <path d="M195 400 Q300 340 405 400 L395 440 Q300 410 205 440 Z" fill="#0A0608"/>
+  <ellipse cx="300" cy="405" rx="92" ry="22" fill="#0A0608"/>
+
+  <!-- Head / face -->
+  <ellipse cx="300" cy="455" rx="86" ry="96" fill="url(#faceGrad)"/>
+
+  <!-- Eyes (mysterious, half-closed) -->
+  <path d="M262 448 Q272 452 282 448" stroke="#2A1508" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M318 448 Q328 452 338 448" stroke="#2A1508" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M258 438 Q268 434 278 438" stroke="#5A3A1A" stroke-width="1.2" fill="none" opacity="0.8"/>
+  <path d="M322 438 Q332 434 342 438" stroke="#5A3A1A" stroke-width="1.2" fill="none" opacity="0.8"/>
+  <!-- Nose -->
+  <path d="M294 458 Q300 468 306 458" stroke="#6B4A2A" stroke-width="1" fill="none" opacity="0.6"/>
+  <!-- Mouth (neutral, wise) -->
+  <path d="M278 478 L322 478" stroke="#5A3A1A" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- Forehead mark / Rahu star -->
+  <path d="M285 398 L300 378 L315 398 L305 398 L305 408 L295 408 L295 398 Z" fill="#D4A017" opacity="0.6"/>
+  <!-- Hood trim -->
+  <path d="M210 398 Q300 368 390 398" fill="none" stroke="#B8860B" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Border -->
+  <rect x="16" y="16" width="568" height="868" rx="4" fill="none" stroke="#B8860B" stroke-width="1" opacity="0.4"/>
+  <rect x="60" y="800" width="480" height="80" rx="2" fill="#060404" opacity="0.7"/>
+  <line x1="80" y1="818" x2="520" y2="818" stroke="#B8860B" stroke-width="0.5" opacity="0.4"/>
+  <text x="300" y="845" text-anchor="middle" font-family="serif" font-size="26" letter-spacing="6" fill="#E8C84A" opacity="0.9">อาจารย์ราหู</text>
+  <text x="300" y="865" text-anchor="middle" font-family="serif" font-size="10" letter-spacing="4" fill="#B8860B" opacity="0.6">ORACLE III · TAROT</text>
+</svg>

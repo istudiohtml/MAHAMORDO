@@ -5,13 +5,11 @@ import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-10-28.acacia',
+  apiVersion: '2026-02-25.clover',
 })
 
 const CREDIT_PACKAGES = {
-  5: { credits: 5, priceThb: 49 },
-  15: { credits: 15, priceThb: 129 },
-  30: { credits: 30, priceThb: 239 },
+  5: { credits: 5, priceThb: 39 },
 }
 
 export async function POST(req: NextRequest) {
