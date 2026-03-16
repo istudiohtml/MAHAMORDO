@@ -1639,6 +1639,7 @@ body {
   width: 100%;
   min-height: 52vh;
   flex-basis: auto;
+  flex-direction: column;
 }
 
 @media (min-width: 1024px) {
@@ -1647,6 +1648,7 @@ body {
     min-height: auto;
     height: 100vh;
     flex: 0 0 50%;
+    flex-direction: column;
   }
 }
 
