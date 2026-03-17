@@ -548,31 +548,72 @@ export default function FortuneChatPage() {
             </>
           )}
 
-          {/* Tarot card selection (oracle 3 only) */}
+          {/* Tarot card selection modal (oracle 3 only) - matches template exactly */}
           {askingForCard && oracleId === 3 && (
-            <>
-              <div className="fortune-vn-speech">
-                <div className="fortune-vn-speech-text">
-                  {selectedCards.length === 0 && 'เลือกไพ่ อดีต (1/3)'}
-                  {selectedCards.length === 1 && 'เลือกไพ่ ปัจจุบัน (2/3)'}
-                  {selectedCards.length === 2 && 'เลือกไพ่ อนาคต (3/3)'}
-                </div>
-              </div>
-              <div className="fortune-vn-input-zone show" style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {selectedCards.length > 0 && (
-                  <div style={{ textAlign: 'center', padding: '12px 24px', borderBottom: '1px solid rgba(212,168,83,0.2)' }}>
-                    <div style={{ color: 'rgba(212,168,83,0.8)', fontSize: '12px' }}>
-                      ✓ {selectedCards.map((sc, i) => `${i === 0 ? 'อดีต: ' : i === 1 ? 'ปัจจุบัน: ' : 'อนาคต: '}${sc.card.nameThai}`).join('  /  ')}
-                    </div>
+            <div style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.85)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+            }}>
+              <div style={{
+                background: 'rgba(8, 4, 0, 0.95)',
+                border: '1px solid rgba(212,168,83,0.3)',
+                borderRadius: '12px',
+                padding: '24px',
+                maxWidth: '500px',
+                width: '90%',
+                maxHeight: '80vh',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '16px',
+              }}>
+                {/* Header */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{
+                    fontSize: '18px',
+                    color: '#D4A853',
+                    fontWeight: 700,
+                    letterSpacing: '2px',
+                    marginBottom: '8px',
+                  }}>
+                    ◆ เลือกไพ่ ◆
                   </div>
-                )}
+                  <div style={{
+                    fontSize: '13px',
+                    color: 'rgba(212,168,83,0.7)',
+                    marginBottom: '12px',
+                  }}>
+                    {selectedCards.length === 0 && 'เลือกไพ่ 3 ใบ...'}
+                    {selectedCards.length === 1 && 'เลือกอีก 2 ใบ'}
+                    {selectedCards.length === 2 && 'เลือกอีก 1 ใบ'}
+                    {selectedCards.length === 3 && '✨ ไพ่เปิดเผยแล้ว ✨'}
+                  </div>
+                  {/* Position indicator dots */}
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                    {['อดีต', 'ปัจจุบัน', 'อนาคต'].map((pos, idx) => (
+                      <div key={idx} style={{
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '50%',
+                        background: selectedCards.length > idx ? '#D4A853' : 'rgba(212,168,83,0.2)',
+                        transition: 'all 0.4s',
+                      }} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cards grid */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: '10px',
-                  padding: '0 16px',
+                  gap: '12px',
                   maxHeight: '55vh',
                   overflowY: 'auto',
+                  paddingRight: '4px',
                 }}>
                   {tarotCards.map((card) => {
                     const isSelected = selectedCards.some(sc => sc.card.id === card.id)
@@ -580,71 +621,104 @@ export default function FortuneChatPage() {
                       <button
                         key={card.id}
                         onClick={async () => {
-                          const newSelected = [...selectedCards, { position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future', card }]
+                          if (selectedCards.length >= 3 || isSelected) return
+
+                          const newSelected = [...selectedCards, {
+                            position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future',
+                            card,
+                          }]
                           setSelectedCards(newSelected)
 
                           // Save to DB
                           if (sessionId) {
-                            const pos = selectedCards.length === 0 ? 'อดีต' : selectedCards.length === 1 ? 'ปัจจุบัน' : 'อนาคต'
+                            const positions = ['อดีต', 'ปัจจุบัน', 'อนาคต']
                             await fetch('/api/fortune/message', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
                                 sessionId,
-                                content: `🃏 ${pos}: ${card.nameThai}`,
+                                content: `🃏 ${positions[selectedCards.length]}: ${card.nameThai}`,
                                 role: 'USER',
                               }),
                             })
                           }
 
+                          // Auto-close after 3 cards
                           if (newSelected.length === 3) {
-                            setAskingForCard(false)
                             setTimeout(() => {
+                              setAskingForCard(false)
                               const reading = buildTarotReading(newSelected, birthData, userName)
                               typeText(reading)
-                            }, 500)
+                            }, 800)
                           }
                         }}
-                        disabled={isSelected}
+                        disabled={selectedCards.length >= 3 || isSelected}
                         style={{
-                          padding: '14px 8px',
+                          padding: '12px 8px',
                           borderRadius: '8px',
-                          background: isSelected ? 'rgba(212,168,83,0.25)' : 'rgba(26, 8, 0, 0.6)',
-                          border: isSelected ? '2px solid #D4A853' : '1px solid rgba(212, 168, 83, 0.4)',
-                          cursor: isSelected ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.2s',
+                          background: isSelected ? 'rgba(212,168,83,0.2)' : 'rgba(26,8,0,0.6)',
+                          border: isSelected ? '2px solid #D4A853' : '1px solid rgba(212,168,83,0.35)',
+                          cursor: selectedCards.length >= 3 || isSelected ? 'not-allowed' : 'pointer',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: '6px',
-                          opacity: isSelected ? 0.5 : 1,
-                          color: '#D4A853',
+                          opacity: isSelected ? 0.5 : selectedCards.length >= 3 ? 0.4 : 1,
+                          transition: 'all 0.25s',
+                          position: 'relative',
                         }}
                         onMouseEnter={(e) => {
-                          if (!isSelected) {
-                            e.currentTarget.style.background = 'rgba(212,168,83,0.15)'
-                            e.currentTarget.style.borderColor = '#D4A853'
-                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(212,168,83,0.2)'
+                          if (!isSelected && selectedCards.length < 3) {
+                            e.currentTarget.style.background = 'rgba(212,168,83,0.12)'
+                            e.currentTarget.style.borderColor = 'rgba(212,168,83,0.7)'
+                            e.currentTarget.style.boxShadow = '0 6px 18px rgba(212,168,83,0.2)'
+                            e.currentTarget.style.transform = 'translateY(-4px)'
                           }
                         }}
                         onMouseLeave={(e) => {
-                          if (!isSelected) {
-                            e.currentTarget.style.background = 'rgba(26, 8, 0, 0.6)'
-                            e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.4)'
+                          if (!isSelected && selectedCards.length < 3) {
+                            e.currentTarget.style.background = 'rgba(26,8,0,0.6)'
+                            e.currentTarget.style.borderColor = 'rgba(212,168,83,0.35)'
                             e.currentTarget.style.boxShadow = 'none'
+                            e.currentTarget.style.transform = 'translateY(0)'
                           }
                         }}
                       >
-                        <div style={{ fontSize: '20px' }}>{card.emoji}</div>
-                        <div style={{ fontSize: '10px', color: 'inherit', fontWeight: '500', lineHeight: '1.2', textAlign: 'center' }}>
-                          {card.nameThai.substring(0, 8)}
+                        <div style={{ fontSize: '22px' }}>{card.emoji}</div>
+                        <div style={{
+                          fontSize: '10px',
+                          color: isSelected ? '#D4A853' : 'rgba(212,168,83,0.8)',
+                          fontWeight: '500',
+                          lineHeight: '1.2',
+                          textAlign: 'center',
+                        }}>
+                          {card.nameThai.substring(0, 10)}
                         </div>
+                        {isSelected && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '2px',
+                            right: '2px',
+                            width: '14px',
+                            height: '14px',
+                            background: '#D4A853',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            color: '#1A0800',
+                            fontWeight: 700,
+                          }}>
+                            ✓
+                          </div>
+                        )}
                       </button>
                     )
                   })}
                 </div>
               </div>
-            </>
+            </div>
           )}
 
 
