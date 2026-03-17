@@ -114,7 +114,6 @@ export default function FortuneChatPage() {
   const [askingForCard, setAskingForCard] = useState(false)
   const [tarotCards, setTarotCards] = useState<TarotCard[]>([])
   const [selectedCards, setSelectedCards] = useState<Array<{ position: 'past' | 'present' | 'future', card: TarotCard }>>([])
-  const [currentPosition, setCurrentPosition] = useState<'past' | 'present' | 'future' | null>(null)
 
   const TOPICS = [
     { id: 'love', emoji: '❤️', name: 'ความรัก', description: 'ความสัมพันธ์ การรักษา ความรักแท้' },
@@ -485,7 +484,7 @@ export default function FortuneChatPage() {
                         // For oracle 3 (tarot), show card selection
                         if (oracleId === 3) {
                           setTarotCards(getAllCards())
-                          setCurrentPosition('past')
+                          setSelectedCards([])
                           setAskingForCard(true)
                         }
                         setAskingTopic(false)
@@ -550,20 +549,30 @@ export default function FortuneChatPage() {
           )}
 
           {/* Tarot card selection (oracle 3 only) */}
-          {!starting && !error && askingForCard && oracleId === 3 && tarotCards.length > 0 && selectedCards.length < 3 && (
+          {askingForCard && oracleId === 3 && (
             <>
               <div className="fortune-vn-speech">
                 <div className="fortune-vn-speech-text">
-                  เลือกไพ่ {currentPosition === 'past' ? 'อดีต' : currentPosition === 'present' ? 'ปัจจุบัน' : 'อนาคต'} ({selectedCards.length + 1}/3)
+                  {selectedCards.length === 0 && 'เลือกไพ่ อดีต (1/3)'}
+                  {selectedCards.length === 1 && 'เลือกไพ่ ปัจจุบัน (2/3)'}
+                  {selectedCards.length === 2 && 'เลือกไพ่ อนาคต (3/3)'}
                 </div>
               </div>
-              <div className="fortune-vn-input-zone show" style={{ justifyContent: 'center', display: 'flex', overflowY: 'auto', maxHeight: '60vh' }}>
+              <div className="fortune-vn-input-zone show" style={{ justifyContent: 'center', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {selectedCards.length > 0 && (
+                  <div style={{ textAlign: 'center', padding: '12px 24px', borderBottom: '1px solid rgba(212,168,83,0.2)' }}>
+                    <div style={{ color: 'rgba(212,168,83,0.8)', fontSize: '12px' }}>
+                      ✓ {selectedCards.map((sc, i) => `${i === 0 ? 'อดีต: ' : i === 1 ? 'ปัจจุบัน: ' : 'อนาคต: '}${sc.card.nameThai}`).join('  /  ')}
+                    </div>
+                  </div>
+                )}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: '12px',
-                  padding: '16px',
-                  maxWidth: '500px',
+                  gap: '10px',
+                  padding: '0 16px',
+                  maxHeight: '55vh',
+                  overflowY: 'auto',
                 }}>
                   {tarotCards.map((card) => {
                     const isSelected = selectedCards.some(sc => sc.card.id === card.id)
@@ -571,18 +580,18 @@ export default function FortuneChatPage() {
                       <button
                         key={card.id}
                         onClick={async () => {
-                          if (!currentPosition) return
-                          const newSelected = [...selectedCards, { position: currentPosition, card }]
+                          const newSelected = [...selectedCards, { position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future', card }]
                           setSelectedCards(newSelected)
 
-                          // Save card selection to DB
+                          // Save to DB
                           if (sessionId) {
+                            const pos = selectedCards.length === 0 ? 'อดีต' : selectedCards.length === 1 ? 'ปัจจุบัน' : 'อนาคต'
                             await fetch('/api/fortune/message', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify({
                                 sessionId,
-                                content: `🃏 ${currentPosition === 'past' ? 'อดีต' : currentPosition === 'present' ? 'ปัจจุบัน' : 'อนาคต'}: ${card.nameThai}`,
+                                content: `🃏 ${pos}: ${card.nameThai}`,
                                 role: 'USER',
                               }),
                             })
@@ -590,65 +599,51 @@ export default function FortuneChatPage() {
 
                           if (newSelected.length === 3) {
                             setAskingForCard(false)
-                            // Generate tarot reading
                             setTimeout(() => {
                               const reading = buildTarotReading(newSelected, birthData, userName)
                               typeText(reading)
                             }, 500)
-                          } else {
-                            // Move to next position
-                            const positions: Array<'past' | 'present' | 'future'> = ['past', 'present', 'future']
-                            const nextIdx = positions.indexOf(currentPosition) + 1
-                            setCurrentPosition(positions[nextIdx])
                           }
                         }}
                         disabled={isSelected}
                         style={{
-                          padding: '16px 8px',
+                          padding: '14px 8px',
                           borderRadius: '8px',
-                          background: isSelected ? 'rgba(212,168,83,0.3)' : 'rgba(26, 8, 0, 0.4)',
-                          border: isSelected ? '2px solid #D4A853' : '1.5px solid rgba(212, 168, 83, 0.3)',
+                          background: isSelected ? 'rgba(212,168,83,0.25)' : 'rgba(26, 8, 0, 0.6)',
+                          border: isSelected ? '2px solid #D4A853' : '1px solid rgba(212, 168, 83, 0.4)',
                           cursor: isSelected ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.25s ease',
+                          transition: 'all 0.2s',
                           display: 'flex',
                           flexDirection: 'column',
                           alignItems: 'center',
                           gap: '6px',
-                          opacity: isSelected ? 0.6 : 1,
+                          opacity: isSelected ? 0.5 : 1,
+                          color: '#D4A853',
                         }}
                         onMouseEnter={(e) => {
                           if (!isSelected) {
-                            e.currentTarget.style.background = 'rgba(212,168,83,0.12)'
-                            e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.6)'
-                            e.currentTarget.style.boxShadow = '0 8px 20px rgba(212,168,83,0.15)'
-                            e.currentTarget.style.transform = 'translateY(-2px)'
+                            e.currentTarget.style.background = 'rgba(212,168,83,0.15)'
+                            e.currentTarget.style.borderColor = '#D4A853'
+                            e.currentTarget.style.boxShadow = '0 6px 16px rgba(212,168,83,0.2)'
                           }
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected) {
-                            e.currentTarget.style.background = 'rgba(26, 8, 0, 0.4)'
-                            e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.3)'
+                            e.currentTarget.style.background = 'rgba(26, 8, 0, 0.6)'
+                            e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.4)'
                             e.currentTarget.style.boxShadow = 'none'
-                            e.currentTarget.style.transform = 'translateY(0)'
                           }
                         }}
                       >
-                        <div style={{ fontSize: '24px' }}>{card.emoji}</div>
-                        <div style={{ fontSize: '11px', color: 'rgba(253, 251, 247, 0.8)', fontWeight: '500', lineHeight: '1.2' }}>
-                          {card.nameThai}
+                        <div style={{ fontSize: '20px' }}>{card.emoji}</div>
+                        <div style={{ fontSize: '10px', color: 'inherit', fontWeight: '500', lineHeight: '1.2', textAlign: 'center' }}>
+                          {card.nameThai.substring(0, 8)}
                         </div>
                       </button>
                     )
                   })}
                 </div>
               </div>
-              {selectedCards.length > 0 && (
-                <div className="fortune-vn-input-zone show" style={{ textAlign: 'center', padding: '12px 24px' }}>
-                  <div style={{ color: 'rgba(212,168,83,0.7)', fontSize: '12px' }}>
-                    ไพ่ที่เลือก: {selectedCards.map(sc => sc.card.nameThai).join(' • ')}
-                  </div>
-                </div>
-              )}
             </>
           )}
 
