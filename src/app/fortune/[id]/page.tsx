@@ -938,6 +938,146 @@ export default function FortuneChatPage() {
           )}
         </div>
       </div>
+
+      {/* Tarot Modal - OUTSIDE frame so position:fixed works */}
+      {askingForCard && oracleId === 3 && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.9)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(20,10,0,0.98), rgba(10,5,0,0.99))',
+            border: '2px solid rgba(212,168,83,0.4)',
+            borderRadius: '16px',
+            padding: '28px',
+            maxWidth: '600px',
+            width: '100%',
+            maxHeight: '85vh',
+            overflowY: 'auto',
+          }}>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{
+                fontSize: '20px',
+                color: '#D4A853',
+                fontWeight: 700,
+                letterSpacing: '3px',
+                marginBottom: '12px',
+              }}>
+                ◆ เลือกไพ่ ◆
+              </div>
+              <div style={{
+                fontSize: '14px',
+                color: 'rgba(212,168,83,0.75)',
+                marginBottom: '16px',
+              }}>
+                {selectedCards.length === 0 && 'เลือกไพ่ 3 ใบ'}
+                {selectedCards.length === 1 && 'เลือกอีก 2 ใบ'}
+                {selectedCards.length === 2 && 'เลือกอีก 1 ใบ'}
+                {selectedCards.length === 3 && '✨ ไพ่เปิดเผยแล้ว ✨'}
+              </div>
+              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+                {[0, 1, 2].map(idx => (
+                  <div key={idx} style={{
+                    width: '12px',
+                    height: '12px',
+                    borderRadius: '50%',
+                    background: selectedCards.length > idx ? '#D4A853' : 'rgba(212,168,83,0.25)',
+                    boxShadow: selectedCards.length > idx ? '0 0 12px #D4A853' : 'none',
+                    transition: 'all 0.3s ease',
+                  }} />
+                ))}
+              </div>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(5, 1fr)',
+              gap: '14px',
+            }}>
+              {tarotCards.map(card => {
+                const isSelected = selectedCards.some(sc => sc.card.id === card.id)
+                return (
+                  <button
+                    key={card.id}
+                    onClick={async () => {
+                      if (selectedCards.length >= 3 || isSelected) return
+                      const newSelected = [...selectedCards, {
+                        position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future',
+                        card,
+                      }]
+                      setSelectedCards(newSelected)
+                      if (sessionId) {
+                        const posLabels = ['อดีต', 'ปัจจุบัน', 'อนาคต']
+                        await fetch('/api/fortune/message', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            sessionId,
+                            content: `🃏 [${posLabels[selectedCards.length]}] ${card.nameThai}`,
+                            role: 'USER',
+                          }),
+                        })
+                      }
+                      if (newSelected.length === 3) {
+                        setTimeout(() => {
+                          setAskingForCard(false)
+                          const reading = buildTarotReading(newSelected, birthData, userName)
+                          typeText(reading)
+                        }, 600)
+                      }
+                    }}
+                    disabled={selectedCards.length >= 3 || isSelected}
+                    style={{
+                      padding: '14px 10px',
+                      borderRadius: '10px',
+                      background: isSelected ? 'rgba(212,168,83,0.25)' : 'rgba(26,8,0,0.7)',
+                      border: isSelected ? '2px solid #D4A853' : '1.5px solid rgba(212,168,83,0.3)',
+                      color: '#D4A853',
+                      cursor: isSelected || selectedCards.length >= 3 ? 'default' : 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px',
+                      opacity: isSelected || selectedCards.length >= 3 ? 0.5 : 1,
+                      transition: 'all 0.2s ease',
+                      fontSize: '12px',
+                      fontFamily: 'inherit',
+                    }}
+                    onMouseEnter={e => {
+                      if (!isSelected && selectedCards.length < 3) {
+                        e.currentTarget.style.background = 'rgba(212,168,83,0.15)'
+                        e.currentTarget.style.borderColor = 'rgba(212,168,83,0.7)'
+                        e.currentTarget.style.boxShadow = '0 0 20px rgba(212,168,83,0.25)'
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!isSelected && selectedCards.length < 3) {
+                        e.currentTarget.style.background = 'rgba(26,8,0,0.7)'
+                        e.currentTarget.style.borderColor = 'rgba(212,168,83,0.3)'
+                        e.currentTarget.style.boxShadow = 'none'
+                      }
+                    }}
+                  >
+                    <span style={{ fontSize: '18px' }}>{card.emoji}</span>
+                    <span style={{ fontSize: '9px', lineHeight: '1.2', textAlign: 'center', fontWeight: 500 }}>
+                      {card.nameThai.substring(0, 9)}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
