@@ -31,10 +31,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Oracle not found' }, { status: 404 })
     }
 
-    // Get user credits + subscription
+    // Get user credits + subscription + name
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { credits: true, subscriptionPlan: true, subscriptionExpiresAt: true },
+      select: {
+        credits: true,
+        subscriptionPlan: true,
+        subscriptionExpiresAt: true,
+        firstName: true,
+        lastName: true,
+        name: true,
+      },
     })
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -91,10 +98,15 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    // Get user's name for greeting
+    const userName = user.firstName || user.name || 'ผู้ถาม'
+
     return NextResponse.json({
       sessionId: session.id,
       oracleDbId: oracle.id,
       credits: updatedUser.credits,
+      userName,
+      initialGreeting: oracle.initialGreeting,
     })
   } catch (error) {
     console.error('Fortune start error:', error)

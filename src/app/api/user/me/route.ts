@@ -14,3 +14,25 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ user })
 }
+
+export async function PATCH(req: NextRequest) {
+  const payload = await getUserFromRequest(req)
+  if (!payload) return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
+
+  const body = await req.json()
+  const { firstName, lastName, birthDate, birthTime, birthPlace } = body
+
+  const user = await prisma.user.update({
+    where: { id: payload.userId },
+    data: {
+      ...(firstName && { firstName }),
+      ...(lastName && { lastName }),
+      ...(birthDate && { birthDate: new Date(birthDate) }),
+      ...(birthTime && { birthTime }),
+      ...(birthPlace && { birthPlace }),
+    },
+    select: { id: true, email: true, name: true, firstName: true, lastName: true, birthDate: true, birthTime: true, birthPlace: true, credits: true },
+  })
+
+  return NextResponse.json({ user })
+}

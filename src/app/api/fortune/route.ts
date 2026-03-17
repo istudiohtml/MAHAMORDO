@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
 export async function POST(req: NextRequest) {
+  let payload: any;
   try {
     // Verify authentication
     const cookieStore = await cookies();
@@ -15,13 +16,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = await verifyAccessToken(token);
+    payload = await verifyAccessToken(token);
     if (!payload?.userId) {
       logger.error("Invalid token");
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const { sessionId, message } = await req.json();
+    const { sessionId, message, userName } = await req.json();
     logger.info("Fortune request", payload.userId, { sessionId, messageLength: message?.length });
 
     if (!sessionId || !message) {
@@ -70,15 +71,23 @@ export async function POST(req: NextRequest) {
     }));
     history.push({ role: "user", content: message });
 
-    // เรียก Claude ด้วย systemPrompt จาก DB
+    // เรียก Claude ด้วย systemPrompt จาก DB + ชื่อผู้ใช้
+    const userNameContext = userName ? `\n\nหมายเหตุ: ชื่อลูกค้าของท่านคือ "${userName}" ใช้ชื่อนี้เวลาทักทายและสังสรรค์สนทนา` : '';
+    const systemPrompt = session.oracle.systemPrompt + userNameContext;
+
     const response = await anthropic.messages.create({
       model: CLAUDE_MODEL,
       max_tokens: MAX_TOKENS,
-      system: session.oracle.systemPrompt,
+      system: systemPrompt,
       messages: history,
     });
 
-    const reply = response.content[0].type === "text" ? response.content[0].text : "";
+    const firstContent = response.content?.[0];
+    if (!firstContent || firstContent.type !== "text") {
+      logger.error("Invalid Claude response format", payload?.userId, { contentType: firstContent?.type });
+      return NextResponse.json({ error: "Invalid response format" }, { status: 500 });
+    }
+    const reply = firstContent.text;
     logger.debug("Claude response received", payload?.userId, { replyLength: reply.length });
 
     // บันทึก assistant message

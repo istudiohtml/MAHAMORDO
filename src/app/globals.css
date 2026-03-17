@@ -1514,31 +1514,6 @@ body {
   text-transform: uppercase;
   margin-bottom: 24px;
 }
-.fortune-oracle-card-avatar {
-  position: relative;
-  z-index: 2;
-  width: 96px;
-  height: 96px;
-  margin-bottom: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  box-shadow: 0 0 32px rgba(212,168,83,0.35);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: vnBreathe 4s ease-in-out infinite;
-}
-.fortune-oracle-card-avatar .oracle-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-}
-.fortune-oracle-card-avatar .oracle-avatar-emoji {
-  font-size: 48px;
-  color: var(--gold);
-}
 .fortune-oracle-card-name {
   font-family: var(--font-prompt), sans-serif;
   font-size: 22px;
@@ -1982,26 +1957,26 @@ body {
 }
 .fortune-vn-buy-link:hover { background: #E0B866; }
 
-/* Oracle card avatar (select page) — เปลี่ยนเป็นกรอบสี่เหลี่ยม */
+/* Oracle card avatar (select page) — fixed height for proper centering */
 .fortune-oracle-card-avatar {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: auto;
-  margin: -48px -40px 24px;
-  border-radius: 10px;
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 40px rgba(212,168,83,0.4);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100% !important;
+  height: 260px !important;
+  margin: 0 0 24px 0 !important;
+  border-radius: 10px !important;
+  position: relative !important;
+  z-index: 2 !important;
+  border: 1px solid var(--gold) !important;
+  box-shadow: 0 0 40px rgba(212,168,83,0.4) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .fortune-oracle-card-avatar .oracle-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top center;
+  object-position: center;
   display: block;
   transition: transform 0.35s ease;
 }
