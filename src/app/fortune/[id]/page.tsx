@@ -483,9 +483,13 @@ export default function FortuneChatPage() {
                         }
                         // For oracle 3 (tarot), show card selection
                         if (oracleId === 3) {
-                          setTarotCards(getAllCards())
+                          console.log('DEBUG: Oracle 3 detected, showing tarot modal')
+                          const allCards = getAllCards()
+                          console.log('DEBUG: Got', allCards.length, 'cards')
+                          setTarotCards(allCards)
                           setSelectedCards([])
                           setAskingForCard(true)
+                          console.log('DEBUG: askingForCard set to true')
                         }
                         setAskingTopic(false)
                       }}
@@ -549,7 +553,9 @@ export default function FortuneChatPage() {
           )}
 
           {/* Tarot card selection - MODAL OVERLAY */}
-          {askingForCard && oracleId === 3 && (
+          {askingForCard && oracleId === 3 && (() => {
+            console.log('DEBUG: Rendering tarot modal. askingForCard:', askingForCard, 'oracleId:', oracleId, 'tarotCards.length:', tarotCards.length, 'selectedCards:', selectedCards.length)
+            return (
             <div style={{
               position: 'fixed',
               top: 0,
@@ -695,7 +701,8 @@ export default function FortuneChatPage() {
                 </div>
               </div>
             </div>
-          )}
+            )
+          })()}
 
 
           {/* Birth data form state */}
