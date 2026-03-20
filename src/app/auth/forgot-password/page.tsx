@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import ParticleBackground from '@/components/landing/ParticleBackground'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -26,6 +27,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="auth-page">
       <div className="auth-left">
+        <ParticleBackground />
         <Link href="/" className="auth-brand">
           <span className="auth-brand-dot" />
           Mahamordo

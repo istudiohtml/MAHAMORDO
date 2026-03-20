@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import ParticleBackground from '@/components/landing/ParticleBackground'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -30,6 +31,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-left">
+        <ParticleBackground />
         <Link href="/" className="auth-brand">
           <span className="auth-brand-dot" />
           Mahamordo

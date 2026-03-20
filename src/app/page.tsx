@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { OracleId } from '@/data/oracles'
+import { OracleId, oracles } from '@/data/oracles'
 import LoadingScreen from '@/components/landing/LoadingScreen'
 import Nav, { NavMode } from '@/components/landing/Nav'
 import HomeView from '@/components/landing/HomeView'
 import DetailView from '@/components/landing/DetailView'
+import ConfirmModal from '@/components/landing/ConfirmModal'
 
 export default function Home() {
   const router = useRouter()
@@ -19,6 +20,7 @@ export default function Home() {
   const [oracleId, setOracleId] = useState<OracleId>(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const detailViewRef = useRef<HTMLDivElement>(null)
+  const [confirmModal, setConfirmModal] = useState<{ open: boolean; targetId?: OracleId }>({ open: false })
 
   const handleLoadingComplete = useCallback((loggedIn: boolean) => {
     setIsLoggedIn(loggedIn)
@@ -59,16 +61,22 @@ export default function Home() {
 
   const handleStartFortune = useCallback((id?: OracleId) => {
     if (isLoggedIn) {
-      // Show confirmation: 1 credit will be deducted
-      const confirmed = window.confirm('การดูดวงแต่ละครั้งจะใช้ 1 เครดิต\nคุณต้องการเริ่มต้นหรือไม่?')
-      if (confirmed) {
-        router.push(id ? `/fortune/${id}` : '/fortune')
-      }
+      setConfirmModal({ open: true, targetId: id ?? undefined })
     } else {
       const redirect = id ? `/fortune/${id}` : '/fortune'
       router.push(`/auth/login?redirect=${redirect}`)
     }
   }, [isLoggedIn, router])
+
+  const handleConfirm = useCallback(() => {
+    const id = confirmModal.targetId
+    setConfirmModal({ open: false })
+    router.push(id ? `/fortune/${id}` : '/fortune')
+  }, [confirmModal.targetId, router])
+
+  const handleCancel = useCallback(() => {
+    setConfirmModal({ open: false })
+  }, [])
 
   return (
     <>
@@ -87,6 +95,13 @@ export default function Home() {
         onNavigate={navigateOracle}
         onScrollTop={scrollDetailTop}
         onStartFortune={handleStartFortune}
+      />
+      <ConfirmModal
+        open={confirmModal.open}
+        oracleName={confirmModal.targetId ? oracles[confirmModal.targetId].name : undefined}
+        creditCost={confirmModal.targetId ? oracles[confirmModal.targetId].creditCost : 1}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
       />
     </>
   )

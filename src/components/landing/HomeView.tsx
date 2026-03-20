@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { oracles, OracleId } from '@/data/oracles'
+import ParticleBackground from './ParticleBackground'
 
 interface Props {
   slideUp: boolean
@@ -24,6 +25,7 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
 
       {/* LEFT: cream + dot grid */}
       <div className="hero-left">
+        <ParticleBackground />
         <div className="hero-left-content">
           <p className={`hero-eyebrow${animated ? ' animate' : ''}`}>
             ✦ &nbsp; มหาหมอดู · Thailand &nbsp; ✦
@@ -42,17 +44,14 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
             <button className="btn-primary" onClick={() => onStartFortune()}>
               เริ่มดูดวง &nbsp;✦
             </button>
-            <button className="btn-outline">เรียนรู้เพิ่ม</button>
+            <button className="btn-outline" onClick={() => onOpenOracle(1)}>เรียนรู้เพิ่ม</button>
           </div>
-        </div>
-        <div className={`scroll-hint${animated ? ' animate' : ''}`}>
-          <span className="scroll-hint-text">เลื่อนลง</span>
-          <div className="scroll-hint-line" />
         </div>
       </div>
 
       {/* RIGHT: dark oracle panel */}
       <div className="hero-right">
+        <ParticleBackground />
         <p className={`panel-label${animated ? ' animate' : ''}`}>
           The Three Oracles <span>[ 3 ]</span>
         </p>

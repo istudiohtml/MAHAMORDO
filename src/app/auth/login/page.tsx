@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import ParticleBackground from '@/components/landing/ParticleBackground'
 
 const ERROR_MESSAGES: Record<string, string> = {
   oauth_failed: 'การเข้าสู่ระบบด้วย Social Login ล้มเหลว กรุณาลองใหม่',
@@ -40,6 +41,7 @@ function LoginForm() {
   return (
     <div className="auth-page">
       <div className="auth-left">
+        <ParticleBackground />
         <Link href="/" className="auth-brand">
           <span className="auth-brand-dot" />
           Mahamordo

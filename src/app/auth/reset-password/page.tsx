@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import ParticleBackground from '@/components/landing/ParticleBackground'
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -98,6 +99,7 @@ export default function ResetPasswordPage() {
   return (
     <div className="auth-page">
       <div className="auth-left">
+        <ParticleBackground />
         <Link href="/" className="auth-brand">
           <span className="auth-brand-dot" />
           Mahamordo

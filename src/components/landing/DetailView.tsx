@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { oracles, OracleId } from '@/data/oracles'
+import CosmicMandala from './CosmicMandala'
 
 interface Props {
   slideIn: boolean
@@ -41,7 +42,19 @@ export default function DetailView({
 
             {/* LEFT: oracle info */}
             <div className="detail-left" data-oracle={oracleId}>
+              <CosmicMandala />
               <div className="detail-oracle-number">{o.number}</div>
+
+              {/* Oracle Avatar */}
+              <div className="detail-avatar">
+                <img
+                  src={`/avatars/template-${o.slug}.jpg`}
+                  alt={o.name}
+                  className="detail-avatar-img"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              </div>
+
               <div className="detail-content">
                 <p className={`detail-eyebrow${contentVisible ? ' visible' : ''}`}>
                   {o.eyebrow}
@@ -89,14 +102,10 @@ export default function DetailView({
                         ))}
                       </div>
                     ) : (
-                      <div className="profile-value">
-                        {row.value.split('\n').map((line, j) => (
-                          <span key={j}>
-                            {line}
-                            {j < row.value.split('\n').length - 1 && <br />}
-                          </span>
-                        ))}
-                      </div>
+                      <div
+                        className="profile-value"
+                        dangerouslySetInnerHTML={{ __html: row.value }}
+                      />
                     )}
                   </div>
                 ))}
@@ -156,13 +165,13 @@ export default function DetailView({
         onClick={() => onNavigate(-1)}
       >
         <div className="side-nav-line" />
-        <span className="side-nav-label">Backward</span>
+        <span className="side-nav-label">ก่อนหน้า</span>
       </div>
       <div
         className={`detail-nav-side nav-next${slideIn ? ' visible' : ''}`}
         onClick={() => onNavigate(1)}
       >
-        <span className="side-nav-label">Forward</span>
+        <span className="side-nav-label">ถัดไป</span>
         <div className="side-nav-line" />
       </div>
     </>
