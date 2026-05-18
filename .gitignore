@@ -25,3 +25,6 @@ tsconfig.tsbuildinfo
 # Logs
 logs/
 *.log
+
+# Oracle source photo drafts (local archive, not used by app)
+public/avatars/_archive/

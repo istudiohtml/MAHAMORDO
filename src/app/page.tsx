@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <>
       <LoadingScreen onComplete={handleLoadingComplete} />
-      <Nav mode={navMode} ready={navReady} onHome={goHome} />
+      <Nav mode={navMode} ready={navReady} onHome={goHome} isLoggedIn={isLoggedIn} />
       <HomeView
         slideUp={homeSlideUp}
         animated={homeAnimated}

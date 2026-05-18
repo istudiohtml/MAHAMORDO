@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import ParticleBackground from '@/components/landing/ParticleBackground'
 
 interface User {
   name?: string | null
@@ -19,6 +20,7 @@ const navItems = [
   { href: '/dashboard', label: 'หน้าหลัก', icon: '◈' },
   { href: '/dashboard/history', label: 'ประวัติดูดวง', icon: '◎' },
   { href: '/dashboard/credits', label: 'เครดิต', icon: '✦' },
+  { href: '/pricing', label: 'ราคา & แพ็คเก็จ', icon: '◇' },
   { href: '/dashboard/profile', label: 'ข้อมูลส่วนตัว', icon: '○' },
 ]
 
@@ -33,6 +35,8 @@ export default function DashSidebar({ user }: Props) {
 
   return (
     <aside className="dash-sidebar">
+      <ParticleBackground />
+
       {/* Logo */}
       <Link href="/" className="dash-logo">
         <span className="dash-logo-dot" />

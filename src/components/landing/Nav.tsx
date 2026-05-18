@@ -6,9 +6,10 @@ interface Props {
   mode: NavMode
   ready: boolean
   onHome: () => void
+  isLoggedIn?: boolean
 }
 
-export default function Nav({ mode, ready, onHome }: Props) {
+export default function Nav({ mode, ready, onHome, isLoggedIn }: Props) {
   const isDetail = mode === 'detail'
 
   return (
@@ -23,6 +24,12 @@ export default function Nav({ mode, ready, onHome }: Props) {
       <div className="nav-right">
         <a href="/fortune" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
         <a href="/pricing" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
+        <a
+          href={isLoggedIn ? '/dashboard' : '/auth/login'}
+          className={`nav-link${isDetail ? ' hidden-link' : ''}`}
+        >
+          {isLoggedIn ? 'แดชบอร์ด' : 'เข้าสู่ระบบ'}
+        </a>
         {isDetail && (
           <button className="nav-back visible" onClick={onHome}>
             <span className="nav-back-line" />

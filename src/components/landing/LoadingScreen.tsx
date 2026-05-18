@@ -2,11 +2,9 @@
 
 import { useEffect, useRef } from 'react'
 
-const RESOURCES = [
-  '/avatars/mae-mor-jan.svg',
-  '/avatars/por-mor-son.svg',
-  '/avatars/ajarn-rahu.svg',
-]
+import { ORACLE_PRELOAD_SVGS } from '@/lib/oracle-assets'
+
+const RESOURCES = ORACLE_PRELOAD_SVGS
 
 interface Props {
   onComplete: (isLoggedIn: boolean) => void

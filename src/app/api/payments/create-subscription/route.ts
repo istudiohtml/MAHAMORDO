@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     // Create Stripe checkout session for recurring payment
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'promptpay'],
       line_items: [
         {
           price_data: {

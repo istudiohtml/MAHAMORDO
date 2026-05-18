@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { oracles, OracleId } from '@/data/oracles'
+import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 import CosmicMandala from './CosmicMandala'
 
 interface Props {
@@ -48,7 +49,7 @@ export default function DetailView({
               {/* Oracle Avatar */}
               <div className="detail-avatar">
                 <img
-                  src={`/avatars/template-${o.slug}.jpg`}
+                  src={getOracleTemplateAvatar(o.slug)}
                   alt={o.name}
                   className="detail-avatar-img"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}

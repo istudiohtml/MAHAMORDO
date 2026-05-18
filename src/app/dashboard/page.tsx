@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
+import OracleTiltCards from '@/components/dashboard/OracleTiltCard'
 
 export default async function DashboardPage() {
   const cookieStore = await cookies()
@@ -29,11 +30,11 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="dash-stats">
-        <div className="dash-stat-card">
+        <Link href="/pricing" className="dash-stat-card dash-stat-link">
           <p className="dash-stat-label">เครดิตคงเหลือ</p>
           <p className="dash-stat-value">{user?.credits ?? 0}</p>
-          <p className="dash-stat-unit">เครดิต</p>
-        </div>
+          <p className="dash-stat-unit">ซื้อเครดิตเพิ่ม →</p>
+        </Link>
         <div className="dash-stat-card">
           <p className="dash-stat-label">การดูดวงทั้งหมด</p>
           <p className="dash-stat-value">{recentSessions.length}</p>
@@ -85,21 +86,7 @@ export default async function DashboardPage() {
       {/* Oracles CTA */}
       <div className="dash-section">
         <h2 className="dash-section-title">หมอดูของเรา</h2>
-        <div className="dash-oracle-cards">
-          {[
-            { num: 'I', name: 'แม่หมอจันทร์', sub: 'Thai Astrology', icon: '☽', cost: 1, id: 1 },
-            { num: 'II', name: 'พ่อหมอซอน', sub: 'Korean Saju', icon: '☯', cost: 1, id: 2 },
-            { num: 'III', name: 'อาจารย์ราหู', sub: 'Tarot', icon: '✦', cost: 2, id: 3 },
-          ].map((o) => (
-            <Link key={o.num} href={`/fortune/${o.id}`} className="dash-oracle-card">
-              <span className="dash-oracle-icon">{o.icon}</span>
-              <p className="dash-oracle-num">Oracle {o.num}</p>
-              <p className="dash-oracle-name">{o.name}</p>
-              <p className="dash-oracle-sub">{o.sub}</p>
-              <p className="dash-oracle-cost">{o.cost} เครดิต</p>
-            </Link>
-          ))}
-        </div>
+        <OracleTiltCards />
       </div>
     </div>
   )

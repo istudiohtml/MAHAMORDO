@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { oracles, OracleId } from '@/data/oracles'
 import { getAllCards, TarotCard } from '@/data/tarot-cards'
+import ParticleBackground from '@/components/landing/ParticleBackground'
+import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 
 const ORACLE_THEME: Record<OracleId, string> = {
   1: 'theme-maemor',
@@ -15,15 +17,6 @@ const ORACLE_BG: Record<OracleId, string> = {
   1: 'linear-gradient(135deg, #1E0F04 0%, #2A1C0C 100%)',
   2: 'linear-gradient(135deg, #080F1A 0%, #0D1A2E 100%)',
   3: 'linear-gradient(135deg, #100820 0%, #1A0D30 100%)',
-}
-
-const TEMPLATE_AVATAR_BY_SLUG: Record<string, string> = {
-  'yai-kham': '/avatars/template-mae-mor-jan.jpg',
-  'nang-fah': '/avatars/template-por-mor-son.jpg',
-  'mor-dum': '/avatars/template-ajarn-rahu.jpg',
-  'mae-mor-jan': '/avatars/template-mae-mor-jan.jpg',
-  'por-mor-son': '/avatars/template-por-mor-son.jpg',
-  'ajarn-rahu': '/avatars/template-ajarn-rahu.jpg',
 }
 
 function buildTarotReading(
@@ -57,24 +50,6 @@ function buildTarotReading(
   return lines.join('\n')
 }
 
-// Fixed star positions to avoid hydration mismatch
-const STARS = [
-  { left: '8%',  top: '12%', size: 1.5, dur: 3.2, delay: 0.4 },
-  { left: '23%', top: '5%',  size: 1,   dur: 2.5, delay: 1.1 },
-  { left: '45%', top: '18%', size: 2,   dur: 4.1, delay: 0.7 },
-  { left: '67%', top: '8%',  size: 1.5, dur: 3.6, delay: 1.9 },
-  { left: '82%', top: '22%', size: 1,   dur: 2.8, delay: 0.2 },
-  { left: '91%', top: '6%',  size: 2,   dur: 3.9, delay: 1.4 },
-  { left: '14%', top: '35%', size: 1,   dur: 4.3, delay: 0.9 },
-  { left: '78%', top: '42%', size: 1.5, dur: 2.7, delay: 0.5 },
-  { left: '56%', top: '55%', size: 1,   dur: 3.4, delay: 2.1 },
-  { left: '34%', top: '68%', size: 2,   dur: 4.8, delay: 0.3 },
-  { left: '88%', top: '71%', size: 1,   dur: 3.1, delay: 1.7 },
-  { left: '5%',  top: '80%', size: 1.5, dur: 2.9, delay: 0.8 },
-  { left: '62%', top: '85%', size: 1,   dur: 4.5, delay: 1.3 },
-  { left: '19%', top: '92%', size: 2,   dur: 3.7, delay: 0.6 },
-  { left: '48%', top: '95%', size: 1,   dur: 2.6, delay: 2.4 },
-]
 
 export default function FortuneChatPage() {
   const params = useParams()
@@ -266,21 +241,8 @@ export default function FortuneChatPage() {
 
   return (
     <div className="fortune-vn-bg" style={{ background: ORACLE_BG[oracleId] }}>
-      {/* Stars */}
-      <div className="fortune-vn-stars" aria-hidden="true">
-        {STARS.map((s, i) => (
-          <div
-            key={i}
-            className="fortune-vn-star"
-            style={{
-              left: s.left, top: s.top,
-              width: `${s.size}px`, height: `${s.size}px`,
-              animationDuration: `${s.dur}s`,
-              animationDelay: `${s.delay}s`,
-            }}
-          />
-        ))}
-      </div>
+      {/* Particle background — same as other pages */}
+      <ParticleBackground />
 
       {/* Main frame */}
       <div className={`fortune-vn-frame ${theme}`}>
@@ -301,7 +263,7 @@ export default function FortuneChatPage() {
           {/* Circular avatar — ใช้รูปเดียวกับหน้ารวม แต่ครอบในวงกลม */}
           <div className={`fortune-vn-avatar${isTalking ? ' talking' : ''}`}>
             <img
-              src={TEMPLATE_AVATAR_BY_SLUG[oracle.slug] ?? `/avatars/${oracle.slug}.svg`}
+              src={getOracleTemplateAvatar(oracle.slug)}
               alt={oracle.name}
             />
           </div>
@@ -358,11 +320,11 @@ export default function FortuneChatPage() {
               </div>
 
               <div className="fortune-vn-input-zone show">
-                <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', padding: '0 24px' }}>
+                <div className="vn-subject-row">
                   <button
+                    className="vn-gold-btn"
                     onClick={async () => {
                       setSubjectChosen('self')
-                      // Save choice to DB
                       if (sessionId) {
                         await fetch('/api/fortune/message', {
                           method: 'POST',
@@ -374,37 +336,15 @@ export default function FortuneChatPage() {
                           }),
                         })
                       }
-                      // Always show form for confirmation/editing
                       setShowBirthForm(true)
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '14px 24px',
-                      borderRadius: '8px',
-                      background: 'linear-gradient(135deg, #D4A853, #8B6914)',
-                      border: 'none',
-                      color: '#1A0800',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 3px 12px rgba(212,168,83,0.4)',
-                      transition: 'all 0.3s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,168,83,0.6)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 3px 12px rgba(212,168,83,0.4)'
                     }}
                   >
                     ตัวเอง
                   </button>
                   <button
+                    className="vn-gold-btn"
                     onClick={async () => {
                       setSubjectChosen('other')
-                      // Save choice to DB
                       if (sessionId) {
                         await fetch('/api/fortune/message', {
                           method: 'POST',
@@ -417,27 +357,6 @@ export default function FortuneChatPage() {
                         })
                       }
                       setShowBirthForm(true)
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '14px 24px',
-                      borderRadius: '8px',
-                      background: 'linear-gradient(135deg, #D4A853, #8B6914)',
-                      border: 'none',
-                      color: '#1A0800',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 3px 12px rgba(212,168,83,0.4)',
-                      transition: 'all 0.3s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,168,83,0.6)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 3px 12px rgba(212,168,83,0.4)'
                     }}
                   >
                     คนอื่น
@@ -456,19 +375,13 @@ export default function FortuneChatPage() {
                 </div>
               </div>
               <div className="fortune-vn-input-zone show" style={{ justifyContent: 'center', display: 'flex' }}>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gap: '14px',
-                  padding: '0 16px',
-                  maxWidth: '360px',
-                }}>
+                <div className="vn-topic-grid">
                   {TOPICS.map((topic) => (
                     <button
                       key={topic.id}
+                      className="vn-topic-btn"
                       onClick={async () => {
                         setTopicChosen(topic.id)
-                        // Save topic to DB (message + session)
                         if (sessionId) {
                           await fetch('/api/fortune/message', {
                             method: 'POST',
@@ -481,229 +394,26 @@ export default function FortuneChatPage() {
                             }),
                           })
                         }
-                        // For oracle 3 (tarot), show card selection
                         if (oracleId === 3) {
-                          console.log('DEBUG: Oracle 3 detected, showing tarot modal')
                           const allCards = getAllCards()
-                          console.log('DEBUG: Got', allCards.length, 'cards')
                           setTarotCards(allCards)
                           setSelectedCards([])
                           setAskingForCard(true)
-                          console.log('DEBUG: askingForCard set to true')
                         }
                         setAskingTopic(false)
                       }}
-                      style={{
-                        padding: '20px 16px',
-                        borderRadius: '12px',
-                        background: 'rgba(26, 8, 0, 0.4)',
-                        border: '1.5px solid rgba(212, 168, 83, 0.3)',
-                        cursor: 'pointer',
-                        transition: 'all 0.35s ease',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: '10px',
-                        position: 'relative',
-                        textAlign: 'left',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(212,168,83,0.12)'
-                        e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.6)'
-                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(212,168,83,0.15)'
-                        e.currentTarget.style.transform = 'translateY(-4px)'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(26, 8, 0, 0.4)'
-                        e.currentTarget.style.borderColor = 'rgba(212, 168, 83, 0.3)'
-                        e.currentTarget.style.boxShadow = 'none'
-                        e.currentTarget.style.transform = 'translateY(0)'
-                      }}
                     >
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        width: '100%',
-                      }}>
-                        <span style={{ fontSize: '24px' }}>{topic.emoji}</span>
-                        <span style={{
-                          color: '#D4A853',
-                          fontSize: '14px',
-                          fontWeight: '700',
-                          letterSpacing: '0.5px',
-                          textTransform: 'uppercase',
-                        }}>
-                          {topic.name}
-                        </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                        <span className="vn-topic-emoji">{topic.emoji}</span>
+                        <span className="vn-topic-name">{topic.name}</span>
                       </div>
-                      <span style={{
-                        color: 'rgba(212, 168, 83, 0.6)',
-                        fontSize: '12px',
-                        lineHeight: '1.4',
-                        fontWeight: '400',
-                      }}>
-                        {topic.description}
-                      </span>
+                      <span className="vn-topic-desc">{topic.description}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </>
           )}
-
-          {/* Tarot card selection - MODAL OVERLAY */}
-          {askingForCard && oracleId === 3 && (() => {
-            console.log('DEBUG: Rendering tarot modal. askingForCard:', askingForCard, 'oracleId:', oracleId, 'tarotCards.length:', tarotCards.length, 'selectedCards:', selectedCards.length)
-            return (
-            <div style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.9)',
-              zIndex: 9999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px',
-            }}>
-              {/* Modal box */}
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(20,10,0,0.98), rgba(10,5,0,0.99))',
-                border: '2px solid rgba(212,168,83,0.4)',
-                borderRadius: '16px',
-                padding: '28px',
-                maxWidth: '600px',
-                width: '100%',
-                maxHeight: '85vh',
-                overflowY: 'auto',
-              }}>
-                {/* TITLE */}
-                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                  <div style={{
-                    fontSize: '20px',
-                    color: '#D4A853',
-                    fontWeight: 700,
-                    letterSpacing: '3px',
-                    marginBottom: '12px',
-                  }}>
-                    ◆ เลือกไพ่ ◆
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    color: 'rgba(212,168,83,0.75)',
-                    marginBottom: '16px',
-                  }}>
-                    {selectedCards.length === 0 && 'เลือกไพ่ 3 ใบ'}
-                    {selectedCards.length === 1 && 'เลือกอีก 2 ใบ'}
-                    {selectedCards.length === 2 && 'เลือกอีก 1 ใบ'}
-                    {selectedCards.length === 3 && '✨ ไพ่เปิดเผยแล้ว ✨'}
-                  </div>
-                  {/* DOT INDICATORS */}
-                  <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                    {[0, 1, 2].map(idx => (
-                      <div key={idx} style={{
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        background: selectedCards.length > idx ? '#D4A853' : 'rgba(212,168,83,0.25)',
-                        boxShadow: selectedCards.length > idx ? '0 0 12px #D4A853' : 'none',
-                        transition: 'all 0.3s ease',
-                      }} />
-                    ))}
-                  </div>
-                </div>
-
-                {/* CARD GRID */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(5, 1fr)',
-                  gap: '14px',
-                }}>
-                  {tarotCards.map(card => {
-                    const isSelected = selectedCards.some(sc => sc.card.id === card.id)
-                    return (
-                      <button
-                        key={card.id}
-                        onClick={async () => {
-                          if (selectedCards.length >= 3 || isSelected) return
-
-                          const newSelected = [...selectedCards, {
-                            position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future',
-                            card,
-                          }]
-                          setSelectedCards(newSelected)
-
-                          // Save message
-                          if (sessionId) {
-                            const posLabels = ['อดีต', 'ปัจจุบัน', 'อนาคต']
-                            await fetch('/api/fortune/message', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                sessionId,
-                                content: `🃏 [${posLabels[selectedCards.length]}] ${card.nameThai}`,
-                                role: 'USER',
-                              }),
-                            })
-                          }
-
-                          // When 3 selected: close and show reading
-                          if (newSelected.length === 3) {
-                            setTimeout(() => {
-                              setAskingForCard(false)
-                              const reading = buildTarotReading(newSelected, birthData, userName)
-                              typeText(reading)
-                            }, 600)
-                          }
-                        }}
-                        disabled={selectedCards.length >= 3 || isSelected}
-                        style={{
-                          padding: '14px 10px',
-                          borderRadius: '10px',
-                          background: isSelected ? 'rgba(212,168,83,0.25)' : 'rgba(26,8,0,0.7)',
-                          border: isSelected ? '2px solid #D4A853' : '1.5px solid rgba(212,168,83,0.3)',
-                          color: '#D4A853',
-                          cursor: isSelected || selectedCards.length >= 3 ? 'default' : 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: '6px',
-                          opacity: isSelected || selectedCards.length >= 3 ? 0.5 : 1,
-                          transition: 'all 0.2s ease',
-                          fontSize: '12px',
-                          fontFamily: 'inherit',
-                        }}
-                        onMouseEnter={e => {
-                          if (!isSelected && selectedCards.length < 3) {
-                            e.currentTarget.style.background = 'rgba(212,168,83,0.15)'
-                            e.currentTarget.style.borderColor = 'rgba(212,168,83,0.7)'
-                            e.currentTarget.style.boxShadow = '0 0 20px rgba(212,168,83,0.25)'
-                          }
-                        }}
-                        onMouseLeave={e => {
-                          if (!isSelected && selectedCards.length < 3) {
-                            e.currentTarget.style.background = 'rgba(26,8,0,0.7)'
-                            e.currentTarget.style.borderColor = 'rgba(212,168,83,0.3)'
-                            e.currentTarget.style.boxShadow = 'none'
-                          }
-                        }}
-                      >
-                        <span style={{ fontSize: '18px' }}>{card.emoji}</span>
-                        <span style={{ fontSize: '9px', lineHeight: '1.2', textAlign: 'center', fontWeight: 500 }}>
-                          {card.nameThai.substring(0, 9)}
-                        </span>
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
-            )
-          })()}
-
 
           {/* Birth data form state */}
           {!starting && !error && showBirthForm && subjectChosen && (
@@ -716,124 +426,54 @@ export default function FortuneChatPage() {
                 </div>
               </div>
               <div className="fortune-vn-input-zone show">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '0 24px' }}>
-                  <div style={{ fontSize: '12px', color: 'rgba(212,168,83,0.6)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    ชื่อ นามสกุล
-                  </div>
+                <div className="vn-form">
+                  <div className="vn-form-label">ชื่อ นามสกุล</div>
                   <input
                     type="text"
+                    className="vn-form-input"
                     placeholder="กรอกชื่อ นามสกุล"
                     value={birthData.fullName || ''}
                     onChange={(e) => setBirthData({ ...birthData, fullName: e.target.value })}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '6px',
-                      border: '1px solid #8B6914',
-                      background: 'rgba(212,168,83,0.08)',
-                      color: '#D4A853',
-                      fontSize: '13px',
-                      fontFamily: 'inherit',
-                      transition: 'all 0.3s',
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#D4A853'
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(212,168,83,0.3)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#8B6914'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
                   />
 
-                  <div style={{ fontSize: '12px', color: 'rgba(212,168,83,0.6)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
-                    วันเกิด <span style={{ color: 'rgba(212,168,83,0.4)', fontSize: '10px' }}>*บังคับ</span>
+                  <div className="vn-form-label">
+                    วันเกิด <span className="vn-form-label-required">*บังคับ</span>
                   </div>
                   <input
                     type="date"
+                    className="vn-form-input"
                     placeholder="วันเกิด"
                     value={birthData.birthDate || ''}
                     onChange={(e) => setBirthData({ ...birthData, birthDate: e.target.value })}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '6px',
-                      border: '1px solid #8B6914',
-                      background: 'rgba(212,168,83,0.08)',
-                      color: '#D4A853',
-                      fontSize: '13px',
-                      fontFamily: 'inherit',
-                      transition: 'all 0.3s',
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#D4A853'
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(212,168,83,0.3)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#8B6914'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
                   />
-                  <div style={{ fontSize: '12px', color: 'rgba(212,168,83,0.6)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
-                    เวลาเกิด <span style={{ color: 'rgba(212,168,83,0.3)', fontSize: '10px' }}>(ตัวเลือก)</span>
+                  <div className="vn-form-label">
+                    เวลาเกิด <span className="vn-form-label-optional">(ตัวเลือก)</span>
                   </div>
                   <input
                     type="time"
+                    className="vn-form-input"
                     placeholder="เวลาเกิด"
                     value={birthData.birthTime || ''}
                     onChange={(e) => setBirthData({ ...birthData, birthTime: e.target.value })}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '6px',
-                      border: '1px solid #8B6914',
-                      background: 'rgba(212,168,83,0.08)',
-                      color: '#D4A853',
-                      fontSize: '13px',
-                      fontFamily: 'inherit',
-                      transition: 'all 0.3s',
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#D4A853'
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(212,168,83,0.3)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#8B6914'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
                   />
-                  <div style={{ fontSize: '12px', color: 'rgba(212,168,83,0.6)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
-                    สถานที่เกิด <span style={{ color: 'rgba(212,168,83,0.3)', fontSize: '10px' }}>(ตัวเลือก)</span>
+                  <div className="vn-form-label">
+                    สถานที่เกิด <span className="vn-form-label-optional">(ตัวเลือก)</span>
                   </div>
                   <input
                     type="text"
+                    className="vn-form-input"
                     placeholder="สถานที่เกิด"
                     value={birthData.birthPlace || ''}
                     onChange={(e) => setBirthData({ ...birthData, birthPlace: e.target.value })}
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '6px',
-                      border: '1px solid #8B6914',
-                      background: 'rgba(212,168,83,0.08)',
-                      color: '#D4A853',
-                      fontSize: '13px',
-                      fontFamily: 'inherit',
-                      transition: 'all 0.3s',
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = '#D4A853'
-                      e.currentTarget.style.boxShadow = '0 0 12px rgba(212,168,83,0.3)'
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = '#8B6914'
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
                   />
                   <button
+                    className="vn-gold-btn"
                     onClick={async () => {
                       if (!birthData.birthDate) {
                         alert('กรุณากรอกวันเกิด')
                         return
                       }
 
-                      // Save birth data to message history
                       const parts = [`ชื่อ: ${birthData.fullName || '-'}`, `วันเกิด: ${birthData.birthDate}`]
                       if (birthData.birthTime) parts.push(`เวลาเกิด: ${birthData.birthTime}`)
                       if (birthData.birthPlace) parts.push(`สถานที่เกิด: ${birthData.birthPlace}`)
@@ -852,7 +492,6 @@ export default function FortuneChatPage() {
                       }
 
                       if (subjectChosen === 'self') {
-                        // Save to user profile (name + birth data)
                         const nameParts = (birthData.fullName || '').split(' ')
                         await fetch('/api/user/me', {
                           method: 'PATCH',
@@ -869,27 +508,6 @@ export default function FortuneChatPage() {
                       setShowBirthForm(false)
                       setAskingSubject(false)
                       setAskingTopic(true)
-                    }}
-                    style={{
-                      padding: '12px 24px',
-                      marginTop: '4px',
-                      borderRadius: '6px',
-                      background: 'linear-gradient(135deg, #D4A853, #8B6914)',
-                      border: 'none',
-                      color: '#1A0800',
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      boxShadow: '0 3px 12px rgba(212,168,83,0.4)',
-                      transition: 'all 0.3s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)'
-                      e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,168,83,0.6)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 3px 12px rgba(212,168,83,0.4)'
                     }}
                   >
                     ยืนยัน
@@ -939,39 +557,41 @@ export default function FortuneChatPage() {
         </div>
       </div>
 
-      {/* Tarot Modal - you add CSS to globals.css */}
+      {/* Tarot card selection - MODAL OVERLAY (outside frame container) */}
       {askingForCard && oracleId === 3 && (
-        <div className="tarot-overlay show" id="tarotOverlay">
-          <div className="tarot-modal-box">
-            <div className="tarot-header">
-              <div className="tarot-title">◆ เลือกไพ่ ◆</div>
-              <div className="tarot-subtitle" id="tarotSubtitle">
+        <div className="vn-tarot-overlay">
+          <div className="vn-tarot-box">
+            <div className="vn-tarot-header">
+              <div className="vn-tarot-title">◆ เลือกไพ่ ◆</div>
+              <div className="vn-tarot-subtitle">
                 {selectedCards.length === 0 && 'เลือกไพ่ 3 ใบ'}
                 {selectedCards.length === 1 && 'เลือกอีก 2 ใบ'}
                 {selectedCards.length === 2 && 'เลือกอีก 1 ใบ'}
                 {selectedCards.length === 3 && '✨ ไพ่เปิดเผยแล้ว ✨'}
               </div>
-              <div className="tarot-dots">
+              <div className="vn-tarot-dots">
                 {[0, 1, 2].map(idx => (
-                  <span key={idx} className={`sel-dot ${selectedCards.length > idx ? 'filled' : ''}`} id={`sdot${idx}`} />
+                  <div key={idx} className={`vn-tarot-dot${selectedCards.length > idx ? ' filled' : ''}`} />
                 ))}
               </div>
             </div>
 
-            <div className="tarot-grid">
+            <div className="vn-tarot-grid">
               {tarotCards.map(card => {
                 const isSelected = selectedCards.some(sc => sc.card.id === card.id)
                 return (
                   <button
                     key={card.id}
-                    className={`tarot-slot ${isSelected ? 'selected' : 'selectable'}`}
+                    className={`vn-tarot-card${isSelected ? ' selected' : ''}`}
                     onClick={async () => {
                       if (selectedCards.length >= 3 || isSelected) return
+
                       const newSelected = [...selectedCards, {
-                        position: selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future',
+                        position: (selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future') as 'past' | 'present' | 'future',
                         card,
                       }]
                       setSelectedCards(newSelected)
+
                       if (sessionId) {
                         const posLabels = ['อดีต', 'ปัจจุบัน', 'อนาคต']
                         await fetch('/api/fortune/message', {
@@ -984,6 +604,7 @@ export default function FortuneChatPage() {
                           }),
                         })
                       }
+
                       if (newSelected.length === 3) {
                         setTimeout(() => {
                           setAskingForCard(false)
@@ -994,8 +615,8 @@ export default function FortuneChatPage() {
                     }}
                     disabled={selectedCards.length >= 3 || isSelected}
                   >
-                    <div className="slot-icon">{card.emoji}</div>
-                    <div className="slot-name">{card.nameThai.substring(0, 9)}</div>
+                    <span className="vn-tarot-card-emoji">{card.emoji}</span>
+                    <span className="vn-tarot-card-name">{card.nameThai.substring(0, 9)}</span>
                   </button>
                 )
               })}

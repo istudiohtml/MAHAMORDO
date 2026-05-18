@@ -9,7 +9,6 @@ const ERROR_MESSAGES: Record<string, string> = {
   oauth_failed: 'การเข้าสู่ระบบด้วย Social Login ล้มเหลว กรุณาลองใหม่',
   no_email: 'ไม่พบอีเมลจากบัญชีนี้ กรุณาใช้วิธีอื่น',
   google_not_configured: 'Google Login ยังไม่ได้ตั้งค่า กรุณาติดต่อผู้ดูแล',
-  apple_not_configured: 'Apple Login ยังไม่ได้ตั้งค่า กรุณาติดต่อผู้ดูแล',
 }
 
 function LoginForm() {

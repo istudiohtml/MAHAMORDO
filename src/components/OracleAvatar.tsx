@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getOracleSvgAvatar } from '@/lib/oracle-assets'
 
 interface OracleAvatarProps {
   slug: string
@@ -16,7 +17,7 @@ interface OracleAvatarProps {
  */
 export default function OracleAvatar({ slug, emoji, className = '', avatarUrl }: OracleAvatarProps) {
   const [imgError, setImgError] = useState(false)
-  const src = avatarUrl || `/avatars/${slug}.svg`
+  const src = getOracleSvgAvatar(slug, avatarUrl)
 
   return (
     <div className={`oracle-avatar ${className}`.trim()}>

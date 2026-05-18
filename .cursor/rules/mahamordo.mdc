@@ -1,0 +1,23 @@
+---
+description: MAHAMORDO project conventions and deferred features
+alwaysApply: true
+---
+
+# MAHAMORDO
+
+## Apple Login — disabled
+
+**Sign in with Apple is intentionally OFF.** Do not add Apple OAuth buttons, routes, or env wiring unless the user explicitly asks to implement it.
+
+- Source of truth: `src/lib/auth-providers.ts` (`apple: false`)
+- Backlog and re-enable steps: `docs/REMAINING.md`
+
+## Remaining work
+
+When asked what is left to do, read and update `docs/REMAINING.md` rather than guessing from memory.
+
+## Code conventions
+
+- User-facing copy: Thai
+- Code comments: English only
+- Auth providers: email + Google only (while Apple is disabled)
