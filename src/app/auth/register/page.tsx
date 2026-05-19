@@ -94,6 +94,7 @@ export default function RegisterPage() {
                 placeholder="your@email.com"
                 required
                 className="auth-input"
+                data-testid="auth-email"
               />
             </div>
             <div className="auth-field">
@@ -106,13 +107,14 @@ export default function RegisterPage() {
                 required
                 minLength={8}
                 className="auth-input"
+                data-testid="auth-password"
               />
               <small className="auth-hint">ต้องมี: 8+ ตัวอักษร, อักษรใหญ่, อักษรเล็ก, ตัวเลข</small>
             </div>
 
             {error && <div className="auth-error">{error}</div>}
 
-            <button type="submit" disabled={loading} className="auth-submit">
+            <button type="submit" disabled={loading} className="auth-submit" data-testid="auth-submit">
               {loading ? 'กำลังสมัคร...' : 'สมัครสมาชิก ✦'}
             </button>
           </form>

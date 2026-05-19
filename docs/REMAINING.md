@@ -14,7 +14,7 @@
 | **Apple Login** | **ปิดชั่วคราว** — ดูหัวข้อด้านล่าง |
 | Stripe payments | โค้ดมี — ต้องตั้งค่า keys + webhook |
 | Unit tests | ยังไม่มีไฟล์ test |
-| Git | branch ahead `origin/main` ~32 commits, มี WIP ยังไม่ commit |
+| Git | sync กับ `origin/main` แล้ว |
 
 ---
 
@@ -67,19 +67,9 @@
 
 ---
 
-## งาน UI / โค้ดที่ยังไม่ commit (WIP)
+## Smoke test ก่อน deploy
 
-ไฟล์ที่แก้ค้าง (ตรวจ `git status` ล่าสุด):
-
-- Landing: `src/app/page.tsx`, `globals.css`, `Nav.tsx`
-- Fortune: `fortune/page.tsx`, `fortune/[id]/page.tsx`, `components/fortune/*`
-- Pricing: `pricing/page.tsx`, `components/pricing/PricingBg.tsx`
-- Dashboard: `dashboard/page.tsx`, `DashSidebar.tsx`, `OracleTiltCard.tsx`
-- Payments API: `create-checkout`, `create-subscription`
-- ทดลอง: `src/app/v2/page.tsx`
-- Assets: avatar จัดแล้วใน `public/avatars/` (ดู `_archive/` สำหรับร่าง)
-
-**แนะนำหลังทดสอบ:** commit + push ขึ้น remote
+- [ ] รันตาม [`docs/SMOKE_TEST.md`](./SMOKE_TEST.md) (53 ข้อ)
 
 ---
 
@@ -105,8 +95,9 @@
 
 ### 4. Tests
 
-- [x] `src/lib/oracle-assets.test.ts` (6 cases)
-- [ ] auth, fortune API, credit deduction
+- [x] `src/lib/oracle-assets.test.ts` (6 unit tests)
+- [x] Playwright E2E — `e2e/*.spec.ts` (`npm run test:e2e`)
+- [ ] เพิ่ม E2E: Stripe checkout, CMS, forgot-password
 
 ---
 
@@ -138,6 +129,7 @@ npm test             # Vitest (ยังไม่มี test files)
 
 ## อ้างอิง
 
+- Smoke test: [`docs/SMOKE_TEST.md`](./SMOKE_TEST.md)
 - Auth flags: `src/lib/auth-providers.ts`
 - Design context: `.impeccable.md`
 - Cursor rule (AI จดจำ): `.cursor/rules/mahamordo.mdc`

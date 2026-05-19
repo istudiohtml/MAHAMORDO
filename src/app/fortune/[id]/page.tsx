@@ -109,6 +109,15 @@ export default function FortuneChatPage() {
     setIsTalking(true)
     setInputVisible(false)
 
+    if (process.env.NEXT_PUBLIC_E2E_FAST_TYPING === 'true') {
+      setDisplayText(text)
+      setIsTyping(false)
+      setIsTalking(false)
+      setInputVisible(true)
+      onDone?.()
+      return
+    }
+
     const speed = oracleId === 3 ? 55 : 42
     let displayIndex = 0
 

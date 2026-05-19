@@ -1,0 +1,12 @@
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+
+/** Readiness probe for Playwright / deploy checks */
+export async function GET() {
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    return NextResponse.json({ ok: true, db: true })
+  } catch {
+    return NextResponse.json({ ok: false, db: false }, { status: 503 })
+  }
+}

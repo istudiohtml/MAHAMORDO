@@ -71,6 +71,15 @@ export async function POST(req: NextRequest) {
     }));
     history.push({ role: "user", content: message });
 
+    // E2E: skip Claude when mock flag is set (Playwright / CI)
+    if (process.env.E2E_MOCK_AI === "true") {
+      const reply = "คำทำนายทดสอบ E2E — โชคดีในเรื่องที่ถาม";
+      await prisma.message.create({
+        data: { sessionId, role: "ASSISTANT", content: reply },
+      });
+      return NextResponse.json({ reply });
+    }
+
     // เรียก Claude ด้วย systemPrompt จาก DB + ชื่อผู้ใช้
     const userNameContext = userName ? `\n\nหมายเหตุ: ชื่อลูกค้าของท่านคือ "${userName}" ใช้ชื่อนี้เวลาทักทายและสังสรรค์สนทนา` : '';
     const systemPrompt = session.oracle.systemPrompt + userNameContext;

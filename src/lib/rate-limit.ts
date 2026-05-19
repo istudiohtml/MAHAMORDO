@@ -14,6 +14,10 @@ export function rateLimit(
   windowMs: number,
 ) {
   return (req: NextRequest): { limited: boolean; retryAfter?: number } => {
+    if (process.env.E2E_DISABLE_RATE_LIMIT === 'true') {
+      return { limited: false }
+    }
+
     const clientId = getClientId(req)
     const now = Date.now()
     const record = limits.get(clientId)

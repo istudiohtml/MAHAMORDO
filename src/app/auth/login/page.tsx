@@ -91,6 +91,7 @@ function LoginForm() {
                 placeholder="your@email.com"
                 required
                 className="auth-input"
+                data-testid="auth-email"
               />
             </div>
             <div className="auth-field">
@@ -102,6 +103,7 @@ function LoginForm() {
                 placeholder="••••••••"
                 required
                 className="auth-input"
+                data-testid="auth-password"
               />
               <div style={{ textAlign: 'right', marginTop: '-4px' }}>
                 <Link href="/auth/forgot-password" className="auth-forgot-link">ลืมรหัสผ่าน?</Link>
@@ -110,7 +112,7 @@ function LoginForm() {
 
             {error && <div className="auth-error">{error}</div>}
 
-            <button type="submit" disabled={loading} className="auth-submit">
+            <button type="submit" disabled={loading} className="auth-submit" data-testid="auth-submit">
               {loading ? 'กำลังเข้าสู่ระบบ...' : 'เข้าสู่ระบบ ✦'}
             </button>
           </form>
