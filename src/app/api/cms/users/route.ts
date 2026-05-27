@@ -15,8 +15,13 @@ export async function GET(req: NextRequest) {
       role: true,
       credits: true,
       createdAt: true,
+      provider: true,
+      deletionRequestedAt: true,
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: [
+      { deletionRequestedAt: { sort: "desc", nulls: "last" } },
+      { createdAt: "desc" },
+    ],
   });
   return NextResponse.json(users);
 }

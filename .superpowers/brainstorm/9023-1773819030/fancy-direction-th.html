@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เลือก Visual Style</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0A0806; color:#F5E8C0; font-family:'Prompt',sans-serif; }
+
+  .page-header { text-align:center; padding:50px 24px 12px; }
+  .page-header h1 { font-size:12px; letter-spacing:5px; color:#B8860B; font-weight:400; margin-bottom:12px; text-transform:uppercase; }
+  .page-header h2 { font-size:26px; font-weight:300; color:#F5E8C0; margin-bottom:8px; }
+  .page-header p { font-size:12px; color:#8A7A6A; max-width:500px; margin:0 auto; line-height:1.8; }
+
+  .options { display:flex; flex-direction:column; gap:24px; padding:36px 28px 80px; max-width:1100px; margin:0 auto; }
+
+  .opt {
+    border:1px solid #2A2218; border-radius:14px; overflow:hidden; cursor:pointer;
+    transition:all 0.4s cubic-bezier(0.4,0,0.2,1); background:#0F0C08; display:flex;
+    position:relative;
+  }
+  .opt:hover { border-color:#B8860B; box-shadow:0 12px 40px rgba(184,134,11,0.12); }
+  .opt.selected { border-color:#E8C84A; box-shadow:0 0 40px rgba(232,200,74,0.15); }
+  .opt.selected::after {
+    content:'✓'; position:absolute; top:14px; right:14px; width:26px; height:26px;
+    background:#E8C84A; color:#0A0806; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:13px; font-weight:700; z-index:10;
+  }
+
+  .opt-info { width:300px; flex-shrink:0; padding:28px 24px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid #1A150E; }
+  .opt-info h3 { font-size:17px; font-weight:600; color:#E8C84A; margin-bottom:10px; }
+  .opt-info p { font-size:12px; color:#8A7A6A; line-height:1.9; }
+  .opt-info .feat { margin-top:14px; display:flex; flex-direction:column; gap:6px; }
+  .opt-info .feat span {
+    font-size:11px; color:#B8860B; padding-left:14px; position:relative;
+  }
+  .opt-info .feat span::before {
+    content:'✦'; position:absolute; left:0; font-size:8px; top:2px; color:#D4A853;
+  }
+
+  .demo { flex:1; height:400px; position:relative; overflow:hidden; }
+
+  /* ═══ A: แผนที่ดวงดาว ═══ */
+  .demo-a { background:radial-gradient(ellipse at 50% 50%, #1a1208 0%, #0A0806 100%); }
+
+  .demo-a .star {
+    position:absolute; width:3px; height:3px; background:#E8C84A; border-radius:50%;
+    box-shadow:0 0 6px rgba(232,200,74,0.4);
+  }
+  .demo-a .star-line {
+    position:absolute; height:1px; background:linear-gradient(90deg, rgba(232,200,74,0.3), rgba(232,200,74,0.05));
+    transform-origin:left center;
+  }
+  .demo-a .center-mandala {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:200px; height:200px;
+  }
+  .demo-a .m-ring {
+    position:absolute; inset:0; border:1px solid rgba(212,168,83,0.12); border-radius:50%;
+    animation:mRot 20s linear infinite;
+  }
+  .demo-a .m-ring:nth-child(2) { inset:15px; border-style:dashed; border-color:rgba(212,168,83,0.08); animation-direction:reverse; animation-duration:30s; }
+  .demo-a .m-ring:nth-child(3) { inset:35px; border-color:rgba(212,168,83,0.15); animation-duration:25s; }
+  .demo-a .m-ring:nth-child(4) { inset:55px; border-style:dotted; border-color:rgba(212,168,83,0.1); animation-direction:reverse; animation-duration:15s; }
+  @keyframes mRot { to { transform:rotate(360deg); } }
+
+  .demo-a .m-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:32px; text-shadow:0 0 30px rgba(232,200,74,0.3); }
+  .demo-a .m-name { position:absolute; top:calc(50% + 40px); left:50%; transform:translateX(-50%); font-family:'Cinzel',serif; font-size:14px; letter-spacing:4px; color:#E8C84A; }
+  .demo-a .zodiac { position:absolute; font-size:10px; color:#B8860B; opacity:0.3; }
+
+  /* ═══ B: หมอกทอง ═══ */
+  .demo-b { background:#0A0806; }
+  .demo-b .smoke {
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%);
+    animation:sDrift ease-in-out infinite; filter:blur(20px);
+  }
+  .demo-b .smoke:nth-child(1) { width:200px; height:200px; left:20%; top:30%; animation-duration:8s; }
+  .demo-b .smoke:nth-child(2) { width:160px; height:160px; left:60%; top:50%; animation-duration:10s; animation-delay:2s; }
+  .demo-b .smoke:nth-child(3) { width:120px; height:120px; left:40%; top:20%; animation-duration:7s; animation-delay:4s; }
+  @keyframes sDrift {
+    0%,100% { transform:translate(0,0) scale(1); opacity:0.4; }
+    33% { transform:translate(20px,-15px) scale(1.1); opacity:0.7; }
+    66% { transform:translate(-10px,10px) scale(0.95); opacity:0.5; }
+  }
+  .demo-b .dust {
+    position:absolute; border-radius:50%; background:#E8C84A;
+    animation:dFloat ease-in-out infinite;
+  }
+  .demo-b .dust:nth-child(4) { width:2px; height:2px; left:15%; top:25%; opacity:0.3; animation-duration:4s; }
+  .demo-b .dust:nth-child(5) { width:1.5px; height:1.5px; left:80%; top:35%; opacity:0.2; animation-duration:5s; animation-delay:1s; }
+  .demo-b .dust:nth-child(6) { width:2px; height:2px; left:25%; top:70%; opacity:0.25; animation-duration:3.5s; animation-delay:2s; }
+  .demo-b .dust:nth-child(7) { width:1px; height:1px; left:70%; top:65%; opacity:0.3; animation-duration:4.5s; animation-delay:0.5s; }
+  .demo-b .dust:nth-child(8) { width:2px; height:2px; left:50%; top:15%; opacity:0.2; animation-duration:3s; animation-delay:1.5s; }
+  @keyframes dFloat { 0%,100% { transform:translateY(0); opacity:0.15; } 50% { transform:translateY(-20px); opacity:0.5; } }
+
+  .demo-b .avatar-area { position:absolute; top:50%; left:50%; transform:translate(-50%,-55%); text-align:center; }
+  .demo-b .av-glow {
+    width:110px; height:110px; border-radius:50%; margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center; font-size:38px;
+    background:rgba(0,0,0,0.4); border:1px solid rgba(212,168,83,0.2);
+    box-shadow:0 0 60px rgba(212,168,83,0.1), inset 0 0 30px rgba(212,168,83,0.05);
+  }
+  .demo-b .av-name { font-size:22px; font-weight:600; color:#F5D98A; letter-spacing:2px; text-shadow:0 0 30px rgba(245,217,138,0.2); }
+  .demo-b .av-sub { font-size:9px; letter-spacing:3px; color:#B8860B; margin-top:4px; text-transform:uppercase; }
+  .demo-b .av-quote { position:absolute; bottom:40px; left:50%; transform:translateX(-50%); font-size:12px; font-style:italic; color:#B8860B; opacity:0.6; white-space:nowrap; }
+
+  /* ═══ C: ยันต์ศักดิ์สิทธิ์ ═══ */
+  .demo-c { background:radial-gradient(ellipse at 50% 50%, #14100a 0%, #0A0806 100%); }
+  .demo-c .yantra { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:280px; height:280px; }
+  .demo-c .y-circle { position:absolute; inset:0; border:1px solid rgba(212,168,83,0.15); border-radius:50%; }
+  .demo-c .y-tri {
+    position:absolute; top:50%; left:50%; width:0; height:0;
+    border-left:70px solid transparent; border-right:70px solid transparent;
+    border-bottom:120px solid rgba(212,168,83,0.06);
+  }
+  .demo-c .y-tri:nth-child(2) { transform:translate(-50%,-60%); }
+  .demo-c .y-tri:nth-child(3) { transform:translate(-50%,-40%) rotate(180deg); }
+
+  .demo-c .lotus {
+    position:absolute; inset:30px; border-radius:50%;
+    border:1px solid rgba(212,168,83,0.1);
+    animation:mRot 40s linear infinite;
+  }
+  .demo-c .petal {
+    position:absolute; width:8px; height:24px;
+    background:rgba(212,168,83,0.08); border-radius:50%;
+    top:-12px; left:50%; transform-origin:center calc(100% + 76px);
+  }
+  .demo-c .petal:nth-child(1) { transform:translateX(-50%) rotate(0deg); }
+  .demo-c .petal:nth-child(2) { transform:translateX(-50%) rotate(30deg); }
+  .demo-c .petal:nth-child(3) { transform:translateX(-50%) rotate(60deg); }
+  .demo-c .petal:nth-child(4) { transform:translateX(-50%) rotate(90deg); }
+  .demo-c .petal:nth-child(5) { transform:translateX(-50%) rotate(120deg); }
+  .demo-c .petal:nth-child(6) { transform:translateX(-50%) rotate(150deg); }
+  .demo-c .petal:nth-child(7) { transform:translateX(-50%) rotate(180deg); }
+  .demo-c .petal:nth-child(8) { transform:translateX(-50%) rotate(210deg); }
+  .demo-c .petal:nth-child(9) { transform:translateX(-50%) rotate(240deg); }
+  .demo-c .petal:nth-child(10) { transform:translateX(-50%) rotate(270deg); }
+  .demo-c .petal:nth-child(11) { transform:translateX(-50%) rotate(300deg); }
+  .demo-c .petal:nth-child(12) { transform:translateX(-50%) rotate(330deg); }
+
+  .demo-c .inner-glow {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:80px; height:80px; border-radius:50%;
+    background:radial-gradient(circle, rgba(212,168,83,0.15) 0%, transparent 70%);
+    animation:gPulse 3s ease-in-out infinite;
+  }
+  @keyframes gPulse {
+    0%,100% { opacity:0.5; transform:translate(-50%,-50%) scale(1); }
+    50% { opacity:1; transform:translate(-50%,-50%) scale(1.15); }
+  }
+  .demo-c .y-icon { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:28px; z-index:2; text-shadow:0 0 20px rgba(232,200,74,0.3); }
+  .demo-c .y-name { position:absolute; top:calc(50% + 160px); left:50%; transform:translateX(-50%); font-size:16px; letter-spacing:3px; color:#E8C84A; font-weight:600; }
+  .demo-c .y-sub { position:absolute; top:calc(50% + 182px); left:50%; transform:translateX(-50%); font-size:9px; letter-spacing:4px; color:#8A7A6A; text-transform:uppercase; }
+
+  .demo-c .corner { position:absolute; width:40px; height:40px; border-color:rgba(212,168,83,0.12); border-style:solid; border-width:0; }
+  .demo-c .corner-tl { top:16px; left:16px; border-top-width:1px; border-left-width:1px; }
+  .demo-c .corner-tr { top:16px; right:16px; border-top-width:1px; border-right-width:1px; }
+  .demo-c .corner-bl { bottom:16px; left:16px; border-bottom-width:1px; border-left-width:1px; }
+  .demo-c .corner-br { bottom:16px; right:16px; border-bottom-width:1px; border-right-width:1px; }
+  .demo-c .thai-wm { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); font-size:11px; color:#B8860B; opacity:0.3; letter-spacing:6px; font-style:italic; }
+
+  .sel-bar {
+    position:fixed; bottom:0; left:0; right:0; background:#1A1510;
+    border-top:1px solid #2A2218; padding:12px 24px; text-align:center;
+    font-size:12px; color:#8A7A6A; z-index:100; transition:all 0.3s;
+  }
+  .sel-bar.on { color:#E8C84A; background:#1A1208; border-top-color:#B8860B44; }
+
+  @media(max-width:900px) {
+    .opt { flex-direction:column; }
+    .opt-info { width:auto; border-right:none; border-bottom:1px solid #1A150E; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Visual Style</h1>
+  <h2>อยากได้ fancy แบบไหน?</h2>
+  <p>เลือกสไตล์ภาพหลักที่จะใช้ทั้ง hero และ section หมอดูแต่ละท่าน</p>
+</div>
+
+<div class="options">
+
+  <!-- A -->
+  <div class="opt" data-choice="a" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>A: แผนที่ดวงดาว</h3>
+      <p>จุดดาวเชื่อมเส้นเป็นกลุ่มดาว วงมณฑลหมุนรอบ avatar สัญลักษณ์จักรราศีลอยอยู่รอบ เหมือนแผนภูมิโหราศาสตร์จริงๆ</p>
+      <div class="feat">
+        <span>เส้นกลุ่มดาว (constellation lines)</span>
+        <span>วงแหวนหมุนแบบมณฑล</span>
+        <span>สัญลักษณ์ราศี 12 ตัว</span>
+        <span>ดาวกระพริบ</span>
+      </div>
+    </div>
+    <div class="demo demo-a">
+      <div class="star" style="left:12%;top:18%"></div>
+      <div class="star" style="left:22%;top:28%"></div>
+      <div class="star" style="left:18%;top:42%"></div>
+      <div class="star" style="left:78%;top:22%"></div>
+      <div class="star" style="left:85%;top:35%"></div>
+      <div class="star" style="left:82%;top:52%"></div>
+      <div class="star" style="left:32%;top:75%"></div>
+      <div class="star" style="left:68%;top:72%"></div>
+      <div class="star" style="left:50%;top:12%"></div>
+      <div class="star" style="left:45%;top:85%"></div>
+      <div class="star-line" style="left:12%;top:18%;width:60px;transform:rotate(25deg)"></div>
+      <div class="star-line" style="left:22%;top:28%;width:40px;transform:rotate(70deg)"></div>
+      <div class="star-line" style="left:78%;top:22%;width:50px;transform:rotate(120deg)"></div>
+      <div class="star-line" style="left:82%;top:35%;width:35px;transform:rotate(150deg)"></div>
+      <span class="zodiac" style="left:8%;top:50%">&#9800;</span>
+      <span class="zodiac" style="left:20%;top:12%">&#9801;</span>
+      <span class="zodiac" style="left:42%;top:6%">&#9802;</span>
+      <span class="zodiac" style="left:65%;top:8%">&#9803;</span>
+      <span class="zodiac" style="left:88%;top:18%">&#9804;</span>
+      <span class="zodiac" style="left:92%;top:45%">&#9805;</span>
+      <span class="zodiac" style="left:88%;top:72%">&#9806;</span>
+      <span class="zodiac" style="left:65%;top:88%">&#9807;</span>
+      <span class="zodiac" style="left:42%;top:92%">&#9808;</span>
+      <span class="zodiac" style="left:20%;top:85%">&#9809;</span>
+      <span class="zodiac" style="left:6%;top:70%">&#9810;</span>
+      <span class="zodiac" style="left:6%;top:30%">&#9811;</span>
+      <div class="center-mandala">
+        <div class="m-ring"></div>
+        <div class="m-ring"></div>
+        <div class="m-ring"></div>
+        <div class="m-ring"></div>
+      </div>
+      <div class="m-center">☽</div>
+      <div class="m-name">แม่หมอจันทร์</div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="opt" data-choice="b" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>B: หมอกทอง</h3>
+      <p>หมอกควันสีทองลอยเลื่อนช้าๆ ฝุ่นทองเรืองแสงกระจายทั่ว avatar ลอยอยู่กลางหมอก scroll แล้วหมอกค่อยๆ เปิดเผย</p>
+      <div class="feat">
+        <span>หมอกควันเคลื่อนไหว (blur + drift)</span>
+        <span>ฝุ่นทองลอย (gold dust)</span>
+        <span>แสงเรืองรอบ avatar</span>
+        <span>บรรยากาศวัดโบราณ</span>
+      </div>
+    </div>
+    <div class="demo demo-b">
+      <div class="smoke"></div>
+      <div class="smoke"></div>
+      <div class="smoke"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="avatar-area">
+        <div class="av-glow">☽</div>
+        <div class="av-name">แม่หมอจันทร์</div>
+        <div class="av-sub">Master Moon Oracle</div>
+      </div>
+      <div class="av-quote">"ดาวทุกดวงมีเรื่องจะเล่าให้คุณฟัง"</div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="opt" data-choice="c" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>C: ยันต์ศักดิ์สิทธิ์</h3>
+      <p>ลายยันต์ สามเหลี่ยมซ้อนวงกลม กลีบบัวหมุนรอบช้าๆ แสงเรืองจากจุดกลาง กรอบทองที่มุม เหมือนยันต์โบราณมีชีวิต</p>
+      <div class="feat">
+        <span>ลายยันต์ (sacred geometry)</span>
+        <span>กลีบบัว 12 กลีบหมุนช้า</span>
+        <span>แสง pulse จากจุดกลาง</span>
+        <span>กรอบทองมุมทั้ง 4</span>
+      </div>
+    </div>
+    <div class="demo demo-c">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+      <div class="yantra">
+        <div class="y-circle"></div>
+        <div class="y-tri"></div>
+        <div class="y-tri"></div>
+        <div class="lotus">
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+          <div class="petal"></div><div class="petal"></div><div class="petal"></div>
+        </div>
+        <div class="inner-glow"></div>
+      </div>
+      <div class="y-icon">☽</div>
+      <div class="y-name">แม่หมอจันทร์</div>
+      <div class="y-sub">Master Moon Oracle</div>
+      <div class="thai-wm">นะโม ตัสสะ</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sel-bar" id="bar">คลิกเลือกสไตล์ที่ชอบ</div>
+
+<script>
+  let picked=null;
+  function sel(el){
+    document.querySelectorAll('.opt').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    picked=el.dataset.choice;
+    const n={a:'A: แผนที่ดวงดาว',b:'B: หมอกทอง',c:'C: ยันต์ศักดิ์สิทธิ์'};
+    const b=document.getElementById('bar');
+    b.textContent='✓ เลือก '+n[picked]; b.classList.add('on');
+    fetch('/event',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'click',choice:picked,text:n[picked],timestamp:Math.floor(Date.now()/1000)})+'\n'
+    }).catch(()=>{});
+  }
+</script>
+</body>
+</html>

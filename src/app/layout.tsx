@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Bebas_Neue, Cinzel, Prompt } from 'next/font/google'
+import PdpaBanner from '@/components/legal/PdpaBanner'
 import './globals.css'
 
 const bebasNeue = Bebas_Neue({
@@ -35,7 +36,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="th"
       className={`${bebasNeue.variable} ${cinzel.variable} ${prompt.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <PdpaBanner />
+      </body>
     </html>
   )
 }

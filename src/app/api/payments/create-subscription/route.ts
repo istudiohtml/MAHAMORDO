@@ -71,9 +71,11 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // Create Stripe checkout session for recurring payment
+    // Create Stripe checkout session for recurring payment.
+    // Note: PromptPay does NOT support Stripe Checkout subscription mode
+    // (real-time payment, one-time only) so we only allow card here.
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'promptpay'],
+      payment_method_types: ['card'],
       line_items: [
         {
           price_data: {

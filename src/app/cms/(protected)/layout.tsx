@@ -7,9 +7,9 @@ export const metadata: Metadata = { title: "CMS — มหาหมอดู" };
 export default function CmsLayout({ children }: { children: React.ReactNode }) {
   return (
     <CmsProvider>
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="cms-shell">
         <Sidebar />
-        <main className="flex-1 ml-56 p-8">{children}</main>
+        <main className="cms-main">{children}</main>
       </div>
     </CmsProvider>
   );

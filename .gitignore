@@ -33,3 +33,7 @@ public/avatars/_archive/
 /playwright-report/
 /test-results/
 /e2e/.auth/
+
+# Fortune post images (server disk storage)
+/data/uploads/
+/public/uploads/posts/

@@ -3,11 +3,26 @@ import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 import CreditPackages from '@/components/dashboard/CreditPackages'
 import CancelSubscriptionButton from '@/components/dashboard/CancelSubscriptionButton'
+import Pagination from '@/components/dashboard/Pagination'
+import { formatThaiDate, isExpired } from '@/lib/format-date'
 
-export default async function CreditsPage() {
+const LOGS_PER_PAGE = 5
+
+type SearchParams = Promise<{ logPage?: string }>
+
+export default async function CreditsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
   const cookieStore = await cookies()
   const token = cookieStore.get('user_token')?.value!
   const payload = await verifyAccessToken(token)
+
+  const sp = await searchParams
+  const rawPage = Number(sp?.logPage ?? '1')
+  const currentPage =
+    Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1
 
   const user = await prisma.user.findUnique({
     where: { id: payload!.userId },
@@ -35,10 +50,17 @@ export default async function CreditsPage() {
     user.subscriptionExpiresAt !== null &&
     user.subscriptionExpiresAt > now
 
+  const totalLogs = await prisma.creditLog.count({
+    where: { userId: payload!.userId },
+  })
+  const totalPages = Math.max(1, Math.ceil(totalLogs / LOGS_PER_PAGE))
+  const safePage = Math.min(currentPage, totalPages)
+
   const logs = await prisma.creditLog.findMany({
     where: { userId: payload!.userId },
     orderBy: { createdAt: 'desc' },
-    take: 20,
+    skip: (safePage - 1) * LOGS_PER_PAGE,
+    take: LOGS_PER_PAGE,
   })
 
   const reasonLabel: Record<string, string> = {
@@ -60,7 +82,7 @@ export default async function CreditsPage() {
     <div className="dash-page">
       <div className="dash-page-header">
         <p className="dash-page-eyebrow">Credits</p>
-        <h1 className="dash-page-title">เครดิตของฉัน</h1>
+        <h1 className="dash-page-title thai-font">เครดิตของฉัน</h1>
         <p className="dash-page-sub">ดูยอดเครดิตและประวัติการใช้งาน</p>
       </div>
 
@@ -69,11 +91,17 @@ export default async function CreditsPage() {
         <div className="dash-credit-balance subscription">
           <span className="dash-credit-balance-icon">✦</span>
           <div>
-            <p className="dash-credit-balance-count">
+            <p className="dash-credit-balance-count thai-font">
               {user?.subscriptionPlan === 'YEARLY' ? 'รายปี' : 'รายเดือน'}
             </p>
-            <p className="dash-credit-balance-label">
-              หมดอายุวันที่ {user?.subscriptionExpiresAt?.toLocaleDateString('th-TH')}
+            <p className="dash-credit-balance-label thai-font">
+              {isExpired(user?.subscriptionExpiresAt) ? (
+                <span className="dash-credits-expired">
+                  หมดอายุแล้ว ({formatThaiDate(user?.subscriptionExpiresAt)})
+                </span>
+              ) : (
+                <>หมดอายุ {formatThaiDate(user?.subscriptionExpiresAt)}</>
+              )}
             </p>
           </div>
         </div>
@@ -82,7 +110,7 @@ export default async function CreditsPage() {
           <span className="dash-credit-balance-icon">✦</span>
           <div>
             <p className="dash-credit-balance-count">{user?.credits ?? 0}</p>
-            <p className="dash-credit-balance-label">เครดิตคงเหลือ</p>
+            <p className="dash-credit-balance-label thai-font">เครดิตคงเหลือ</p>
           </div>
         </div>
       )}
@@ -90,10 +118,10 @@ export default async function CreditsPage() {
       {/* Subscription Cancel Button */}
       {hasActiveSubscription && (
         <div className="dash-section">
-          <h2 className="dash-section-title">การสมัครสมาชิก</h2>
+          <h2 className="dash-section-title thai-font">การสมัครสมาชิก</h2>
           <div className="dash-subscription-info">
             <p>คุณกำลังใช้สมาชิก {user?.subscriptionPlan === 'YEARLY' ? 'รายปี' : 'รายเดือน'}</p>
-            <p>หมดอายุวันที่ {user?.subscriptionExpiresAt?.toLocaleDateString('th-TH')}</p>
+            <p>หมดอายุ {formatThaiDate(user?.subscriptionExpiresAt)}</p>
           </div>
           <CancelSubscriptionButton userId={payload!.userId} isCancelledAtPeriodEnd={isCancelledAtPeriodEnd} />
         </div>
@@ -102,34 +130,48 @@ export default async function CreditsPage() {
       {/* Buy packages - only show if no active subscription */}
       {!hasActiveSubscription && (
         <div className="dash-section">
-          <h2 className="dash-section-title">ซื้อเครดิตเพิ่ม</h2>
-          <CreditPackages />
+          <h2 className="dash-section-title thai-font">ซื้อเครดิตเพิ่ม</h2>
+          <CreditPackages initialCredits={user?.credits ?? 0} />
         </div>
       )}
 
       {/* Log */}
-      <div className="dash-section">
-        <h2 className="dash-section-title">ประวัติการใช้เครดิต</h2>
+      <div className="dash-section" id="credit-log">
+        <h2 className="dash-section-title thai-font">ประวัติการใช้เครดิต</h2>
         {logs.length === 0 ? (
           <div className="dash-empty">
             <p className="dash-empty-text">ยังไม่มีประวัติ</p>
           </div>
         ) : (
-          <div className="dash-credit-log">
-            {logs.map((log) => (
-              <div key={log.id} className="dash-credit-log-item">
-                <div className="dash-credit-log-reason">
-                  {getReasonLabel(log.reason)}
+          <>
+            <div className="dash-credit-log">
+              {logs.map((log) => (
+                <div key={log.id} className="dash-credit-log-item">
+                  <div className="dash-credit-log-reason">
+                    {getReasonLabel(log.reason)}
+                  </div>
+                  <div className="dash-credit-log-date thai-font">
+                    {formatThaiDate(log.createdAt)}
+                  </div>
+                  <div className={`dash-credit-log-amount ${log.amount > 0 ? 'positive' : 'negative'}`}>
+                    {log.amount > 0 ? '+' : ''}{log.amount}
+                  </div>
                 </div>
-                <div className="dash-credit-log-date">
-                  {log.createdAt.toLocaleDateString('th-TH')}
-                </div>
-                <div className={`dash-credit-log-amount ${log.amount > 0 ? 'positive' : 'negative'}`}>
-                  {log.amount > 0 ? '+' : ''}{log.amount}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination
+                currentPage={safePage}
+                totalPages={totalPages}
+                totalCount={totalLogs}
+                pageSize={LOGS_PER_PAGE}
+                basePath="/dashboard/credits"
+                paramName="logPage"
+                anchor="credit-log"
+              />
+            )}
+          </>
         )}
       </div>
     </div>

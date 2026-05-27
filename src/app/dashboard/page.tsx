@@ -3,6 +3,12 @@ import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import OracleTiltCards from '@/components/dashboard/OracleTiltCard'
+import { formatThaiDate } from '@/lib/format-date'
+import {
+  getEffectiveSessionStatus,
+  getSessionStatusLabel,
+  getSessionStatusDescription,
+} from '@/lib/session-status'
 
 export default async function DashboardPage() {
   const cookieStore = await cookies()
@@ -14,7 +20,12 @@ export default async function DashboardPage() {
   })
 
   const recentSessions = await prisma.fortuneSession.findMany({
-    where: { userId: payload!.userId },
+    where: {
+      userId: payload!.userId,
+      // Only show sessions where the user actually asked something — skip
+      // accidentally-opened-then-closed empty ones.
+      messages: { some: { role: 'USER' } },
+    },
     orderBy: { createdAt: 'desc' },
     take: 3,
     include: { oracle: { select: { name: true, speciality: true } } },
@@ -24,25 +35,25 @@ export default async function DashboardPage() {
     <div className="dash-page">
       <div className="dash-page-header">
         <p className="dash-page-eyebrow">Overview</p>
-        <h1 className="dash-page-title">สวัสดี{user?.name ? `, ${user.name}` : ''}</h1>
+        <h1 className="dash-page-title thai-font">สวัสดี{user?.name ? `, ${user.name}` : ''}</h1>
         <p className="dash-page-sub">พร้อมรับรู้ชะตากรรมของคุณแล้วหรือยัง?</p>
       </div>
 
       {/* Stats */}
       <div className="dash-stats">
         <Link href="/pricing" className="dash-stat-card dash-stat-link">
-          <p className="dash-stat-label">เครดิตคงเหลือ</p>
+          <p className="dash-stat-label thai-font">เครดิตคงเหลือ</p>
           <p className="dash-stat-value">{user?.credits ?? 0}</p>
           <p className="dash-stat-unit">ซื้อเครดิตเพิ่ม →</p>
         </Link>
         <div className="dash-stat-card">
-          <p className="dash-stat-label">การดูดวงทั้งหมด</p>
+          <p className="dash-stat-label thai-font">การดูดวงทั้งหมด</p>
           <p className="dash-stat-value">{recentSessions.length}</p>
           <p className="dash-stat-unit">ครั้ง</p>
         </div>
         <div className="dash-stat-card">
-          <p className="dash-stat-label">สมาชิกตั้งแต่</p>
-          <p className="dash-stat-value">
+          <p className="dash-stat-label thai-font">สมาชิกตั้งแต่</p>
+          <p className="dash-stat-value thai-font">
             {user?.createdAt.toLocaleDateString('th-TH', { month: 'short', year: 'numeric' })}
           </p>
           <p className="dash-stat-unit">&nbsp;</p>
@@ -52,8 +63,8 @@ export default async function DashboardPage() {
       {/* Recent sessions */}
       <div className="dash-section">
         <div className="dash-section-header">
-          <h2 className="dash-section-title">การดูดวงล่าสุด</h2>
-          <Link href="/dashboard/history" className="dash-section-link">ดูทั้งหมด →</Link>
+          <h2 className="dash-section-title thai-font">การดูดวงล่าสุด</h2>
+          <Link href="/dashboard/history" className="dash-section-link thai-font">ดูทั้งหมด →</Link>
         </div>
 
         {recentSessions.length === 0 ? (
@@ -64,28 +75,39 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="dash-session-list">
-            {recentSessions.map((s) => (
-              <div key={s.id} className="dash-session-item">
-                <div className="dash-session-oracle">{s.oracle.name}</div>
-                <div className="dash-session-meta">
-                  <span>{s.oracle.speciality}</span>
-                  {s.topic && <span className="dash-session-topic">{s.topic}</span>}
-                </div>
-                <div className="dash-session-date">
-                  {s.createdAt.toLocaleDateString('th-TH')}
-                </div>
-                <span className={`dash-session-status ${s.status.toLowerCase()}`}>
-                  {s.status === 'ACTIVE' ? 'กำลังดำเนินการ' : s.status === 'COMPLETED' ? 'เสร็จสิ้น' : 'หมดอายุ'}
-                </span>
-              </div>
-            ))}
+            {recentSessions.map((s) => {
+              const effective = getEffectiveSessionStatus(s.status, s.expiresAt)
+              return (
+                <Link
+                  key={s.id}
+                  href={`/dashboard/history/${s.id}`}
+                  className="dash-session-item dash-session-item-link"
+                >
+                  <div className="dash-session-oracle">{s.oracle.name}</div>
+                  <div className="dash-session-meta thai-font">
+                    <span>{s.oracle.speciality}</span>
+                    {s.topic && <span className="dash-session-topic">{s.topic}</span>}
+                  </div>
+                  <div className="dash-session-date thai-font">
+                    {formatThaiDate(s.createdAt)}
+                  </div>
+                  <span
+                    className={`dash-session-status thai-font ${effective.toLowerCase()}`}
+                    title={getSessionStatusDescription(effective)}
+                  >
+                    {getSessionStatusLabel(effective)}
+                  </span>
+                  <span className="dash-session-chevron" aria-hidden>›</span>
+                </Link>
+              )
+            })}
           </div>
         )}
       </div>
 
       {/* Oracles CTA */}
       <div className="dash-section">
-        <h2 className="dash-section-title">หมอดูของเรา</h2>
+        <h2 className="dash-section-title thai-font">หมอดูของเรา</h2>
         <OracleTiltCards />
       </div>
     </div>

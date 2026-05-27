@@ -15,7 +15,8 @@ model Oracle {
   name             String            // "ยายขาม"
   title            String            // "หมอดูผู้เฒ่าแห่งโหราศาสตร์ไทย"
   description      String   @db.Text // คำอธิบายสั้นๆ แสดงใน UI
-  avatarUrl        String?           // path รูปภาพ/sprite
+  avatarUrl        String?           // SVG icon path (preload / small avatar)
+  posterUrl        String?           // custom poster — overrides template jpg when set
   systemPrompt     String   @db.Text // full system prompt ส่งให้ Claude
   initialGreeting  String   @default("สวัสดีค่ะ") @db.Text // greeting message เมื่อเริ่มต้น ไม่ต้องเรียก API
   speciality       String            // "โหราศาสตร์ไทย", "ไพ่ทาโรต์", "ศาสตร์มืด"
@@ -61,7 +62,16 @@ model User {
   aiOverviewQuotaUsed Int      @default(0)     // AI overview usage today (max 2 for free)
   aiOverviewQuotaResetAt DateTime @default(now()) // when quota resets
 
+  // PDPA / Consent tracking (Thai Personal Data Protection Act 2562)
+  consentVersion        String?   // version of policy user agreed to (e.g. "1.0")
+  consentAcceptedAt     DateTime? // when user accepted the policy
+  marketingConsent      Boolean   @default(false) // optional analytics / marketing email
+  dataExportRequestedAt DateTime? // last data-export request timestamp
+  deletionRequestedAt   DateTime? // user-requested account deletion (soft)
+
   sessions           FortuneSession[]
+  fortunePosts       FortunePost[]
+  articles           Article[]
   creditLogs         CreditLog[]
   payments           Payment[]
   refreshTokens      RefreshToken[]
@@ -100,15 +110,98 @@ model FortuneSession {
   birthTime String?   // เวลาเกิด เช่น "14:30"
 
   status    SessionStatus @default(ACTIVE)
+  // Credit is charged once per session on the FIRST oracle reply (not on session open).
+  // Subscription users get this flipped to true without decrementing credits.
+  creditCharged Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   expiresAt DateTime @default(dbgenerated("now() + interval '24 hours'")) // Auto-expire after 24 hours
 
   messages  Message[]
+  posts     FortunePost[]
 
   @@index([userId])
   @@index([expiresAt])
   @@map("fortune_sessions")
+}
+
+// ── FORTUNE POSTS ───────────────────────────────────────────
+// โพสต์แชร์ผลดูดวง + รูปภาพ AI
+model FortunePost {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  sessionId   String?
+  session     FortuneSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+
+  title       String
+  caption     String   @db.Text
+  imageUrl    String
+  imagePrompt String?  @db.Text
+
+  topic       String?
+  oracleName  String
+  visibility  PostVisibility @default(PRIVATE)
+
+  zodiac      String?
+  tradition   String?  // chinese | western | korean
+  timePeriod  String?
+  focus       String?
+  platform    String?
+  imageStyle  String?
+  imageSize   String?
+  createMode  String?  // both | post | image | prompt
+  quoteLine   String?  // Thai quote on image (quote_card style)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sessionId])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([visibility, createdAt(sort: Desc)])
+  @@map("fortune_posts")
+}
+
+// ── ARTICLES (BLOG) ─────────────────────────────────────────
+// บทความหน้าเว็บสาธารณะ — admin จัดการ, cron daily generate ได้
+model Article {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  excerpt      String   @db.Text
+  content      String   @db.Text   // markdown body
+  coverImageUrl String?            // /api/uploads/articles/{id}.jpg
+  coverPrompt  String?  @db.Text   // DALL-E prompt used (or for re-gen)
+
+  category     String              // "horoscope" | "tarot" | "feng_shui" | "lucky" | "general"
+  tags         String[] @default([])
+
+  status       ArticleStatus @default(DRAFT)
+  publishedAt  DateTime?
+  source       String   @default("manual") // "manual" | "ai" | "cron"
+
+  authorId     String?
+  author       User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  readingMinutes Int?              // estimated reading time
+  viewCount      Int     @default(0)
+
+  seoTitle       String?
+  seoDescription String? @db.Text
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([category, publishedAt(sort: Desc)])
+  @@map("articles")
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 // ── MESSAGES ────────────────────────────────────────────────
@@ -204,6 +297,11 @@ enum SessionStatus {
 enum MessageRole {
   USER
   ASSISTANT
+}
+
+enum PostVisibility {
+  PRIVATE
+  PUBLIC
 }
 
 enum SubscriptionPlan {

@@ -1,11 +1,39 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
+import { verifyAccessToken } from '@/lib/jwt'
 
 export const metadata = {
   title: 'ราคา - MAHAMORDO',
   description: 'ดูราคาเครดิตและแพ็คเก็จสมาชิกของ MAHAMORDO',
 }
 
-export default function PricingPage() {
+const CREDITS_PATH = '/dashboard/credits'
+
+async function getIsLoggedIn(): Promise<boolean> {
+  const store = await cookies()
+  const token = store.get('user_token')?.value
+  if (!token) return false
+  try {
+    const payload = await verifyAccessToken(token)
+    return Boolean(payload?.userId)
+  } catch {
+    return false
+  }
+}
+
+export default async function PricingPage() {
+  const isLoggedIn = await getIsLoggedIn()
+
+  // Buttons for paid plans / credits → if logged in, jump straight to /dashboard/credits.
+  // Otherwise, send to /auth/login (with redirect back) so existing users don't get forced
+  // through registration just to top up.
+  const buyHref = isLoggedIn
+    ? CREDITS_PATH
+    : `/auth/login?redirect=${encodeURIComponent(CREDITS_PATH)}`
+  const registerHref = isLoggedIn
+    ? '/dashboard'
+    : `/auth/register?redirect=${encodeURIComponent('/dashboard')}`
+
   return (
     <div className="pricing-page">
       {/* Nav */}
@@ -23,7 +51,7 @@ export default function PricingPage() {
       {/* Hero — editorial left-aligned */}
       <header className="pricing-hero">
         <p className="pricing-eyebrow">Pricing &amp; Membership</p>
-        <h1 className="pricing-title">ราคา &<br />แพ็คเก็จ</h1>
+        <h1 className="pricing-title thai-font">ราคา &<br />แพ็คเก็จ</h1>
         <p className="pricing-subtitle">เลือกเส้นทางที่เหมาะกับการเดินทางของคุณ</p>
         <div className="pricing-hero-divider" />
       </header>
@@ -70,7 +98,7 @@ export default function PricingPage() {
         {/* Free Tier */}
         <div className="pricing-plan">
           <div className="pricing-plan-left">
-            <span className="pricing-plan-tag">ทดลองฟรี</span>
+            <span className="pricing-plan-tag thai-font">ทดลองฟรี</span>
             <span className="pricing-plan-price">
               <span className="pricing-plan-amount">฿0</span>
             </span>
@@ -85,8 +113,8 @@ export default function PricingPage() {
               <span className="pricing-feature excluded">ดวงความเข้ากัน</span>
               <span className="pricing-feature excluded">พยากรณ์รายปี/ทศวรรษ</span>
             </div>
-            <Link href="/auth/register" className="pricing-plan-btn">
-              เริ่มต้นฟรี
+            <Link href={registerHref} className="pricing-plan-btn">
+              {isLoggedIn ? 'ไปแดชบอร์ด' : 'เริ่มต้นฟรี'}
             </Link>
           </div>
         </div>
@@ -94,7 +122,7 @@ export default function PricingPage() {
         {/* One-Time Credits */}
         <div className="pricing-plan">
           <div className="pricing-plan-left">
-            <span className="pricing-plan-tag">ครั้งเดียว</span>
+            <span className="pricing-plan-tag thai-font">ครั้งเดียว</span>
             <span className="pricing-plan-price">
               <span className="pricing-plan-amount">฿39</span>
             </span>
@@ -108,7 +136,7 @@ export default function PricingPage() {
               <span className="pricing-feature included">เครดิตไม่มีวันหมดอายุ</span>
               <span className="pricing-feature included">ทุกฟีเจอร์พรีเมียม</span>
             </div>
-            <Link href="/auth/register" className="pricing-plan-btn">
+            <Link href={buyHref} className="pricing-plan-btn">
               ซื้อเครดิต
             </Link>
           </div>
@@ -117,7 +145,7 @@ export default function PricingPage() {
         {/* Monthly */}
         <div className="pricing-plan">
           <div className="pricing-plan-left">
-            <span className="pricing-plan-tag">สมาชิก</span>
+            <span className="pricing-plan-tag thai-font">สมาชิก</span>
             <span className="pricing-plan-price">
               <span className="pricing-plan-amount">฿129</span>
               <span className="pricing-plan-period">/เดือน</span>
@@ -132,7 +160,7 @@ export default function PricingPage() {
               <span className="pricing-feature included">ทุกฟีเจอร์พรีเมียม</span>
               <span className="pricing-feature included">ยกเลิกได้ตลอดเวลา</span>
             </div>
-            <Link href="/auth/register" className="pricing-plan-btn">
+            <Link href={buyHref} className="pricing-plan-btn">
               สมัครรายเดือน
             </Link>
           </div>
@@ -140,9 +168,9 @@ export default function PricingPage() {
 
         {/* Yearly — recommended */}
         <div className="pricing-plan pricing-plan-featured">
-          <div className="pricing-plan-recommend">ประหยัด 36%</div>
+          <div className="pricing-plan-recommend thai-font">ประหยัด 36%</div>
           <div className="pricing-plan-left">
-            <span className="pricing-plan-tag">สมาชิก</span>
+            <span className="pricing-plan-tag thai-font">สมาชิก</span>
             <span className="pricing-plan-price">
               <span className="pricing-plan-amount">฿999</span>
               <span className="pricing-plan-period">/ปี</span>
@@ -157,7 +185,7 @@ export default function PricingPage() {
               <span className="pricing-feature included">ทุกฟีเจอร์พรีเมียม</span>
               <span className="pricing-feature included">ยกเลิกได้ตลอดเวลา</span>
             </div>
-            <Link href="/auth/register" className="pricing-plan-btn pricing-plan-btn-gold">
+            <Link href={buyHref} className="pricing-plan-btn pricing-plan-btn-gold">
               สมัครรายปี
             </Link>
           </div>
@@ -166,7 +194,7 @@ export default function PricingPage() {
 
       {/* FAQ — ruled rows */}
       <section className="pricing-faq-section">
-        <p className="pricing-section-label">คำถามที่พบบ่อย</p>
+        <p className="pricing-section-label thai-font">คำถามที่พบบ่อย</p>
 
         <div className="pricing-faq-row">
           <h3>ฉันได้เครดิตฟรีเท่าไหร่?</h3>
@@ -197,10 +225,21 @@ export default function PricingPage() {
       {/* CTA — editorial */}
       <section className="pricing-cta">
         <div className="pricing-cta-inner">
-          <p className="pricing-cta-eyebrow">Begin Your Journey</p>
-          <h2 className="pricing-cta-title">พร้อมรับรู้<br />ชะตากรรม?</h2>
-          <Link href="/auth/register" className="pricing-cta-btn">
-            สมัครฟรีวันนี้
+          <p className="pricing-cta-eyebrow">
+            {isLoggedIn ? 'Top Up Your Credits' : 'Begin Your Journey'}
+          </p>
+          <h2 className="pricing-cta-title thai-font">
+            {isLoggedIn ? (
+              <>พร้อมต่อยอด<br />การเดินทาง?</>
+            ) : (
+              <>พร้อมรับรู้<br />ชะตากรรม?</>
+            )}
+          </h2>
+          <Link
+            href={isLoggedIn ? CREDITS_PATH : registerHref}
+            className="pricing-cta-btn"
+          >
+            {isLoggedIn ? 'ไปหน้าเติมเครดิต' : 'สมัครฟรีวันนี้'}
             <span className="pricing-cta-arrow" />
           </Link>
         </div>

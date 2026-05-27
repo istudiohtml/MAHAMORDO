@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fancy Direction</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&family=Cinzel:wght@400;600&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0A0806; color:#F5E8C0; font-family:'Prompt',sans-serif; }
+
+  .page-header { text-align:center; padding:50px 24px 12px; }
+  .page-header h1 { font-size:12px; letter-spacing:5px; color:#B8860B; font-weight:400; margin-bottom:12px; text-transform:uppercase; }
+  .page-header h2 { font-size:26px; font-weight:300; color:#F5E8C0; margin-bottom:8px; }
+  .page-header p { font-size:12px; color:#8A7A6A; max-width:500px; margin:0 auto; }
+
+  .options { display:flex; flex-direction:column; gap:24px; padding:36px 28px 80px; max-width:1100px; margin:0 auto; }
+
+  .opt {
+    border:1px solid #2A2218; border-radius:14px; overflow:hidden; cursor:pointer;
+    transition:all 0.4s cubic-bezier(0.4,0,0.2,1); background:#0F0C08; display:flex;
+  }
+  .opt:hover { border-color:#B8860B; box-shadow:0 12px 40px rgba(184,134,11,0.12); }
+  .opt.selected { border-color:#E8C84A; box-shadow:0 0 40px rgba(232,200,74,0.15); }
+  .opt.selected::after {
+    content:'✓'; position:absolute; top:14px; right:14px; width:26px; height:26px;
+    background:#E8C84A; color:#0A0806; border-radius:50%; display:flex; align-items:center;
+    justify-content:center; font-size:13px; font-weight:700; z-index:10;
+  }
+  .opt { position:relative; }
+
+  .opt-info { width:300px; flex-shrink:0; padding:28px 24px; display:flex; flex-direction:column; justify-content:center; border-right:1px solid #1A150E; }
+  .opt-info h3 { font-size:17px; font-weight:600; color:#E8C84A; margin-bottom:10px; }
+  .opt-info p { font-size:12px; color:#8A7A6A; line-height:1.8; }
+  .opt-info .tags { display:flex; gap:6px; margin-top:14px; flex-wrap:wrap; }
+  .opt-info .tag { font-size:9px; padding:3px 10px; border-radius:12px; border:1px solid #2A2218; color:#B8860B; }
+
+  .demo { flex:1; height:400px; position:relative; overflow:hidden; }
+
+  /* ═══ OPTION A: Celestial Map ═══ */
+  .demo-a { background:radial-gradient(ellipse at 50% 50%, #1a1208 0%, #0A0806 100%); }
+
+  .demo-a .constellation {
+    position:absolute; inset:0;
+  }
+  .demo-a .star {
+    position:absolute; width:3px; height:3px; background:#E8C84A; border-radius:50%;
+    box-shadow:0 0 6px rgba(232,200,74,0.4);
+  }
+  .demo-a .star-line {
+    position:absolute; height:1px; background:linear-gradient(90deg, rgba(232,200,74,0.3), rgba(232,200,74,0.05));
+    transform-origin:left center;
+  }
+
+  .demo-a .center-mandala {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:200px; height:200px;
+  }
+  .demo-a .mandala-ring {
+    position:absolute; inset:0; border:1px solid rgba(212,168,83,0.12); border-radius:50%;
+    animation:mandalaRotate 20s linear infinite;
+  }
+  .demo-a .mandala-ring:nth-child(2) {
+    inset:15px; border-style:dashed; border-color:rgba(212,168,83,0.08);
+    animation-direction:reverse; animation-duration:30s;
+  }
+  .demo-a .mandala-ring:nth-child(3) {
+    inset:35px; border-color:rgba(212,168,83,0.15);
+    animation-duration:25s;
+  }
+  .demo-a .mandala-ring:nth-child(4) {
+    inset:55px; border-style:dotted; border-color:rgba(212,168,83,0.1);
+    animation-direction:reverse; animation-duration:15s;
+  }
+  @keyframes mandalaRotate { to { transform:rotate(360deg); } }
+
+  .demo-a .mandala-center {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:32px; text-shadow:0 0 30px rgba(232,200,74,0.3);
+  }
+  .demo-a .mandala-name {
+    position:absolute; top:calc(50% + 40px); left:50%; transform:translateX(-50%);
+    font-family:'Cinzel',serif; font-size:14px; letter-spacing:4px; color:#E8C84A;
+    text-shadow:0 0 20px rgba(232,200,74,0.2);
+  }
+  .demo-a .zodiac-marks {
+    position:absolute; inset:0;
+  }
+  .demo-a .zodiac {
+    position:absolute; font-size:10px; color:#B8860B; opacity:0.3;
+  }
+
+  /* ═══ OPTION B: Smoke & Reveal ═══ */
+  .demo-b { background:#0A0806; }
+
+  .demo-b .smoke-layer {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 30% 60%, rgba(212,168,83,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 40%, rgba(212,168,83,0.04) 0%, transparent 50%);
+  }
+  .demo-b .smoke-wisp {
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%);
+    animation:smokeDrift ease-in-out infinite;
+    filter:blur(20px);
+  }
+  .demo-b .smoke-wisp:nth-child(1) { width:200px; height:200px; left:20%; top:30%; animation-duration:8s; }
+  .demo-b .smoke-wisp:nth-child(2) { width:160px; height:160px; left:60%; top:50%; animation-duration:10s; animation-delay:2s; }
+  .demo-b .smoke-wisp:nth-child(3) { width:120px; height:120px; left:40%; top:20%; animation-duration:7s; animation-delay:4s; }
+  @keyframes smokeDrift {
+    0%,100% { transform:translate(0,0) scale(1); opacity:0.4; }
+    33% { transform:translate(20px,-15px) scale(1.1); opacity:0.7; }
+    66% { transform:translate(-10px,10px) scale(0.95); opacity:0.5; }
+  }
+
+  .demo-b .reveal-avatar {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-55%);
+    text-align:center;
+  }
+  .demo-b .avatar-glow {
+    width:110px; height:110px; border-radius:50%; margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center; font-size:38px;
+    background:rgba(0,0,0,0.4);
+    border:1px solid rgba(212,168,83,0.2);
+    box-shadow:0 0 60px rgba(212,168,83,0.1), inset 0 0 30px rgba(212,168,83,0.05);
+  }
+  .demo-b .reveal-name {
+    font-size:22px; font-weight:600; color:#F5D98A; letter-spacing:2px;
+    text-shadow:0 0 30px rgba(245,217,138,0.2);
+  }
+  .demo-b .reveal-sub {
+    font-size:9px; letter-spacing:3px; color:#B8860B; margin-top:4px;
+    text-transform:uppercase;
+  }
+  .demo-b .reveal-quote {
+    position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+    font-size:12px; font-style:italic; color:#B8860B; opacity:0.6;
+    white-space:nowrap;
+  }
+
+  /* gold dust particles */
+  .demo-b .dust {
+    position:absolute; border-radius:50%; background:#E8C84A;
+    animation:dustFloat ease-in-out infinite;
+  }
+  .demo-b .dust:nth-child(4) { width:2px; height:2px; left:15%; top:25%; opacity:0.3; animation-duration:4s; }
+  .demo-b .dust:nth-child(5) { width:1.5px; height:1.5px; left:80%; top:35%; opacity:0.2; animation-duration:5s; animation-delay:1s; }
+  .demo-b .dust:nth-child(6) { width:2px; height:2px; left:25%; top:70%; opacity:0.25; animation-duration:3.5s; animation-delay:2s; }
+  .demo-b .dust:nth-child(7) { width:1px; height:1px; left:70%; top:65%; opacity:0.3; animation-duration:4.5s; animation-delay:0.5s; }
+  .demo-b .dust:nth-child(8) { width:2px; height:2px; left:50%; top:15%; opacity:0.2; animation-duration:3s; animation-delay:1.5s; }
+  @keyframes dustFloat {
+    0%,100% { transform:translateY(0); opacity:0.15; }
+    50% { transform:translateY(-20px); opacity:0.5; }
+  }
+
+  /* ═══ OPTION C: Thai Sacred Geometry ═══ */
+  .demo-c { background:radial-gradient(ellipse at 50% 50%, #14100a 0%, #0A0806 100%); }
+
+  .demo-c .yantra {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:280px; height:280px;
+  }
+  /* outer circle */
+  .demo-c .yantra-circle {
+    position:absolute; inset:0; border:1px solid rgba(212,168,83,0.15); border-radius:50%;
+  }
+  /* inner triangles */
+  .demo-c .yantra-tri {
+    position:absolute; top:50%; left:50%;
+    width:0; height:0;
+    border-left:70px solid transparent; border-right:70px solid transparent;
+    border-bottom:120px solid rgba(212,168,83,0.06);
+  }
+  .demo-c .yantra-tri:nth-child(2) { transform:translate(-50%,-60%); }
+  .demo-c .yantra-tri:nth-child(3) { transform:translate(-50%,-40%) rotate(180deg); }
+
+  /* lotus petals (simplified) */
+  .demo-c .lotus-ring {
+    position:absolute; inset:30px; border-radius:50%;
+    border:1px solid rgba(212,168,83,0.1);
+    animation:mandalaRotate 40s linear infinite;
+  }
+  .demo-c .lotus-petal {
+    position:absolute;
+    width:8px; height:24px;
+    background:rgba(212,168,83,0.08);
+    border-radius:50%;
+    top:-12px; left:50%; transform-origin:center calc(100% + 76px);
+  }
+  .demo-c .lotus-petal:nth-child(1) { transform:translateX(-50%) rotate(0deg); }
+  .demo-c .lotus-petal:nth-child(2) { transform:translateX(-50%) rotate(30deg); }
+  .demo-c .lotus-petal:nth-child(3) { transform:translateX(-50%) rotate(60deg); }
+  .demo-c .lotus-petal:nth-child(4) { transform:translateX(-50%) rotate(90deg); }
+  .demo-c .lotus-petal:nth-child(5) { transform:translateX(-50%) rotate(120deg); }
+  .demo-c .lotus-petal:nth-child(6) { transform:translateX(-50%) rotate(150deg); }
+  .demo-c .lotus-petal:nth-child(7) { transform:translateX(-50%) rotate(180deg); }
+  .demo-c .lotus-petal:nth-child(8) { transform:translateX(-50%) rotate(210deg); }
+  .demo-c .lotus-petal:nth-child(9) { transform:translateX(-50%) rotate(240deg); }
+  .demo-c .lotus-petal:nth-child(10) { transform:translateX(-50%) rotate(270deg); }
+  .demo-c .lotus-petal:nth-child(11) { transform:translateX(-50%) rotate(300deg); }
+  .demo-c .lotus-petal:nth-child(12) { transform:translateX(-50%) rotate(330deg); }
+
+  .demo-c .inner-glow {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:80px; height:80px; border-radius:50%;
+    background:radial-gradient(circle, rgba(212,168,83,0.15) 0%, transparent 70%);
+    animation:glowPulse 3s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%,100% { opacity:0.5; transform:translate(-50%,-50%) scale(1); }
+    50% { opacity:1; transform:translate(-50%,-50%) scale(1.15); }
+  }
+
+  .demo-c .yantra-icon {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    font-size:28px; z-index:2;
+    text-shadow:0 0 20px rgba(232,200,74,0.3);
+  }
+  .demo-c .yantra-name {
+    position:absolute; top:calc(50% + 160px); left:50%; transform:translateX(-50%);
+    font-family:'Cinzel',serif; font-size:16px; letter-spacing:3px; color:#E8C84A;
+    text-shadow:0 0 20px rgba(232,200,74,0.15);
+  }
+  .demo-c .yantra-sub {
+    position:absolute; top:calc(50% + 182px); left:50%; transform:translateX(-50%);
+    font-size:9px; letter-spacing:4px; color:#8A7A6A; text-transform:uppercase;
+  }
+
+  /* corner ornaments */
+  .demo-c .corner {
+    position:absolute; width:40px; height:40px;
+    border-color:rgba(212,168,83,0.12); border-style:solid; border-width:0;
+  }
+  .demo-c .corner-tl { top:16px; left:16px; border-top-width:1px; border-left-width:1px; }
+  .demo-c .corner-tr { top:16px; right:16px; border-top-width:1px; border-right-width:1px; }
+  .demo-c .corner-bl { bottom:16px; left:16px; border-bottom-width:1px; border-left-width:1px; }
+  .demo-c .corner-br { bottom:16px; right:16px; border-bottom-width:1px; border-right-width:1px; }
+
+  /* thai script watermark */
+  .demo-c .thai-watermark {
+    position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:#B8860B; opacity:0.3; letter-spacing:6px;
+    font-style:italic;
+  }
+
+  .sel-bar {
+    position:fixed; bottom:0; left:0; right:0; background:#1A1510;
+    border-top:1px solid #2A2218; padding:12px 24px; text-align:center;
+    font-size:12px; color:#8A7A6A; z-index:100; transition:all 0.3s;
+  }
+  .sel-bar.on { color:#E8C84A; background:#1A1208; border-top-color:#B8860B44; }
+
+  @media(max-width:900px) {
+    .opt { flex-direction:column; }
+    .opt-info { width:auto; border-right:none; border-bottom:1px solid #1A150E; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Visual Direction</h1>
+  <h2>แต่ละ section จะ fancy แบบไหน?</h2>
+  <p>เลือก visual style หลักที่จะใช้กับ hero + oracle sections ทั้งหมด</p>
+</div>
+
+<div class="options">
+
+  <!-- A: Celestial Map -->
+  <div class="opt" data-choice="a" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>A: Celestial Map</h3>
+      <p>แผนที่ดวงดาว จุดดาวเชื่อมเส้นกลุ่มดาว วงมณฑลหมุนรอบ avatar เหมือนแผนผังโหราศาสตร์จริงๆ สัญลักษณ์จักรราศีลอยรอบ</p>
+      <div class="tags">
+        <span class="tag">constellation lines</span>
+        <span class="tag">rotating mandala</span>
+        <span class="tag">zodiac symbols</span>
+      </div>
+    </div>
+    <div class="demo demo-a">
+      <div class="constellation">
+        <div class="star" style="left:12%;top:18%"></div>
+        <div class="star" style="left:22%;top:28%"></div>
+        <div class="star" style="left:18%;top:42%"></div>
+        <div class="star" style="left:78%;top:22%"></div>
+        <div class="star" style="left:85%;top:35%"></div>
+        <div class="star" style="left:82%;top:52%"></div>
+        <div class="star" style="left:32%;top:75%"></div>
+        <div class="star" style="left:68%;top:72%"></div>
+        <div class="star" style="left:50%;top:12%"></div>
+        <div class="star" style="left:45%;top:85%"></div>
+        <div class="star-line" style="left:12%;top:18%;width:60px;transform:rotate(25deg)"></div>
+        <div class="star-line" style="left:22%;top:28%;width:40px;transform:rotate(70deg)"></div>
+        <div class="star-line" style="left:78%;top:22%;width:50px;transform:rotate(120deg)"></div>
+        <div class="star-line" style="left:82%;top:35%;width:35px;transform:rotate(150deg)"></div>
+      </div>
+      <div class="zodiac-marks">
+        <span class="zodiac" style="left:8%;top:50%">&#9800;</span>
+        <span class="zodiac" style="left:20%;top:12%">&#9801;</span>
+        <span class="zodiac" style="left:42%;top:6%">&#9802;</span>
+        <span class="zodiac" style="left:65%;top:8%">&#9803;</span>
+        <span class="zodiac" style="left:88%;top:18%">&#9804;</span>
+        <span class="zodiac" style="left:92%;top:45%">&#9805;</span>
+        <span class="zodiac" style="left:88%;top:72%">&#9806;</span>
+        <span class="zodiac" style="left:65%;top:88%">&#9807;</span>
+        <span class="zodiac" style="left:42%;top:92%">&#9808;</span>
+        <span class="zodiac" style="left:20%;top:85%">&#9809;</span>
+        <span class="zodiac" style="left:6%;top:70%">&#9810;</span>
+        <span class="zodiac" style="left:6%;top:30%">&#9811;</span>
+      </div>
+      <div class="center-mandala">
+        <div class="mandala-ring"></div>
+        <div class="mandala-ring"></div>
+        <div class="mandala-ring"></div>
+        <div class="mandala-ring"></div>
+      </div>
+      <div class="mandala-center">☽</div>
+      <div class="mandala-name">แม่หมอจันทร์</div>
+    </div>
+  </div>
+
+  <!-- B: Smoke & Reveal -->
+  <div class="opt" data-choice="b" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>B: Smoke & Gold Dust</h3>
+      <p>ควันทองลอยเลื่อน ฝุ่นทองเรืองแสง avatar ลอยอยู่กลางหมอก scroll แล้วหมอกเปิดเผย บรรยากาศเหมือนเข้าวัดโบราณ</p>
+      <div class="tags">
+        <span class="tag">fog/smoke effect</span>
+        <span class="tag">gold dust particles</span>
+        <span class="tag">atmospheric reveal</span>
+      </div>
+    </div>
+    <div class="demo demo-b">
+      <div class="smoke-layer"></div>
+      <div class="smoke-wisp"></div>
+      <div class="smoke-wisp"></div>
+      <div class="smoke-wisp"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="dust"></div>
+      <div class="reveal-avatar">
+        <div class="avatar-glow">☽</div>
+        <div class="reveal-name">แม่หมอจันทร์</div>
+        <div class="reveal-sub">Master Moon Oracle</div>
+      </div>
+      <div class="reveal-quote">"ดาวทุกดวงมีเรื่องจะเล่าให้คุณฟัง"</div>
+    </div>
+  </div>
+
+  <!-- C: Thai Sacred Geometry -->
+  <div class="opt" data-choice="c" onclick="sel(this)">
+    <div class="opt-info">
+      <h3>C: Thai Sacred Geometry</h3>
+      <p>ยันต์ + เรขาคณิตศักดิ์สิทธิ์ สามเหลี่ยมซ้อน วงกลมมณฑล กลีบบัวหมุนรอบ มุมกรอบทอง อักขระเลือนลาง เหมือนยันต์โบราณ</p>
+      <div class="tags">
+        <span class="tag">yantra geometry</span>
+        <span class="tag">lotus petals</span>
+        <span class="tag">sacred triangles</span>
+        <span class="tag">gold frame</span>
+      </div>
+    </div>
+    <div class="demo demo-c">
+      <div class="corner corner-tl"></div>
+      <div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div>
+      <div class="corner corner-br"></div>
+      <div class="yantra">
+        <div class="yantra-circle"></div>
+        <div class="yantra-tri"></div>
+        <div class="yantra-tri"></div>
+        <div class="lotus-ring">
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+          <div class="lotus-petal"></div>
+        </div>
+        <div class="inner-glow"></div>
+      </div>
+      <div class="yantra-icon">☽</div>
+      <div class="yantra-name">แม่หมอจันทร์</div>
+      <div class="yantra-sub">Master Moon Oracle</div>
+      <div class="thai-watermark">นะโม ตัสสะ</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sel-bar" id="bar">คลิกเลือก visual direction ที่ชอบ</div>
+
+<script>
+  let picked=null;
+  function sel(el){
+    document.querySelectorAll('.opt').forEach(c=>c.classList.remove('selected'));
+    el.classList.add('selected');
+    picked=el.dataset.choice;
+    const n={a:'A: Celestial Map',b:'B: Smoke & Gold Dust',c:'C: Thai Sacred Geometry'};
+    const b=document.getElementById('bar');
+    b.textContent='✓ เลือก '+n[picked]; b.classList.add('on');
+    fetch('/event',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'click',choice:picked,text:n[picked],timestamp:Math.floor(Date.now()/1000)})+'\n'
+    }).catch(()=>{});
+  }
+</script>
+</body>
+</html>

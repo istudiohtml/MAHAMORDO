@@ -22,16 +22,17 @@ export default function Nav({ mode, ready, onHome, isLoggedIn }: Props) {
         </div>
       </div>
       <div className="nav-right">
-        <a href="/fortune" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
-        <a href="/pricing" className={`nav-link${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
+        <a href="/fortune" className={`nav-link thai-font${isDetail ? ' hidden-link' : ''}`}>หมอดู</a>
+        <a href="/articles" className={`nav-link thai-font${isDetail ? ' hidden-link' : ''}`}>บทความ</a>
+        <a href="/pricing" className={`nav-link thai-font${isDetail ? ' hidden-link' : ''}`}>ราคา</a>
         <a
           href={isLoggedIn ? '/dashboard' : '/auth/login'}
-          className={`nav-link${isDetail ? ' hidden-link' : ''}`}
+          className={`nav-link thai-font${isDetail ? ' hidden-link' : ''}`}
         >
           {isLoggedIn ? 'แดชบอร์ด' : 'เข้าสู่ระบบ'}
         </a>
         {isDetail && (
-          <button className="nav-back visible" onClick={onHome}>
+          <button className="nav-back thai-font visible" onClick={onHome}>
             <span className="nav-back-line" />
             กลับหน้าหลัก
           </button>

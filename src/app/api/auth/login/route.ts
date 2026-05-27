@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from "@/lib/jwt";
+import { cmsForbiddenResponse, isCmsAdminRole } from "@/lib/cms-auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,6 +15,10 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user || !user.password || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json({ error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" }, { status: 401 });
+    }
+
+    if (!isCmsAdminRole(user.role)) {
+      return cmsForbiddenResponse();
     }
 
     // สร้าง tokens

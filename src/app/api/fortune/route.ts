@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { verifyAccessToken } from "@/lib/jwt";
-import { anthropic, CLAUDE_MODEL, MAX_TOKENS } from "@/lib/anthropic";
+import { anthropic, CLAUDE_FAST_MODEL, MAX_TOKENS } from "@/lib/anthropic";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
@@ -59,6 +59,50 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Session expired" }, { status: 410 });
     }
 
+    // Charge credit on the FIRST oracle reply (not on session open).
+    // Subscription users have creditCharged=true set at session create time
+    // so they skip this block entirely.
+    if (!session.creditCharged) {
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+        select: { credits: true },
+      });
+      if (!user || user.credits < session.oracle.creditCost) {
+        return NextResponse.json(
+          { error: "Insufficient credits" },
+          { status: 402 }
+        );
+      }
+      try {
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: payload.userId },
+            data: { credits: { decrement: session.oracle.creditCost } },
+          }),
+          prisma.fortuneSession.update({
+            where: { id: sessionId },
+            data: { creditCharged: true },
+          }),
+          prisma.creditLog.create({
+            data: {
+              userId: payload.userId,
+              amount: -session.oracle.creditCost,
+              reason: `session_reply:${sessionId}`,
+            },
+          }),
+        ]);
+      } catch (chargeErr) {
+        logger.error("Credit charge failed", payload?.userId, {
+          sessionId,
+          error: chargeErr instanceof Error ? chargeErr.message : String(chargeErr),
+        });
+        return NextResponse.json(
+          { error: "Failed to charge credit" },
+          { status: 500 }
+        );
+      }
+    }
+
     // บันทึก user message
     await prisma.message.create({
       data: { sessionId, role: "USER", content: message },
@@ -85,7 +129,7 @@ export async function POST(req: NextRequest) {
     const systemPrompt = session.oracle.systemPrompt + userNameContext;
 
     const response = await anthropic.messages.create({
-      model: CLAUDE_MODEL,
+      model: CLAUDE_FAST_MODEL,
       max_tokens: MAX_TOKENS,
       system: systemPrompt,
       messages: history,
@@ -104,8 +148,14 @@ export async function POST(req: NextRequest) {
       data: { sessionId, role: "ASSISTANT", content: reply },
     });
 
+    // Return the latest credit balance so the UI can refresh.
+    const after = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { credits: true },
+    });
+
     logger.info("Message saved to DB", payload?.userId, { sessionId });
-    return NextResponse.json({ reply });
+    return NextResponse.json({ reply, credits: after?.credits });
   } catch (error) {
     logger.error("Fortune API error", payload?.userId, {
       error: error instanceof Error ? error.message : String(error),

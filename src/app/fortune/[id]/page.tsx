@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { Suspense, useEffect, useRef, useState, useCallback } from 'react'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { oracles, OracleId } from '@/data/oracles'
 import { getAllCards, TarotCard } from '@/data/tarot-cards'
 import ParticleBackground from '@/components/landing/ParticleBackground'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
-
+import { useOraclePosters } from '@/hooks/useOraclePosters'
 const ORACLE_THEME: Record<OracleId, string> = {
   1: 'theme-maemor',
   2: 'theme-son',
@@ -51,12 +51,22 @@ function buildTarotReading(
 }
 
 
-export default function FortuneChatPage() {
+type HistoryMessage = {
+  id: string
+  role: 'USER' | 'ASSISTANT'
+  content: string
+  createdAt: string
+}
+
+function FortuneChatPageInner() {
   const params = useParams()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const resumeSessionId = searchParams.get('session')
   const rawId = Number(params.id)
   const oracleId = (rawId >= 1 && rawId <= 3 ? rawId : 1) as OracleId
   const oracle = oracles[oracleId]
+  const { posters } = useOraclePosters()
 
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [displayText, setDisplayText] = useState('')
@@ -69,6 +79,11 @@ export default function FortuneChatPage() {
   const [error, setError] = useState('')
   const [credits, setCredits] = useState(0)
   const [userName, setUserName] = useState('')
+
+  // Resume mode — populated when ?session=xxx is provided in the URL.
+  const [resumed, setResumed] = useState(false)
+  const [history, setHistory] = useState<HistoryMessage[]>([])
+  const [showHistory, setShowHistory] = useState(false)
 
   // Subject selection (self or others)
   const [askingSubject, setAskingSubject] = useState(false)
@@ -89,7 +104,6 @@ export default function FortuneChatPage() {
   const [askingForCard, setAskingForCard] = useState(false)
   const [tarotCards, setTarotCards] = useState<TarotCard[]>([])
   const [selectedCards, setSelectedCards] = useState<Array<{ position: 'past' | 'present' | 'future', card: TarotCard }>>([])
-
   const TOPICS = [
     { id: 'love', emoji: '❤️', name: 'ความรัก', description: 'ความสัมพันธ์ การรักษา ความรักแท้' },
     { id: 'health', emoji: '💚', name: 'สุขภาพ', description: 'สุขภาพกาย จิตใจ การแคร์ตัวเอง' },
@@ -148,9 +162,52 @@ export default function FortuneChatPage() {
     async function init() {
       const meRes = await fetch('/api/user/me')
       if (!meRes.ok) {
-        router.push(`/auth/login?redirect=/fortune/${oracleId}`)
+        router.push(`/auth/login?redirect=/fortune/${oracleId}${resumeSessionId ? `?session=${resumeSessionId}` : ''}`)
         return
       }
+
+      // Resume mode — load an existing session instead of creating a new one.
+      if (resumeSessionId) {
+        try {
+          const res = await fetch(`/api/fortune/session/${resumeSessionId}`)
+          if (!res.ok) {
+            setError('ไม่พบเซสชันนี้\nหรืออาจหมดอายุแล้ว')
+            setStarting(false)
+            return
+          }
+          const data = await res.json()
+          if (data.isExpired || data.status === 'EXPIRED') {
+            setError('เซสชันนี้หมดอายุแล้ว\nเริ่มดูดวงรอบใหม่ได้ที่หน้าแรก')
+            setStarting(false)
+            return
+          }
+          setSessionId(data.sessionId)
+          setCredits(data.credits)
+          setUserName(data.userName)
+          setHistory(data.messages || [])
+          setShowHistory(true)
+          setResumed(true)
+          setStarting(false)
+          // Skip onboarding (subject/topic) — go straight to chat.
+          const lastAssistant = (data.messages || []).filter(
+            (m: HistoryMessage) => m.role === 'ASSISTANT'
+          ).pop()
+          // Show the last assistant message in the speech bubble (no typing
+          // animation — just snap it in so the user can keep chatting).
+          if (lastAssistant) {
+            setDisplayText(lastAssistant.content)
+            setInputVisible(true)
+          } else {
+            setInputVisible(true)
+          }
+          return
+        } catch {
+          setError('เกิดข้อผิดพลาดในการโหลดเซสชัน')
+          setStarting(false)
+          return
+        }
+      }
+
       try {
         const startRes = await fetch('/api/fortune/start', {
           method: 'POST',
@@ -210,6 +267,18 @@ export default function FortuneChatPage() {
 
   async function sendMessage(sid: string, msg: string, uName?: string) {
     setLoading(true)
+    // In resume mode, append the user's message to the thread immediately.
+    if (resumed) {
+      setHistory((prev) => [
+        ...prev,
+        {
+          id: `local-user-${Date.now()}`,
+          role: 'USER',
+          content: msg,
+          createdAt: new Date().toISOString(),
+        },
+      ])
+    }
     try {
       const res = await fetch('/api/fortune', {
         method: 'POST',
@@ -218,14 +287,32 @@ export default function FortuneChatPage() {
       })
       if (res.ok) {
         const data = await res.json()
+        if (typeof data.credits === 'number') setCredits(data.credits)
+        setLoading(false)
+        if (resumed) {
+          setHistory((prev) => [
+            ...prev,
+            {
+              id: `local-assistant-${Date.now()}`,
+              role: 'ASSISTANT',
+              content: data.reply,
+              createdAt: new Date().toISOString(),
+            },
+          ])
+        }
         typeText(data.reply)
-      } else {
-        typeText('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+        return
       }
-    } catch {
-      typeText('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
-    } finally {
+      if (res.status === 402) {
+        setLoading(false)
+        setError('เครดิตไม่เพียงพอ\nกรุณาเติมเครดิตเพิ่ม')
+        return
+      }
       setLoading(false)
+      typeText('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
+    } catch {
+      setLoading(false)
+      typeText('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง')
     }
   }
 
@@ -234,6 +321,9 @@ export default function FortuneChatPage() {
     const msg = userInput.trim()
     setUserInput('')
     setInputVisible(false)
+    // Echo the user's question into the speech area immediately so they know
+    // the system received it while Claude is still thinking.
+    setDisplayText(`คุณ: ${msg}`)
     await sendMessage(sessionId, msg)
   }
 
@@ -261,7 +351,7 @@ export default function FortuneChatPage() {
           {/* Navigation */}
           <div className="fortune-vn-nav">
             <a href="/dashboard" className="fortune-vn-switch">⟵ Dashboard</a>
-            <a href="/fortune" className="fortune-vn-switch">เปลี่ยนหมอดู</a>
+            <a href="/fortune" className="fortune-vn-switch thai-font">เปลี่ยนหมอดู</a>
           </div>
 
           {/* Animated rings */}
@@ -272,7 +362,7 @@ export default function FortuneChatPage() {
           {/* Circular avatar — ใช้รูปเดียวกับหน้ารวม แต่ครอบในวงกลม */}
           <div className={`fortune-vn-avatar${isTalking ? ' talking' : ''}`}>
             <img
-              src={getOracleTemplateAvatar(oracle.slug)}
+              src={getOracleTemplateAvatar(oracle.slug, posters[oracle.slug])}
               alt={oracle.name}
             />
           </div>
@@ -313,7 +403,7 @@ export default function FortuneChatPage() {
                 {error.includes('เครดิต') ? (
                   <a href="/dashboard/credits" className="fortune-vn-buy-link">ซื้อเครดิตเพิ่ม ✦</a>
                 ) : null}
-                <a href="/fortune" className="fortune-vn-back-link">← เลือกหมอดูใหม่</a>
+                <a href="/fortune" className="fortune-vn-back-link thai-font">← เลือกหมอดูใหม่</a>
               </div>
             </>
           )}
@@ -391,25 +481,40 @@ export default function FortuneChatPage() {
                       className="vn-topic-btn"
                       onClick={async () => {
                         setTopicChosen(topic.id)
+                        const isCustom = topic.id === 'custom'
+                        // Build a starter message — for fixed topics we phrase it
+                        // as a real question so the AI immediately gives a reading.
+                        const starterMessage = isCustom
+                          ? `${topic.emoji} ${topic.name}`
+                          : `ฉันอยากให้ดูดวงเรื่อง${topic.name}ค่ะ ช่วยทำนายให้หน่อยได้ไหม`
+
                         if (sessionId) {
                           await fetch('/api/fortune/message', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                               sessionId,
-                              content: `${topic.emoji} ${topic.name}`,
+                              content: starterMessage,
                               role: 'USER',
                               topic: topic.id,
                             }),
                           })
                         }
                         if (oracleId === 3) {
+                          // Tarot oracle: skip auto-send; user picks cards first.
                           const allCards = getAllCards()
                           setTarotCards(allCards)
                           setSelectedCards([])
                           setAskingForCard(true)
+                          setAskingTopic(false)
+                          return
                         }
                         setAskingTopic(false)
+                        if (!isCustom && sessionId) {
+                          // Auto-trigger the first reading for fixed topics.
+                          setDisplayText(`คุณ: เลือกดูดวงเรื่อง${topic.name}`)
+                          await sendMessage(sessionId, starterMessage)
+                        }
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
@@ -529,19 +634,77 @@ export default function FortuneChatPage() {
           {/* Chat state */}
           {!starting && !error && !askingSubject && !showBirthForm && !askingTopic && !askingForCard && (
             <>
+              {/* Resume mode — show full conversation history above the active bubble.
+                  The last assistant message is hidden because it's already
+                  rendered (with typing animation) in the speech bubble below. */}
+              {resumed && showHistory && history.length > 0 && (
+                <div className="fortune-vn-history">
+                  <div className="fortune-vn-history-header">
+                    <span>บทสนทนาก่อนหน้า</span>
+                    <button
+                      type="button"
+                      className="fortune-vn-history-toggle"
+                      onClick={() => setShowHistory(false)}
+                    >
+                      ซ่อน
+                    </button>
+                  </div>
+                  <div className="fortune-vn-history-scroll">
+                    {history.slice(0, -1).map((m) => (
+                      <div
+                        key={m.id}
+                        className={`fortune-vn-history-msg ${
+                          m.role === 'USER'
+                            ? 'is-user'
+                            : 'is-oracle'
+                        }`}
+                      >
+                        <span className="fortune-vn-history-author">
+                          {m.role === 'USER' ? 'คุณ' : oracle.name}
+                        </span>
+                        <span className="fortune-vn-history-text">
+                          {m.content}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {resumed && !showHistory && history.length > 0 && (
+                <button
+                  type="button"
+                  className="fortune-vn-history-show"
+                  onClick={() => setShowHistory(true)}
+                >
+                  ▾ ดูบทสนทนาก่อนหน้า ({history.length - 1})
+                </button>
+              )}
+
               <div className="fortune-vn-speech">
                 <div className="fortune-vn-speech-text">
                   {displayText}
                   {isTyping && <span className="fortune-vn-cursor" />}
                 </div>
+                {loading && !isTyping && (
+                  <div className="fortune-vn-thinking" aria-live="polite">
+                    <span className="fortune-vn-thinking-label">
+                      {oracle.name}กำลังคิด
+                    </span>
+                    <span className="fortune-vn-thinking-dots" aria-hidden>
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  </div>
+                )}
               </div>
 
-              <div className={`fortune-vn-input-zone${inputVisible ? ' show' : ''}`}>
+              <div className={`fortune-vn-input-zone${inputVisible && !loading ? ' show' : ''}`}>
                 <div className="fortune-vn-text-row">
                   <input
                     className="fortune-vn-text-input"
                     type="text"
-                    placeholder="พิมพ์คำถามของคุณ..."
+                    placeholder={loading ? 'กำลังรอคำตอบ...' : 'พิมพ์คำถามของคุณ...'}
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -558,7 +721,7 @@ export default function FortuneChatPage() {
                   </button>
                 </div>
                 {credits > 0 && (
-                  <div className="fortune-vn-credits">{credits} เครดิตคงเหลือ</div>
+                  <div className="fortune-vn-credits thai-font">{credits} เครดิตคงเหลือ</div>
                 )}
               </div>
             </>
@@ -634,5 +797,13 @@ export default function FortuneChatPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function FortuneChatPage() {
+  return (
+    <Suspense fallback={null}>
+      <FortuneChatPageInner />
+    </Suspense>
   )
 }

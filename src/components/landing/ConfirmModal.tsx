@@ -56,7 +56,7 @@ export default function ConfirmModal({ open, oracleName, creditCost, onConfirm, 
         <div className="confirm-modal-icon">✦</div>
         <h3 className="confirm-modal-title">เริ่มดูดวง</h3>
         {oracleName && (
-          <p className="confirm-modal-oracle">{oracleName}</p>
+          <p className="confirm-modal-oracle thai-font">{oracleName}</p>
         )}
         <p className="confirm-modal-desc">
           การดูดวงครั้งนี้จะใช้ <strong>{creditCost} เครดิต</strong>

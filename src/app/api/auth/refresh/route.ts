@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from "@/lib/jwt";
+import { clearCmsAuthCookies, cmsForbiddenResponse, isCmsAdminRole } from "@/lib/cms-auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,6 +21,13 @@ export async function POST(req: NextRequest) {
       // ลบถ้าหมดอายุ
       if (stored) await prisma.refreshToken.deleteMany({ where: { id: stored.id } });
       return NextResponse.json({ error: "Refresh token expired" }, { status: 401 });
+    }
+
+    if (!isCmsAdminRole(stored.user.role)) {
+      await prisma.refreshToken.deleteMany({ where: { id: stored.id } });
+      const res = cmsForbiddenResponse();
+      clearCmsAuthCookies(res);
+      return res;
     }
 
     // Rotate refresh token (ออก token ใหม่ + ลบอันเก่า)

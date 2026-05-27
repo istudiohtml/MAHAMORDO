@@ -1,9 +1,10 @@
 'use client'
 
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { oracles, OracleId } from '@/data/oracles'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
+import { useOraclePosters } from '@/hooks/useOraclePosters'
 
 interface OracleCardData {
   num: string
@@ -12,6 +13,7 @@ interface OracleCardData {
   icon: string
   cost: number
   id: number
+  slug: string
   avatar: string
   theme: string
 }
@@ -21,21 +23,6 @@ const ORACLE_CARD_META: Record<OracleId, { num: string; sub: string; theme: stri
   2: { num: 'II', sub: 'Korean Saju', theme: 'saju' },
   3: { num: 'III', sub: 'Tarot', theme: 'rahu' },
 }
-
-const oracleCards: OracleCardData[] = ([1, 2, 3] as OracleId[]).map((id) => {
-  const o = oracles[id]
-  const meta = ORACLE_CARD_META[id]
-  return {
-    num: meta.num,
-    name: o.name,
-    sub: meta.sub,
-    icon: o.avatar,
-    cost: o.creditCost,
-    id,
-    avatar: getOracleTemplateAvatar(o.slug),
-    theme: meta.theme,
-  }
-})
 
 function TiltCard({ o }: { o: OracleCardData }) {
   const cardRef = useRef<HTMLAnchorElement>(null)
@@ -85,12 +72,32 @@ function TiltCard({ o }: { o: OracleCardData }) {
       <p className="dash-oracle-num">Oracle {o.num}</p>
       <p className="dash-oracle-name">{o.name}</p>
       <p className="dash-oracle-sub">{o.sub}</p>
-      <p className="dash-oracle-cost">{o.cost} เครดิต ✦</p>
+      <p className="dash-oracle-cost thai-font">{o.cost} เครดิต ✦</p>
     </Link>
   )
 }
 
 export default function OracleTiltCards() {
+  const { posters } = useOraclePosters()
+
+  const oracleCards = useMemo<OracleCardData[]>(() => {
+    return ([1, 2, 3] as OracleId[]).map((id) => {
+      const o = oracles[id]
+      const meta = ORACLE_CARD_META[id]
+      return {
+        num: meta.num,
+        name: o.name,
+        sub: meta.sub,
+        icon: o.avatar,
+        cost: o.creditCost,
+        id,
+        slug: o.slug,
+        avatar: getOracleTemplateAvatar(o.slug, posters[o.slug]),
+        theme: meta.theme,
+      }
+    })
+  }, [posters])
+
   return (
     <div className="dash-oracle-cards">
       {oracleCards.map((o) => (

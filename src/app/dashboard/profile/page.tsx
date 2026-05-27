@@ -61,7 +61,7 @@ export default function ProfilePage() {
     <div className="dash-page">
       <div className="dash-page-header">
         <p className="dash-page-eyebrow">Profile</p>
-        <h1 className="dash-page-title">ข้อมูลส่วนตัว</h1>
+        <h1 className="dash-page-title thai-font">ข้อมูลส่วนตัว</h1>
         <p className="dash-page-sub">ข้อมูลเหล่านี้ช่วยให้หมอดูวิเคราะห์ดวงชะตาได้แม่นยำขึ้น</p>
       </div>
 
@@ -69,10 +69,10 @@ export default function ProfilePage() {
 
         {/* ── ข้อมูลพื้นฐาน ── */}
         <div className="profile-section">
-          <div className="profile-section-title">ข้อมูลพื้นฐาน</div>
+          <div className="profile-section-title thai-font">ข้อมูลพื้นฐาน</div>
           <div className="profile-grid">
             <div className="profile-field">
-              <label className="profile-label">ชื่อ</label>
+              <label className="profile-label thai-font">ชื่อ</label>
               <input
                 type="text"
                 value={form.firstName}
@@ -82,7 +82,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="profile-field">
-              <label className="profile-label">นามสกุล</label>
+              <label className="profile-label thai-font">นามสกุล</label>
               <input
                 type="text"
                 value={form.lastName}
@@ -96,12 +96,12 @@ export default function ProfilePage() {
 
         {/* ── ข้อมูลการเกิด ── */}
         <div className="profile-section">
-          <div className="profile-section-title">ข้อมูลการเกิด</div>
+          <div className="profile-section-title thai-font">ข้อมูลการเกิด</div>
           <p className="profile-section-sub">ใช้สำหรับคำนวณดวงชะตา — ยิ่งครบถ้วนยิ่งแม่น</p>
 
           <div className="profile-grid">
             <div className="profile-field">
-              <label className="profile-label">วันเกิด</label>
+              <label className="profile-label thai-font">วันเกิด</label>
               <input
                 type="date"
                 value={form.birthDate}
@@ -110,7 +110,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="profile-field">
-              <label className="profile-label">เวลาที่เกิด</label>
+              <label className="profile-label thai-font">เวลาที่เกิด</label>
               <input
                 type="time"
                 value={form.birthTime}
@@ -123,7 +123,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="profile-field" style={{ marginTop: 16 }}>
-            <label className="profile-label">สถานที่เกิด</label>
+            <label className="profile-label thai-font">สถานที่เกิด</label>
             <input
               type="text"
               value={form.birthPlace}
@@ -138,7 +138,7 @@ export default function ProfilePage() {
         {/* ── Fortune context preview ── */}
         {(form.firstName || form.birthDate) && (
           <div className="profile-preview">
-            <p className="profile-preview-label">ตัวอย่างข้อมูลที่หมอดูจะได้รับ</p>
+            <p className="profile-preview-label thai-font">ตัวอย่างข้อมูลที่หมอดูจะได้รับ</p>
             <p className="profile-preview-text">
               {form.firstName && `ชื่อ: ${form.firstName}${form.lastName ? ' ' + form.lastName : ''}`}
               {form.birthDate && ` · เกิด: ${new Date(form.birthDate).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}`}
@@ -155,7 +155,7 @@ export default function ProfilePage() {
           <button type="submit" disabled={loading} className="profile-save-btn">
             {loading ? 'กำลังบันทึก...' : 'บันทึกข้อมูล ✦'}
           </button>
-          {saved && <span className="profile-saved-msg">✓ บันทึกแล้ว</span>}
+          {saved && <span className="profile-saved-msg thai-font">✓ บันทึกแล้ว</span>}
         </div>
 
       </form>

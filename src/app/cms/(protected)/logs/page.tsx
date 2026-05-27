@@ -3,9 +3,46 @@
 import { useEffect, useState } from "react";
 import { cmsFetch } from "@/components/cms/CmsProvider";
 
+type LogType = "credit" | "session";
+
+interface CreditLog {
+  id: string;
+  amount: number;
+  reason: string;
+  createdAt: string;
+  user?: { email?: string; name?: string | null };
+}
+
+interface SessionLog {
+  id: string;
+  status: string;
+  createdAt: string;
+  user?: { email?: string; name?: string | null };
+  oracle?: { name?: string };
+  _count?: { messages?: number };
+}
+
+type AnyLog = CreditLog | SessionLog;
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function statusClass(status: string) {
+  if (status === "ACTIVE") return "cms-status-active";
+  if (status === "COMPLETED") return "cms-status-completed";
+  return "cms-status-failed";
+}
+
 export default function LogsPage() {
-  const [type, setType] = useState<"credit" | "session">("credit");
-  const [data, setData] = useState<any[]>([]);
+  const [type, setType] = useState<LogType>("credit");
+  const [data, setData] = useState<AnyLog[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -13,64 +50,143 @@ export default function LogsPage() {
     setLoading(true);
     cmsFetch(`/api/cms/logs?type=${type}`)
       .then((r) => r.json())
-      .then((res) => { setData(res.data ?? []); setTotal(res.total ?? 0); })
+      .then((res) => {
+        setData(res.data ?? []);
+        setTotal(res.total ?? 0);
+      })
       .finally(() => setLoading(false));
   }, [type]);
 
   return (
-    <div className="max-w-5xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="cms-page cms-logs-page">
+      <header className="cms-page-header">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900">Logs</h2>
-          <p className="text-slate-500 text-sm mt-1">รวม {total} รายการ</p>
+          <p className="cms-page-eyebrow">Logs</p>
+          <h1 className="cms-page-title">บันทึกการใช้งาน</h1>
+          <p className="cms-page-sub">
+            รวม {total} รายการ — credit logs และ session history
+          </p>
         </div>
-        <div className="flex bg-white border border-slate-100 rounded-lg p-1 shadow-sm">
-          {(["credit", "session"] as const).map((t) => (
-            <button key={t} onClick={() => setType(t)}
-              className={`text-sm px-4 py-1.5 rounded-md font-medium transition-all ${type === t ? "bg-slate-900 text-white" : "text-slate-500 hover:text-slate-700"}`}>
-              {t === "credit" ? "Credit Logs" : "Sessions"}
-            </button>
-          ))}
+        <div className="cms-logs-header-actions">
+          <div className="cms-segmented" role="tablist">
+            {(["credit", "session"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                role="tab"
+                aria-selected={type === t}
+                onClick={() => setType(t)}
+                className={`cms-segmented-item${type === t ? " is-active" : ""}`}
+              >
+                {t === "credit" ? "Credit Logs" : "Sessions"}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </header>
 
-      {loading && <div className="animate-pulse text-slate-400 text-sm">กำลังโหลด...</div>}
+      {loading && (
+        <div className="cms-table-wrap" aria-busy="true">
+          <div style={{ padding: "1rem" }}>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="skeleton cms-skel-row" />
+            ))}
+          </div>
+        </div>
+      )}
+
       {!loading && data.length === 0 && (
-        <div className="bg-white rounded-xl border border-slate-100 p-12 text-center text-slate-400 text-sm">ยังไม่มีข้อมูล</div>
+        <div className="cms-empty">
+          <span className="cms-empty-icon">≡</span>
+          <h3>ยังไม่มีข้อมูล</h3>
+          <p>
+            {type === "credit"
+              ? "ยังไม่มีการใช้งานเครดิต"
+              : "ยังไม่มี session การคุยกับหมอดู"}
+          </p>
+        </div>
       )}
 
       {!loading && data.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="cms-table-wrap">
+          <table className="cms-table">
             <thead>
-              <tr className="border-b border-slate-100">
-                {(type === "credit"
-                  ? ["ผู้ใช้", "Amount", "เหตุผล", "วันที่"]
-                  : ["ผู้ใช้", "หมอดู", "ข้อความ", "Status", "วันที่"]
-                ).map((h) => (
-                  <th key={h} className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-5 py-3">{h}</th>
-                ))}
-              </tr>
+              {type === "credit" ? (
+                <tr>
+                  <th>ผู้ใช้</th>
+                  <th>จำนวน</th>
+                  <th>เหตุผล</th>
+                  <th>วันที่</th>
+                </tr>
+              ) : (
+                <tr>
+                  <th>ผู้ใช้</th>
+                  <th>หมอดู</th>
+                  <th>ข้อความ</th>
+                  <th>สถานะ</th>
+                  <th>วันที่</th>
+                </tr>
+              )}
             </thead>
-            <tbody className="divide-y divide-slate-50">
-              {data.map((item: any) => (
-                <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-5 py-3">
-                    <p className="text-slate-900">{item.user?.name || "—"}</p>
-                    <p className="text-xs text-slate-400 font-mono">{item.user?.email}</p>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <p className="cms-cell-primary">
+                      {item.user?.name || "—"}
+                    </p>
+                    <p className="cms-cell-sub">{item.user?.email ?? ""}</p>
                   </td>
                   {type === "credit" ? (
                     <>
-                      <td className="px-5 py-3"><span className={`font-mono font-medium ${item.amount > 0 ? "text-emerald-600" : "text-red-500"}`}>{item.amount > 0 ? `+${item.amount}` : item.amount}</span></td>
-                      <td className="px-5 py-3 text-xs text-slate-500 font-mono">{item.reason}</td>
-                      <td className="px-5 py-3 text-xs text-slate-400">{new Date(item.createdAt).toLocaleString("th-TH")}</td>
+                      <td>
+                        <span
+                          className={
+                            (item as CreditLog).amount > 0
+                              ? "cms-amount-pos"
+                              : "cms-amount-neg"
+                          }
+                        >
+                          {(item as CreditLog).amount > 0
+                            ? `+${(item as CreditLog).amount}`
+                            : (item as CreditLog).amount}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="cms-cell-mono">
+                          {(item as CreditLog).reason}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="cms-cell-muted">
+                          {formatDate(item.createdAt)}
+                        </span>
+                      </td>
                     </>
                   ) : (
                     <>
-                      <td className="px-5 py-3 text-slate-700">{item.oracle?.name}</td>
-                      <td className="px-5 py-3 text-slate-500">{item._count?.messages} ข้อความ</td>
-                      <td className="px-5 py-3"><span className={`text-xs px-2 py-0.5 rounded font-medium ${item.status === "ACTIVE" ? "bg-emerald-50 text-emerald-600" : item.status === "COMPLETED" ? "bg-slate-100 text-slate-500" : "bg-red-50 text-red-500"}`}>{item.status}</span></td>
-                      <td className="px-5 py-3 text-xs text-slate-400">{new Date(item.createdAt).toLocaleString("th-TH")}</td>
+                      <td>
+                        <span className="cms-cell-primary" style={{ fontWeight: 500 }}>
+                          {(item as SessionLog).oracle?.name ?? "—"}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="cms-cell-muted">
+                          {(item as SessionLog)._count?.messages ?? 0} ข้อความ
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`cms-status-badge ${statusClass((item as SessionLog).status)}`}
+                        >
+                          {(item as SessionLog).status}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="cms-cell-muted">
+                          {formatDate(item.createdAt)}
+                        </span>
+                      </td>
                     </>
                   )}
                 </tr>

@@ -18,7 +18,7 @@ export default function FortuneSelectPage() {
         <div className="fs-hero">
           <p className="fs-eyebrow">✦ &nbsp; The Grand Oracle &nbsp; ✦</p>
           <h1 className="fs-title">MAHA<br />MORDO</h1>
-          <p className="fs-sub">เลือกหมอดูของคุณ</p>
+          <p className="fs-sub thai-font">เลือกหมอดูของคุณ</p>
         </div>
 
         {/* Poster Grid */}

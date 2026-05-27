@@ -53,50 +53,25 @@ export async function POST(req: NextRequest) {
       user.subscriptionExpiresAt !== null &&
       user.subscriptionExpiresAt > now
 
-    // ถ้าไม่มี subscription ที่ยัง active → ใช้เครดิตตามเดิม
+    // Reject up front if user clearly can't afford a reading — but DO NOT
+    // deduct here. Charging happens in /api/fortune on the first oracle reply.
     if (!hasActiveSubscription && user.credits < oracle.creditCost) {
       return NextResponse.json({ error: 'Insufficient credits' }, { status: 402 })
     }
 
-    // Create session + deduct credits in a transaction
-    const sessionExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000) // 24 hours from now
+    const sessionExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000) // 24 hours
 
-    const [session, updatedUser] = await prisma.$transaction([
-      prisma.fortuneSession.create({
-        data: {
-          userId,
-          oracleId: oracle.id,
-          status: 'ACTIVE',
-          expiresAt: sessionExpiresAt,
-        },
-      }),
-      // ถ้ามี subscription ไม่ต้องหักเครดิต
-      hasActiveSubscription
-        ? prisma.user.findUnique({
-            where: { id: userId },
-            select: { credits: true },
-          })
-        : prisma.user.update({
-            where: { id: userId },
-            data: { credits: { decrement: oracle.creditCost } },
-            select: { credits: true },
-          }),
-    ])
-
-    if (!updatedUser) {
-      return NextResponse.json({ error: 'Failed to update user' }, { status: 500 })
-    }
-
-    // Log credit usage (เฉพาะกรณีใช้เครดิตจริง ๆ)
-    if (!hasActiveSubscription) {
-      await prisma.creditLog.create({
-        data: {
-          userId,
-          amount: -oracle.creditCost,
-          reason: `session_start:${session.id}`,
-        },
-      })
-    }
+    const session = await prisma.fortuneSession.create({
+      data: {
+        userId,
+        oracleId: oracle.id,
+        status: 'ACTIVE',
+        expiresAt: sessionExpiresAt,
+        // Subscription users get this set immediately so /api/fortune skips
+        // the charge step. Pay-as-you-go users get charged on first reply.
+        creditCharged: hasActiveSubscription,
+      },
+    })
 
     // Get user's name for greeting
     const userName = user.firstName || user.name || 'ผู้ถาม'
@@ -104,9 +79,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       sessionId: session.id,
       oracleDbId: oracle.id,
-      credits: updatedUser.credits,
+      credits: user.credits, // unchanged — we didn't deduct
       userName,
       initialGreeting: oracle.initialGreeting,
+      creditCost: oracle.creditCost,
+      hasActiveSubscription,
     })
   } catch (error) {
     console.error('Fortune start error:', error)

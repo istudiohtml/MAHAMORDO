@@ -62,9 +62,12 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    // Create Stripe checkout session
+    // Create Stripe checkout session.
+    // We intentionally omit payment_method_types so Stripe shows all methods
+    // enabled in the Dashboard (Settings → Payment methods). This makes
+    // PromptPay appear automatically once enabled at:
+    //   https://dashboard.stripe.com/settings/payment_methods
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'promptpay'],
       line_items: [
         {
           price_data: {

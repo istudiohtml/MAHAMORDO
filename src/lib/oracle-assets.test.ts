@@ -21,8 +21,8 @@ describe('oracle-assets', () => {
     expect(getOracleTemplateAvatar('mor-dum')).toBe('/avatars/template-ajarn-rahu.jpg')
   })
 
-  it('prefers explicit avatarUrl', () => {
-    expect(getOracleTemplateAvatar('ajarn-rahu', '/custom.png')).toBe('/custom.png')
+  it('prefers explicit posterUrl', () => {
+    expect(getOracleTemplateAvatar('ajarn-rahu', '/api/uploads/oracles/ajarn-rahu.jpg')).toBe('/api/uploads/oracles/ajarn-rahu.jpg')
   })
 
   it('returns svg paths', () => {

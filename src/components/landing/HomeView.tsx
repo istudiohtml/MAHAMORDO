@@ -27,7 +27,7 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
       <div className="hero-left">
         <ParticleBackground />
         <div className="hero-left-content">
-          <p className={`hero-eyebrow${animated ? ' animate' : ''}`}>
+          <p className={`hero-eyebrow thai-font${animated ? ' animate' : ''}`}>
             ✦ &nbsp; มหาหมอดู · Thailand &nbsp; ✦
           </p>
           <h1 className={`hero-title${animated ? ' animate' : ''}`}>
@@ -88,7 +88,7 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
         <div className="oracle-preview">
           <div className={`preview-card preview-card-default${previewId === 0 ? ' active' : ''}`}>
             <div className="preview-dots"><span /><span /><span /></div>
-            <p className="preview-hint">เลือกหมอดู</p>
+            <p className="preview-hint thai-font">เลือกหมอดู</p>
           </div>
           {([1, 2, 3] as OracleId[]).map((id) => {
             const o = oracles[id]
@@ -105,9 +105,9 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
               >
                 <div className="preview-symbol">{symbols[id]}</div>
                 <p className="preview-tag">{previews[id].tag}</p>
-                <p className="preview-name">{o.name}</p>
+                <p className="preview-name thai-font">{o.name}</p>
                 <p className="preview-sub">{previews[id].sub}</p>
-                <button className="preview-action" onClick={() => onOpenOracle(id)}>
+                <button className="preview-action thai-font" onClick={() => onOpenOracle(id)}>
                   ดูดวงเลย <span className="preview-action-arrow" />
                 </button>
               </div>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahamordo — Scroll Flow Options</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0A0806;
+    color: #F5E8C0;
+    font-family: 'Prompt', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: 60px 24px 20px;
+  }
+  .page-header h1 {
+    font-size: 14px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #B8860B;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .page-header h2 {
+    font-size: 28px;
+    font-weight: 300;
+    color: #F5E8C0;
+    margin-bottom: 10px;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: #8A7A6A;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .options-row {
+    display: flex;
+    gap: 20px;
+    padding: 40px 32px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .option-card {
+    flex: 1;
+    border: 1px solid #2A2218;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    background: #0F0C08;
+  }
+  .option-card:hover {
+    border-color: #B8860B;
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(184, 134, 11, 0.15);
+  }
+  .option-card.selected {
+    border-color: #E8C84A;
+    box-shadow: 0 0 40px rgba(232, 200, 74, 0.2);
+  }
+  .option-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+    background: #E8C84A;
+    color: #0A0806;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 10;
+  }
+
+  /* ---- MOCKUP AREA ---- */
+  .mockup-area {
+    height: 420px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* === OPTION A: Carousel === */
+  .mock-a .mockup-area {
+    background: linear-gradient(180deg, #0D0A06 0%, #1A1208 100%);
+  }
+  .mock-a .flow-sections {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .mock-a .flow-sec {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-bottom: 1px solid #1A150E;
+  }
+  .mock-a .flow-sec:last-child { border-bottom: none; }
+
+  .mock-a .sec-hero {
+    background: radial-gradient(ellipse at 50% 50%, rgba(184,134,11,0.08) 0%, transparent 70%);
+  }
+  .mock-a .sec-hero .sec-content {
+    text-align: center;
+  }
+  .mock-a .sec-hero .logo-text {
+    font-size: 22px;
+    letter-spacing: 8px;
+    color: #E8C84A;
+    font-weight: 600;
+  }
+  .mock-a .sec-hero .logo-sub {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #8A7A6A;
+    margin-top: 4px;
+  }
+
+  .mock-a .sec-intro {
+    background: rgba(184,134,11,0.03);
+  }
+  .mock-a .sec-intro .tagline {
+    font-size: 11px;
+    color: #B8860B;
+    letter-spacing: 2px;
+    text-align: center;
+    opacity: 0.7;
+  }
+
+  .mock-a .sec-carousel {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px;
+    background: rgba(0,0,0,0.3);
+  }
+  .mock-a .mini-oracle {
+    flex: 1;
+    height: 70%;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid;
+    transition: all 0.3s;
+  }
+  .mock-a .mini-oracle:nth-child(1) {
+    background: linear-gradient(135deg, #1E0F04, #2A1C0C);
+    border-color: #3A2A14;
+  }
+  .mock-a .mini-oracle:nth-child(2) {
+    background: linear-gradient(135deg, #080F1A, #0D1A2E);
+    border-color: #1A2A40;
+  }
+  .mock-a .mini-oracle:nth-child(3) {
+    background: linear-gradient(135deg, #100820, #1A0D30);
+    border-color: #2A1A40;
+  }
+  .mock-a .mini-oracle .oracle-icon { font-size: 20px; }
+  .mock-a .mini-oracle .oracle-name { font-size: 9px; color: #B8860B; letter-spacing: 1px; }
+
+  .mock-a .sec-steps {
+    flex: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+  }
+  .mock-a .step-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #B8860B44;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #B8860B;
+  }
+
+  .mock-a .sec-cta {
+    flex: 0.6;
+    background: linear-gradient(0deg, rgba(184,134,11,0.08) 0%, transparent 100%);
+  }
+  .mock-a .sec-cta .cta-btn {
+    padding: 6px 20px;
+    background: linear-gradient(135deg, #D4A853, #8B6914);
+    border-radius: 20px;
+    font-size: 10px;
+    color: #1A0800;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .flow-label {
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    font-size: 7px;
+    letter-spacing: 2px;
+    color: #4A3F35;
+    text-transform: uppercase;
+  }
+
+  /* === OPTION B: Sequential === */
+  .mock-b .mockup-area {
+    background: #0D0A06;
+  }
+  .mock-b .flow-sections {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .mock-b .flow-sec {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.5s;
+  }
+
+  .mock-b .sec-hero-b {
+    background: radial-gradient(ellipse at 50% 50%, rgba(184,134,11,0.1) 0%, transparent 70%);
+    border-bottom: 1px solid #1A150E;
+  }
+  .mock-b .sec-hero-b .logo-text {
+    font-size: 18px;
+    letter-spacing: 8px;
+    color: #E8C84A;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .mock-b .sec-oracle {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+  }
+  .mock-b .oracle-avatar-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .mock-b .oracle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .mock-b .oracle-info .name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .mock-b .oracle-info .desc {
+    font-size: 8px;
+    opacity: 0.5;
+    letter-spacing: 1px;
+  }
+
+  .mock-b .sec-o1 {
+    background: linear-gradient(90deg, #1E0F04 0%, #0D0A06 100%);
+    border-bottom: 1px solid rgba(212,168,83,0.1);
+  }
+  .mock-b .sec-o1 .oracle-avatar-circle { background: radial-gradient(circle, #2A1C0C, #1E0F04); border: 1px solid #D4A85333; }
+  .mock-b .sec-o1 .name { color: #F5D98A; }
+  .mock-b .sec-o1 .desc { color: #B8860B; }
+
+  .mock-b .sec-o2 {
+    background: linear-gradient(90deg, #080F1A 0%, #0D0A06 100%);
+    border-bottom: 1px solid rgba(140,180,220,0.1);
+  }
+  .mock-b .sec-o2 .oracle-avatar-circle { background: radial-gradient(circle, #0D1A2E, #080F1A); border: 1px solid #8BB8E033; }
+  .mock-b .sec-o2 .name { color: #C8DCF0; }
+  .mock-b .sec-o2 .desc { color: #6A8AAA; }
+
+  .mock-b .sec-o3 {
+    background: linear-gradient(90deg, #100820 0%, #0D0A06 100%);
+    border-bottom: 1px solid rgba(155,89,208,0.1);
+  }
+  .mock-b .sec-o3 .oracle-avatar-circle { background: radial-gradient(circle, #1A0D30, #100820); border: 1px solid #9B59D033; }
+  .mock-b .sec-o3 .name { color: #C4A0E8; }
+  .mock-b .sec-o3 .desc { color: #7A5A9A; }
+
+  .mock-b .sec-cta-b {
+    background: linear-gradient(0deg, rgba(184,134,11,0.06) 0%, transparent 100%);
+  }
+  .mock-b .sec-cta-b .cta-btn {
+    padding: 6px 20px;
+    background: linear-gradient(135deg, #D4A853, #8B6914);
+    border-radius: 20px;
+    font-size: 10px;
+    color: #1A0800;
+    font-weight: 600;
+  }
+
+  /* scroll indicator between sections */
+  .mock-b .scroll-fade {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 16px;
+    background: linear-gradient(180deg, transparent, #B8860B44, transparent);
+  }
+
+  /* === OPTION C: Cinematic === */
+  .mock-c .mockup-area {
+    background: #0D0A06;
+  }
+  .mock-c .flow-sections {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .mock-c .flow-sec {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .mock-c .sec-hero-c {
+    flex: 1.2;
+    background: radial-gradient(ellipse at 50% 40%, rgba(184,134,11,0.12) 0%, transparent 60%);
+    border-bottom: 1px solid #1A150E;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mock-c .sec-hero-c .logo-text {
+    font-size: 24px;
+    letter-spacing: 10px;
+    color: #E8C84A;
+    font-weight: 600;
+  }
+  .mock-c .sec-hero-c .mist {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(0deg, #0D0A06, transparent);
+  }
+
+  .mock-c .sec-story {
+    flex: 1.5;
+    flex-direction: column;
+    gap: 10px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(184,134,11,0.04) 0%, transparent 70%);
+    border-bottom: 1px solid #1A150E;
+  }
+  .mock-c .story-line {
+    font-size: 11px;
+    color: #B8860B;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    text-align: center;
+    line-height: 1.8;
+  }
+  .mock-c .story-line:nth-child(2) { opacity: 0.8; }
+  .mock-c .story-line:nth-child(3) { opacity: 1; color: #E8C84A; }
+  .mock-c .pin-label {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    font-size: 7px;
+    color: #4A3F35;
+    letter-spacing: 1px;
+    border: 1px solid #2A2218;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .mock-c .sec-gallery {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .mock-c .gallery-track {
+    display: flex;
+    gap: 2px;
+    height: 100%;
+    width: 100%;
+  }
+  .mock-c .gallery-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+  }
+  .mock-c .gallery-panel:nth-child(1) {
+    background: linear-gradient(135deg, #1E0F04, #14090280);
+  }
+  .mock-c .gallery-panel:nth-child(2) {
+    background: linear-gradient(135deg, #080F1A, #06091280);
+  }
+  .mock-c .gallery-panel:nth-child(3) {
+    background: linear-gradient(135deg, #100820, #0A041580);
+  }
+  .mock-c .gallery-panel .g-icon { font-size: 22px; }
+  .mock-c .gallery-panel .g-name { font-size: 10px; letter-spacing: 2px; }
+  .mock-c .gallery-panel:nth-child(1) .g-name { color: #F5D98A; }
+  .mock-c .gallery-panel:nth-child(2) .g-name { color: #C8DCF0; }
+  .mock-c .gallery-panel:nth-child(3) .g-name { color: #C4A0E8; }
+  .mock-c .h-scroll-label {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    color: #4A3F35;
+    letter-spacing: 1px;
+    border: 1px solid #2A2218;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .mock-c .sec-cta-c {
+    flex: 0.6;
+    background: linear-gradient(0deg, rgba(184,134,11,0.08) 0%, transparent 100%);
+  }
+  .mock-c .sec-cta-c .cta-btn {
+    padding: 6px 20px;
+    background: linear-gradient(135deg, #D4A853, #8B6914);
+    border-radius: 20px;
+    font-size: 10px;
+    color: #1A0800;
+    font-weight: 600;
+  }
+
+  /* ---- DESCRIPTION AREA ---- */
+  .option-desc {
+    padding: 24px;
+    border-top: 1px solid #1A150E;
+  }
+  .option-desc h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #E8C84A;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .option-desc p {
+    font-size: 12px;
+    color: #8A7A6A;
+    line-height: 1.7;
+  }
+  .option-desc .tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .option-desc .tag {
+    font-size: 9px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    border: 1px solid #2A2218;
+    color: #B8860B;
+    letter-spacing: 0.5px;
+  }
+
+  @media (max-width: 900px) {
+    .options-row {
+      flex-direction: column;
+      padding: 24px 16px 60px;
+    }
+  }
+
+  /* selection indicator */
+  .selection-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #1A1510;
+    border-top: 1px solid #2A2218;
+    padding: 12px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #8A7A6A;
+    z-index: 100;
+    transition: all 0.3s;
+  }
+  .selection-bar.active {
+    color: #E8C84A;
+    background: #1A1208;
+    border-top-color: #B8860B44;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Mahamordo Landing V2</h1>
+  <h2>เลือก Scroll Flow ที่ใช่</h2>
+  <p>คลิกที่ตัวเลือกที่ชอบ แต่ละแบบมี scroll behavior ที่ต่างกัน</p>
+</div>
+
+<div class="options-row">
+
+  <!-- OPTION A -->
+  <div class="option-card mock-a" data-choice="a" onclick="select(this)">
+    <div class="mockup-area">
+      <div class="flow-sections">
+        <div class="flow-sec sec-hero">
+          <span class="flow-label">Hero</span>
+          <div class="sec-content">
+            <div class="logo-text">MAHAMORDO</div>
+            <div class="logo-sub">มหาหมอดู</div>
+          </div>
+        </div>
+        <div class="flow-sec sec-intro">
+          <span class="flow-label">Intro</span>
+          <div class="tagline">ดวงดาวรู้ทุกอย่าง... แต่ไม่ใช่ทุกคนที่ฟังเสียงดาวเป็น</div>
+        </div>
+        <div class="flow-sec sec-carousel">
+          <span class="flow-label">Carousel (pinned)</span>
+          <div class="mini-oracle">
+            <span class="oracle-icon">☽</span>
+            <span class="oracle-name">จันทร์</span>
+          </div>
+          <div class="mini-oracle">
+            <span class="oracle-icon">☯</span>
+            <span class="oracle-name">ซอน</span>
+          </div>
+          <div class="mini-oracle">
+            <span class="oracle-icon">✦</span>
+            <span class="oracle-name">ราห์</span>
+          </div>
+        </div>
+        <div class="flow-sec sec-steps">
+          <span class="flow-label">How it works</span>
+          <div class="step-dot">1</div>
+          <div class="step-dot">2</div>
+          <div class="step-dot">3</div>
+        </div>
+        <div class="flow-sec sec-cta">
+          <span class="flow-label">CTA</span>
+          <div class="cta-btn">เริ่มดูดวง</div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <h3>A: Carousel Reveal</h3>
+      <p>3 หมอดูอยู่ใน section เดียว เลื่อนแนวนอนแบบ scroll-pinned ไม่ใช้พื้นที่เยอะ กระชับ</p>
+      <div class="tags">
+        <span class="tag">5 sections</span>
+        <span class="tag">scroll-pin carousel</span>
+        <span class="tag">compact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B -->
+  <div class="option-card mock-b" data-choice="b" onclick="select(this)">
+    <div class="mockup-area">
+      <div class="flow-sections">
+        <div class="flow-sec sec-hero-b">
+          <span class="flow-label">Hero</span>
+          <div class="logo-text">MAHAMORDO</div>
+        </div>
+        <div class="flow-sec sec-oracle sec-o1">
+          <span class="flow-label">Oracle I</span>
+          <div class="scroll-fade"></div>
+          <div class="oracle-avatar-circle">☽</div>
+          <div class="oracle-info">
+            <span class="name">แม่หมอจันทร์</span>
+            <span class="desc">THAI ASTROLOGY</span>
+          </div>
+        </div>
+        <div class="flow-sec sec-oracle sec-o2">
+          <span class="flow-label">Oracle II</span>
+          <div class="scroll-fade"></div>
+          <div class="oracle-avatar-circle">☯</div>
+          <div class="oracle-info">
+            <span class="name">พ่อหมอซอน</span>
+            <span class="desc">KOREAN SAJU</span>
+          </div>
+        </div>
+        <div class="flow-sec sec-oracle sec-o3">
+          <span class="flow-label">Oracle III</span>
+          <div class="scroll-fade"></div>
+          <div class="oracle-avatar-circle">✦</div>
+          <div class="oracle-info">
+            <span class="name">อาจารย์ราห์</span>
+            <span class="desc">TAROT · MAJOR ARCANA</span>
+          </div>
+        </div>
+        <div class="flow-sec sec-cta-b">
+          <span class="flow-label">CTA</span>
+          <div class="cta-btn">เลือกหมอดู</div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <h3>B: Sequential Reveal</h3>
+      <p>แต่ละหมอดูมี section เต็มจอ พื้นหลังเปลี่ยนสีตามตัวละคร ทอง → ฟ้า → ม่วง สร้างบรรยากาศตัวละครได้ดี</p>
+      <div class="tags">
+        <span class="tag">5 sections</span>
+        <span class="tag">color-shift background</span>
+        <span class="tag">character atmosphere</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C -->
+  <div class="option-card mock-c" data-choice="c" onclick="select(this)">
+    <div class="mockup-area">
+      <div class="flow-sections">
+        <div class="flow-sec sec-hero-c">
+          <span class="flow-label">Hero</span>
+          <div class="logo-text">MAHAMORDO</div>
+          <div class="mist"></div>
+        </div>
+        <div class="flow-sec sec-story">
+          <span class="flow-label">Story</span>
+          <div class="pin-label">PINNED</div>
+          <div class="story-line">ดวงดาวรู้ทุกอย่าง...</div>
+          <div class="story-line">แต่ไม่ใช่ทุกคนที่ฟังเสียงดาวเป็น</div>
+          <div class="story-line">พบกับหมอดู 3 ท่าน</div>
+        </div>
+        <div class="flow-sec sec-gallery">
+          <span class="flow-label">Gallery</span>
+          <div class="h-scroll-label">← HORIZONTAL SCROLL →</div>
+          <div class="gallery-track">
+            <div class="gallery-panel">
+              <span class="g-icon">☽</span>
+              <span class="g-name">จันทร์</span>
+            </div>
+            <div class="gallery-panel">
+              <span class="g-icon">☯</span>
+              <span class="g-name">ซอน</span>
+            </div>
+            <div class="gallery-panel">
+              <span class="g-icon">✦</span>
+              <span class="g-name">ราห์</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-sec sec-cta-c">
+          <span class="flow-label">CTA</span>
+          <div class="cta-btn">เริ่มดูดวง</div>
+        </div>
+      </div>
+    </div>
+    <div class="option-desc">
+      <h3>C: Cinematic Scroll</h3>
+      <p>เปิดด้วย story text ลอยทับพื้นหลัง pinned แล้วเลื่อนแนวนอนเข้า gallery หมอดู Dramatic สุด ใช้ GSAP เยอะสุด</p>
+      <div class="tags">
+        <span class="tag">4 sections</span>
+        <span class="tag">scroll-pin + horizontal</span>
+        <span class="tag">cinematic</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="selection-bar" id="selBar">คลิกเลือกตัวเลือกที่ชอบ</div>
+
+<script>
+  let selected = null;
+  function select(el) {
+    document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selected = el.dataset.choice;
+    const bar = document.getElementById('selBar');
+    const names = { a: 'A: Carousel Reveal', b: 'B: Sequential Reveal', c: 'C: Cinematic Scroll' };
+    bar.textContent = '✓ เลือก ' + names[selected];
+    bar.classList.add('active');
+
+    // Write event
+    const eventData = JSON.stringify({
+      type: 'click',
+      choice: selected,
+      text: names[selected],
+      timestamp: Math.floor(Date.now() / 1000)
+    }) + '\n';
+    fetch('/event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: eventData
+    }).catch(() => {});
+  }
+</script>
+</body>
+</html>

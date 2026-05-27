@@ -102,6 +102,48 @@ async function main() {
     { key: "free_credits_on_signup", value: "3", label: "credit ฟรีเมื่อสมัครสมาชิก" },
     { key: "max_messages_per_session", value: "20", label: "จำนวนข้อความสูงสุดต่อ session" },
     { key: "site_maintenance", value: "false", label: "ปิดปรับปรุงชั่วคราว" },
+    { key: "fortune_post_enabled", value: "true", label: "เปิดฟีเจอร์โพสต์ดูดวง" },
+    {
+      key: "fortune_post_default_visibility",
+      value: "PRIVATE",
+      label: "การมองเห็นโพสต์เริ่มต้น (PRIVATE/PUBLIC)",
+    },
+    {
+      key: "fortune_post_image_style_suffix",
+      value: "ornate Thai mystical art, golden accents",
+      label: "คำเติมท้าย prompt ภาพ AI",
+    },
+    { key: "articles_enabled", value: "true", label: "เปิดฟีเจอร์บทความ" },
+    {
+      key: "articles_default_status",
+      value: "DRAFT",
+      label: "สถานะเริ่มต้นของบทความใหม่ (DRAFT/PUBLISHED)",
+    },
+    {
+      key: "articles_image_style_suffix",
+      value: "elegant editorial illustration, soft cinematic lighting, ornate Thai mystical art",
+      label: "คำเติมท้าย prompt ภาพปก AI",
+    },
+    {
+      key: "articles_cron_enabled",
+      value: "false",
+      label: "เปิดสร้างบทความอัตโนมัติรายวัน (cron)",
+    },
+    {
+      key: "articles_cron_hour",
+      value: "7",
+      label: "ชั่วโมงที่ cron รัน (0-23, เวลา Bangkok)",
+    },
+    {
+      key: "articles_cron_categories",
+      value: "horoscope,tarot,feng_shui,lucky,general",
+      label: "หมวดหมู่หมุนเวียนสำหรับ cron (คั่นด้วย ,)",
+    },
+    {
+      key: "articles_cron_auto_publish",
+      value: "true",
+      label: "publish ทันทีเมื่อ cron สร้างบทความ (true/false)",
+    },
   ];
 
   for (const s of settings) {

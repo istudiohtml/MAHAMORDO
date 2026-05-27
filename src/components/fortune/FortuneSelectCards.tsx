@@ -4,11 +4,12 @@ import { useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { oracles, OracleId } from '@/data/oracles'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
+import { useOraclePosters } from '@/hooks/useOraclePosters'
 
 const themes: Record<OracleId, string> = { 1: 'moon', 2: 'saju', 3: 'rahu' }
 const numerals: Record<OracleId, string> = { 1: 'I', 2: 'II', 3: 'III' }
 
-function TiltPoster({ id, index }: { id: OracleId; index: number }) {
+function TiltPoster({ id, index, posterUrl }: { id: OracleId; index: number; posterUrl?: string }) {
   const cardRef = useRef<HTMLAnchorElement>(null)
   const sheenRef = useRef<HTMLDivElement>(null)
   const o = oracles[id]
@@ -52,7 +53,7 @@ function TiltPoster({ id, index }: { id: OracleId; index: number }) {
         onMouseLeave={handleLeave}
       >
         <div ref={sheenRef} className="fs-poster-sheen" aria-hidden="true" />
-        <img src={getOracleTemplateAvatar(o.slug)} alt={o.name} className="fs-poster-img" />
+        <img src={getOracleTemplateAvatar(o.slug, posterUrl)} alt={o.name} className="fs-poster-img" />
         <div className="fs-poster-overlay" aria-hidden="true" />
 
         <div className="fs-poster-top">
@@ -65,8 +66,8 @@ function TiltPoster({ id, index }: { id: OracleId; index: number }) {
           <p className="fs-poster-subtitle">{o.subtitle}</p>
           <p className="fs-poster-desc">{o.desc.replace(/\n/g, ' ')}</p>
           <div className="fs-poster-footer">
-            <span className="fs-poster-cost">{o.creditCost} เครดิต</span>
-            <span className="fs-poster-cta">เริ่มเลย →</span>
+            <span className="fs-poster-cost thai-font">{o.creditCost} เครดิต</span>
+            <span className="fs-poster-cta thai-font">เริ่มเลย →</span>
           </div>
         </div>
       </Link>
@@ -75,10 +76,12 @@ function TiltPoster({ id, index }: { id: OracleId; index: number }) {
 }
 
 export default function FortuneSelectCards() {
+  const { posters } = useOraclePosters()
+
   return (
     <div className="fs-grid">
       {([1, 2, 3] as OracleId[]).map((id, i) => (
-        <TiltPoster key={id} id={id} index={i} />
+        <TiltPoster key={id} id={id} index={i} posterUrl={posters[oracles[id].slug]} />
       ))}
     </div>
   )

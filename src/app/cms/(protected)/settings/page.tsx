@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cmsFetch } from "@/components/cms/CmsProvider";
 
-interface Setting { id: string; key: string; label: string; value: string; }
+interface Setting {
+  id: string;
+  key: string;
+  label: string;
+  value: string;
+}
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Setting[]>([]);
@@ -13,56 +18,113 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    cmsFetch("/api/cms/settings").then((r) => r.json()).then((data) => {
-      setSettings(data);
-      const init: Record<string, string> = {};
-      data.forEach((s: Setting) => { init[s.key] = s.value; });
-      setEdited(init);
-    }).finally(() => setLoading(false));
+    cmsFetch("/api/cms/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSettings(data);
+          const init: Record<string, string> = {};
+          data.forEach((s: Setting) => {
+            init[s.key] = s.value;
+          });
+          setEdited(init);
+        }
+      })
+      .finally(() => setLoading(false));
   }, []);
+
+  const hasChanges = useMemo(
+    () => settings.some((s) => edited[s.key] !== s.value),
+    [settings, edited]
+  );
 
   async function handleSave() {
     setSaving(true);
-    const payload = Object.entries(edited).map(([key, value]) => ({ key, value }));
-    await cmsFetch("/api/cms/settings", {
-      method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    const payload = Object.entries(edited).map(([key, value]) => ({
+      key,
+      value,
+    }));
+    const res = await cmsFetch("/api/cms/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    setSaving(false); setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (res.ok) {
+      setSettings((prev) =>
+        prev.map((s) => ({ ...s, value: edited[s.key] ?? s.value }))
+      );
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+    setSaving(false);
   }
 
-  const hasChanges = settings.some((s) => edited[s.key] !== s.value);
-
   return (
-    <div className="max-w-2xl">
-      <div className="flex items-center justify-between mb-8">
+    <div className="cms-page cms-settings-page">
+      <header className="cms-page-header">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-900">ตั้งค่าระบบ</h2>
-          <p className="text-slate-500 text-sm mt-1">SUPERADMIN เท่านั้น</p>
+          <p className="cms-page-eyebrow">System Settings</p>
+          <h1 className="cms-page-title">ตั้งค่าระบบ</h1>
+          <p className="cms-page-sub">
+            ราคา credit และค่าคงที่ของระบบ — SUPERADMIN เท่านั้น
+          </p>
         </div>
         {hasChanges && (
-          <button onClick={handleSave} disabled={saving}
-            className={`px-5 py-2 text-sm rounded-lg font-medium transition-all ${saved ? "bg-emerald-500 text-white" : "bg-slate-900 text-white hover:bg-slate-700"}`}>
-            {saved ? "✓ บันทึกแล้ว" : saving ? "กำลังบันทึก..." : "บันทึกทั้งหมด"}
-          </button>
+          <div className="cms-settings-header-actions">
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className={`cms-btn cms-btn-primary${saved ? " cms-btn-saved" : ""}`}
+            >
+              {saved
+                ? "✓ บันทึกแล้ว"
+                : saving
+                  ? "กำลังบันทึก..."
+                  : "บันทึกทั้งหมด"}
+            </button>
+          </div>
         )}
-      </div>
+      </header>
 
-      {loading && <div className="animate-pulse text-slate-400 text-sm">กำลังโหลด...</div>}
+      {loading && <p className="cms-loading-text">กำลังโหลด...</p>}
+
+      {!loading && settings.length === 0 && (
+        <div className="cms-empty">
+          <span className="cms-empty-icon">◇</span>
+          <h3>ยังไม่มีการตั้งค่า</h3>
+          <p>เพิ่ม system settings เพื่อเริ่มใช้งาน</p>
+        </div>
+      )}
 
       {!loading && settings.length > 0 && (
-        <div className="space-y-3">
+        <div className="cms-settings-list">
           {settings.map((s) => {
             const changed = edited[s.key] !== s.value;
             return (
-              <div key={s.key} className={`bg-white rounded-xl border shadow-sm p-5 transition-all ${changed ? "border-slate-900/20" : "border-slate-100"}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-slate-900">{s.label}</label>
-                  {changed && <span className="text-xs text-amber-500 font-medium">มีการแก้ไข</span>}
+              <div
+                key={s.key}
+                className={`cms-settings-card${changed ? " is-dirty" : ""}`}
+              >
+                <div className="cms-settings-card-head">
+                  <label className="cms-settings-card-label" htmlFor={s.key}>
+                    {s.label}
+                  </label>
+                  {changed && (
+                    <span className="cms-settings-card-dirty-flag">
+                      มีการแก้ไข
+                    </span>
+                  )}
                 </div>
-                <p className="text-xs text-slate-400 font-mono mb-3">{s.key}</p>
-                <input value={edited[s.key] ?? ""} onChange={(e) => setEdited((prev) => ({ ...prev, [s.key]: e.target.value }))}
-                  className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900/10" />
+                <p className="cms-settings-card-key">{s.key}</p>
+                <input
+                  id={s.key}
+                  value={edited[s.key] ?? ""}
+                  onChange={(e) =>
+                    setEdited((prev) => ({ ...prev, [s.key]: e.target.value }))
+                  }
+                  className="cms-settings-input"
+                />
               </div>
             );
           })}

@@ -15,6 +15,9 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') ?? '/dashboard'
+  const registerHref = redirect === '/dashboard'
+    ? '/auth/register'
+    : `/auth/register?redirect=${encodeURIComponent(redirect)}`
   const errorParam = searchParams.get('error')
 
   const [email, setEmail] = useState('')
@@ -60,8 +63,8 @@ function LoginForm() {
       <div className="auth-right">
         <div className="auth-card">
           <div className="auth-card-header">
-            <h2 className="auth-card-title">เข้าสู่ระบบ</h2>
-            <p className="auth-card-sub">ยังไม่มีบัญชี? <Link href="/auth/register" className="auth-link">สมัครสมาชิก</Link></p>
+            <h2 className="auth-card-title thai-font">เข้าสู่ระบบ</h2>
+            <p className="auth-card-sub">ยังไม่มีบัญชี? <Link href={registerHref} className="auth-link">สมัครสมาชิก</Link></p>
           </div>
 
           {/* OAuth Buttons */}
@@ -83,7 +86,7 @@ function LoginForm() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field">
-              <label className="auth-label">อีเมล</label>
+              <label className="auth-label thai-font">อีเมล</label>
               <input
                 type="email"
                 value={email}
@@ -95,7 +98,7 @@ function LoginForm() {
               />
             </div>
             <div className="auth-field">
-              <label className="auth-label">รหัสผ่าน</label>
+              <label className="auth-label thai-font">รหัสผ่าน</label>
               <input
                 type="password"
                 value={password}
@@ -118,7 +121,7 @@ function LoginForm() {
           </form>
 
           <div className="auth-back">
-            <Link href="/" className="auth-back-link">← กลับหน้าหลัก</Link>
+            <Link href="/" className="auth-back-link thai-font">← กลับหน้าหลัก</Link>
           </div>
         </div>
       </div>

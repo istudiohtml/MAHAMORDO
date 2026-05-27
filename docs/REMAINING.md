@@ -1,6 +1,6 @@
 # MAHAMORDO — งานที่เหลือ (Remaining Work)
 
-อัปเดตล่าสุด: 2026-05-18  
+อัปเดตล่าสุด: 2026-05-22  
 ใช้ไฟล์นี้เป็นสารบัญงานค้าง — อัปเดตเมื่อปิดหรือเปิดฟีเจอร์
 
 ---
@@ -13,6 +13,7 @@
 | Google OAuth | ทำแล้ว — ต้องใส่ credentials |
 | **Apple Login** | **ปิดชั่วคราว** — ดูหัวข้อด้านล่าง |
 | Stripe payments | โค้ดมี — ต้องตั้งค่า keys + webhook |
+| PDPA / Privacy | เสร็จแล้ว — banner + `/pdpa` + `/terms` + `/dashboard/privacy` (export / delete / consent) |
 | Unit tests | ยังไม่มีไฟล์ test |
 | Git | sync กับ `origin/main` แล้ว |
 
@@ -59,17 +60,21 @@
 | `DATABASE_URL` | ทุก flow |
 | `JWT_SECRET` | login / session |
 | `ANTHROPIC_API_KEY` | ดูดวง AI |
+| `OPENAI_API_KEY` | รูปภาพ AI สำหรับโพสต์ดูดวง (DALL-E 3) |
 | `NEXT_PUBLIC_APP_URL` | redirect, email links |
 | `GOOGLE_*` | Google login |
 | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | ซื้อเครดิต / subscription |
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | อีเมล reset password (production) |
-| `NEXT_PUBLIC_SUPABASE_*`, `SUPABASE_SERVICE_ROLE_KEY` | production / Supabase |
+| `UPLOAD_DIR` | โฟลเดอร์เก็บรูปโพสต์/รูปปกบทความบนเซิร์ฟเวอร์ — ดู [`docs/DEPLOY_STORAGE.md`](./DEPLOY_STORAGE.md) |
+| `CRON_SECRET` | secret สำหรับเรียก `/api/cron/articles/daily` (ตั้ง system cron บน VPS หรือใช้ external pinger) |
 
 ---
 
-## Smoke test ก่อน deploy
+## Deploy
 
-- [ ] รันตาม [`docs/SMOKE_TEST.md`](./SMOKE_TEST.md) (53 ข้อ)
+- ขั้นตอน deploy production ทั้งหมด → [`docs/DEPLOY.md`](./DEPLOY.md)
+- Smoke test ก่อน deploy → [`docs/SMOKE_TEST.md`](./SMOKE_TEST.md) (53 ข้อ)
+- รายละเอียด storage / uploads → [`docs/DEPLOY_STORAGE.md`](./DEPLOY_STORAGE.md)
 
 ---
 
@@ -96,8 +101,9 @@
 ### 4. Tests
 
 - [x] `src/lib/oracle-assets.test.ts` (6 unit tests)
+- [x] `src/lib/article-*.test.ts` + `markdown.test.ts` (19 unit tests สำหรับบทความ)
 - [x] Playwright E2E — `e2e/*.spec.ts` (`npm run test:e2e`)
-- [ ] เพิ่ม E2E: Stripe checkout, CMS, forgot-password
+- [ ] เพิ่ม E2E: Stripe checkout, CMS, forgot-password, **articles list/detail + AI generate**
 
 ---
 
@@ -110,8 +116,40 @@
 | Forgot password อีเมลจริง | dev แสดงลิงก์ใน log; production ใช้ Resend |
 | CMS | มี `/cms` — ตรวจ flow admin แยกจาก user app |
 | Accessibility audit | เป้า WCAG AA ใน `.impeccable.md` |
+| Fortune post + AI image | CMS เท่านั้น (`/cms/posts`) — ADMIN/SUPERADMIN; `OPENAI_API_KEY` + `UPLOAD_DIR` |
+| Articles / Blog | **เสร็จแล้ว** — CMS `/cms/articles` + หน้าสาธารณะ `/articles`, `/articles/[slug]`; รองรับ AI ร่าง + cron รายวัน (เปิด/ปิดใน `/cms/articles/settings`) |
 
 ---
+
+## Articles (Blog) — สรุปการใช้งาน
+
+ระบบบทความสำหรับแสดงบนหน้าเว็บสาธารณะ (`/articles`)
+
+| ส่วน | ที่อยู่ |
+|------|---------|
+| หน้าสาธารณะ (list) | `/articles` |
+| หน้าสาธารณะ (detail) | `/articles/[slug]` |
+| CMS list | `/cms/articles` |
+| CMS เขียนใหม่ (manual + AI) | `/cms/articles/new` |
+| CMS แก้ไข | `/cms/articles/[id]` |
+| ตั้งค่า (cron, default status, …) | `/cms/articles/settings` |
+| Public API | `GET /api/articles`, `GET /api/articles/[slug]` |
+| CMS API | `/api/cms/articles`, `/[id]`, `/generate`, `/settings` |
+| รูปปก (public) | `GET /api/uploads/articles/[filename]` |
+| Cron รายวัน | `GET/POST /api/cron/articles/daily` (ต้องส่ง `CRON_SECRET`) |
+
+**โหมดสร้างบทความ:**
+
+1. **Manual** — admin เขียนเองทั้งหมด (markdown)
+2. **AI** — Claude ร่างให้ + DALL-E 3 สร้างรูปปก (เปิด `OPENAI_API_KEY` ก่อน)
+3. **Cron auto** — รันรายวันตามชั่วโมงที่ตั้งใน settings (Bangkok time) หมุนหมวดตาม `articles_cron_categories`
+
+**System cron บน VPS (ตัวอย่าง):**
+
+```cron
+# ทุกชั่วโมง ส่งให้แอปตัดสินใจเองว่าถึงเวลาแล้วหรือยัง (`articles_cron_hour`)
+0 * * * * curl -s -H "Authorization: Bearer $CRON_SECRET" https://your-domain/api/cron/articles/daily > /dev/null
+```
 
 ## คำสั่งที่ใช้บ่อย
 
@@ -129,7 +167,9 @@ npm test             # Vitest (ยังไม่มี test files)
 
 ## อ้างอิง
 
+- Deploy production: [`docs/DEPLOY.md`](./DEPLOY.md)
 - Smoke test: [`docs/SMOKE_TEST.md`](./SMOKE_TEST.md)
+- Storage / uploads: [`docs/DEPLOY_STORAGE.md`](./DEPLOY_STORAGE.md)
 - Auth flags: `src/lib/auth-providers.ts`
 - Design context: `.impeccable.md`
 - Cursor rule (AI จดจำ): `.cursor/rules/mahamordo.mdc`

@@ -39,14 +39,26 @@ export function resolveOracleSlug(slug: string): string {
 
 export function getOracleTemplateAvatar(
   slug: string,
-  avatarUrl?: string | null
+  posterUrl?: string | null
 ): string {
-  if (avatarUrl) return avatarUrl
+  if (posterUrl?.trim()) return posterUrl
   const canonical = resolveOracleSlug(slug)
   if (canonical in ORACLE_TEMPLATE_AVATAR) {
     return ORACLE_TEMPLATE_AVATAR[canonical as OracleSlug]
   }
   return `/avatars/template-${canonical}.jpg`
+}
+
+/** Cache-busted poster URL for CMS preview after upload */
+export function oraclePosterSrc(
+  slug: string,
+  posterUrl?: string | null,
+  version = 0
+): string {
+  const base = getOracleTemplateAvatar(slug, posterUrl)
+  if (!version) return base
+  const sep = base.includes("?") ? "&" : "?"
+  return `${base}${sep}v=${version}`
 }
 
 export function getOracleSvgAvatar(

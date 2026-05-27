@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { oracles, OracleId } from '@/data/oracles'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
+import { useOraclePosters } from '@/hooks/useOraclePosters'
 import CosmicMandala from './CosmicMandala'
 
 interface Props {
@@ -24,6 +25,7 @@ export default function DetailView({
 }: Props) {
   const viewRef = useRef<HTMLDivElement>(null)
   const o = oracles[oracleId]
+  const { posters } = useOraclePosters()
 
   // Reset scroll when oracle changes
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function DetailView({
               {/* Oracle Avatar */}
               <div className="detail-avatar">
                 <img
-                  src={getOracleTemplateAvatar(o.slug)}
+                  src={getOracleTemplateAvatar(o.slug, posters[o.slug])}
                   alt={o.name}
                   className="detail-avatar-img"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
@@ -84,7 +86,7 @@ export default function DetailView({
             {/* RIGHT: oracle profile panel */}
             <div className={`detail-right${contentVisible ? ' visible' : ''}`}>
               <div className="profile-title">
-                <p className="profile-oracle-id">{o.profile.id}</p>
+                <p className="profile-oracle-id thai-font">{o.profile.id}</p>
                 <h2 className="profile-name">{o.profile.name}</h2>
               </div>
 
@@ -95,7 +97,7 @@ export default function DetailView({
                     className={`profile-row${contentVisible ? ' visible' : ''}`}
                     style={{ transitionDelay: contentVisible ? `${0.55 + i * 0.07}s` : '0s' }}
                   >
-                    <div className="profile-label">{row.label}</div>
+                    <div className="profile-label thai-font">{row.label}</div>
                     {row.tags ? (
                       <div className="profile-tags">
                         {row.tags.map((tag) => (
@@ -123,13 +125,13 @@ export default function DetailView({
           <footer className="detail-footer">
             <div className="footer-top">
               <div>
-                <p className="footer-contact-label">ติดต่อ</p>
+                <p className="footer-contact-label thai-font">ติดต่อ</p>
                 <a href="mailto:hello@mahamordo.com" className="footer-email">
                   hello@mahamordo.com
                 </a>
                 <div className="footer-btns">
-                  <button className="footer-btn footer-btn-primary" onClick={() => onStartFortune(oracleId)}>→ &nbsp;เริ่มดูดวง</button>
-                  <a href="/auth/register" className="footer-btn footer-btn-outline">✦ &nbsp;สมัครสมาชิก</a>
+                  <button className="footer-btn thai-font footer-btn-primary" onClick={() => onStartFortune(oracleId)}>→ &nbsp;เริ่มดูดวง</button>
+                  <a href="/auth/register" className="footer-btn thai-font footer-btn-outline">✦ &nbsp;สมัครสมาชิก</a>
                 </div>
               </div>
               <div className="footer-socials">
@@ -140,20 +142,26 @@ export default function DetailView({
             </div>
 
             <div className="footer-bottom">
-              <span className="footer-tagline">มหาหมอดู · โหราศาสตร์ไทย</span>
+              <span className="footer-tagline thai-font">มหาหมอดู · โหราศาสตร์ไทย</span>
               <div className="footer-nav-group">
-                <button className="footer-nav-btn" onClick={() => onNavigate(-1)}>
+                <button className="footer-nav-btn thai-font" onClick={() => onNavigate(-1)}>
                   &lt;&lt; &nbsp;หมอดูก่อนหน้า
                 </button>
-                <button className="footer-nav-btn footer-back-top" onClick={onScrollTop}>
+                <button className="footer-nav-btn thai-font footer-back-top" onClick={onScrollTop}>
                   <div className="footer-back-top-arrow" />
                   กลับขึ้น
                 </button>
-                <button className="footer-nav-btn" onClick={() => onNavigate(1)}>
+                <button className="footer-nav-btn thai-font" onClick={() => onNavigate(1)}>
                   หมอดูถัดไป &nbsp;&gt;&gt;
                 </button>
               </div>
               <span className="footer-copyright">© 2026 &nbsp;Mahamordo</span>
+            </div>
+
+            <div className="footer-legal">
+              <a href="/pdpa" className="footer-legal-link">นโยบายความเป็นส่วนตัว (PDPA)</a>
+              <span className="footer-legal-sep">·</span>
+              <a href="/terms" className="footer-legal-link">เงื่อนไขการใช้บริการ</a>
             </div>
           </footer>
 
@@ -166,13 +174,13 @@ export default function DetailView({
         onClick={() => onNavigate(-1)}
       >
         <div className="side-nav-line" />
-        <span className="side-nav-label">ก่อนหน้า</span>
+        <span className="side-nav-label thai-font">ก่อนหน้า</span>
       </div>
       <div
         className={`detail-nav-side nav-next${slideIn ? ' visible' : ''}`}
         onClick={() => onNavigate(1)}
       >
-        <span className="side-nav-label">ถัดไป</span>
+        <span className="side-nav-label thai-font">ถัดไป</span>
         <div className="side-nav-line" />
       </div>
     </>

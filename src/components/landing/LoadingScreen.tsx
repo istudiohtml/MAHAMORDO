@@ -74,7 +74,7 @@ export default function LoadingScreen({ onComplete }: Props) {
       <div className="loading-logo">
         <span className="loading-logo-symbol">M</span>
       </div>
-      <span className="loading-status" ref={statusRef}>Loading</span>
+      <span className="loading-status thai-font" ref={statusRef}>Loading</span>
       <span className="loading-percent" ref={percentRef}>0%</span>
     </div>
   )

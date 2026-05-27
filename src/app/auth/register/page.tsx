@@ -1,12 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import ParticleBackground from '@/components/landing/ParticleBackground'
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') ?? '/dashboard'
+  const loginHref = redirect === '/dashboard'
+    ? '/auth/login'
+    : `/auth/login?redirect=${encodeURIComponent(redirect)}`
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -25,7 +31,7 @@ export default function RegisterPage() {
     const data = await res.json()
     setLoading(false)
     if (!res.ok) { setError(data.error ?? 'เกิดข้อผิดพลาด'); return }
-    router.replace('/dashboard')
+    router.replace(redirect)
   }
 
   return (
@@ -53,8 +59,8 @@ export default function RegisterPage() {
       <div className="auth-right">
         <div className="auth-card">
           <div className="auth-card-header">
-            <h2 className="auth-card-title">สมัครสมาชิก</h2>
-            <p className="auth-card-sub">มีบัญชีแล้ว? <Link href="/auth/login" className="auth-link">เข้าสู่ระบบ</Link></p>
+            <h2 className="auth-card-title thai-font">สมัครสมาชิก</h2>
+            <p className="auth-card-sub">มีบัญชีแล้ว? <Link href={loginHref} className="auth-link">เข้าสู่ระบบ</Link></p>
           </div>
 
           {/* OAuth Buttons */}
@@ -76,7 +82,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="auth-field">
-              <label className="auth-label">ชื่อ (ไม่บังคับ)</label>
+              <label className="auth-label thai-font">ชื่อ (ไม่บังคับ)</label>
               <input
                 type="text"
                 value={name}
@@ -86,7 +92,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="auth-field">
-              <label className="auth-label">อีเมล</label>
+              <label className="auth-label thai-font">อีเมล</label>
               <input
                 type="email"
                 value={email}
@@ -98,7 +104,7 @@ export default function RegisterPage() {
               />
             </div>
             <div className="auth-field">
-              <label className="auth-label">รหัสผ่าน</label>
+              <label className="auth-label thai-font">รหัสผ่าน</label>
               <input
                 type="password"
                 value={password}
@@ -120,10 +126,18 @@ export default function RegisterPage() {
           </form>
 
           <div className="auth-back">
-            <Link href="/" className="auth-back-link">← กลับหน้าหลัก</Link>
+            <Link href="/" className="auth-back-link thai-font">← กลับหน้าหลัก</Link>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   )
 }

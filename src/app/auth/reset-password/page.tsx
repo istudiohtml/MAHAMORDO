@@ -19,7 +19,7 @@ function ResetPasswordForm() {
     return (
       <div className="auth-card">
         <div className="auth-card-header">
-          <h2 className="auth-card-title">ลิงก์ไม่ถูกต้อง</h2>
+          <h2 className="auth-card-title thai-font">ลิงก์ไม่ถูกต้อง</h2>
           <p className="auth-card-sub">ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุแล้ว</p>
         </div>
         <Link href="/auth/forgot-password" className="auth-submit" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
@@ -51,13 +51,13 @@ function ResetPasswordForm() {
   return (
     <div className="auth-card">
       <div className="auth-card-header">
-        <h2 className="auth-card-title">รีเซ็ตรหัสผ่าน</h2>
+        <h2 className="auth-card-title thai-font">รีเซ็ตรหัสผ่าน</h2>
         <p className="auth-card-sub">กำหนดรหัสผ่านใหม่ของคุณ</p>
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="auth-field">
-          <label className="auth-label">รหัสผ่านใหม่</label>
+          <label className="auth-label thai-font">รหัสผ่านใหม่</label>
           <input
             type="password"
             value={password}
@@ -70,7 +70,7 @@ function ResetPasswordForm() {
           <small className="auth-hint">ต้องมี: 8+ ตัวอักษร, อักษรใหญ่, อักษรเล็ก, ตัวเลข</small>
         </div>
         <div className="auth-field">
-          <label className="auth-label">ยืนยันรหัสผ่าน</label>
+          <label className="auth-label thai-font">ยืนยันรหัสผ่าน</label>
           <input
             type="password"
             value={confirm}
@@ -89,7 +89,7 @@ function ResetPasswordForm() {
       </form>
 
       <div className="auth-back">
-        <Link href="/auth/login" className="auth-back-link">← กลับหน้าเข้าสู่ระบบ</Link>
+        <Link href="/auth/login" className="auth-back-link thai-font">← กลับหน้าเข้าสู่ระบบ</Link>
       </div>
     </div>
   )

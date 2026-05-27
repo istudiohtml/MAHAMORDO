@@ -3,6 +3,12 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+const CMS_FORBIDDEN_MESSAGE = "บัญชีนี้ไม่มีสิทธิ์เข้า CMS (ต้องเป็น ADMIN)";
+
+function isCmsAdminRole(role: string | undefined): boolean {
+  return role === "ADMIN" || role === "SUPERADMIN";
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -14,10 +20,36 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/auth/refresh", { method: "POST" }).then((res) => {
-      if (res.ok) router.replace(redirect);
-    });
-  }, []);
+    const forbidden = searchParams.get("error") === "forbidden";
+    if (forbidden) {
+      setError(CMS_FORBIDDEN_MESSAGE);
+      void fetch("/api/auth/logout", { method: "POST" });
+      return;
+    }
+
+    async function tryExistingSession() {
+      const cmsRes = await fetch("/api/auth/refresh", { method: "POST" });
+      if (cmsRes.ok) {
+        const data = await cmsRes.json();
+        if (isCmsAdminRole(data.user?.role)) {
+          router.replace(redirect);
+          return;
+        }
+        await fetch("/api/auth/logout", { method: "POST" });
+      }
+
+      const sessionRes = await fetch("/api/cms/session");
+      if (sessionRes.ok) {
+        const data = await sessionRes.json();
+        if (isCmsAdminRole(data.user?.role)) {
+          router.replace(redirect);
+          return;
+        }
+      }
+    }
+
+    void tryExistingSession();
+  }, [redirect, router, searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,58 +70,71 @@ function LoginForm() {
       return;
     }
 
+    if (!isCmsAdminRole(data.user?.role)) {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setError(CMS_FORBIDDEN_MESSAGE);
+      return;
+    }
+
     router.replace(redirect);
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <p className="text-xs text-slate-400 font-medium tracking-widest uppercase mb-1">CMS</p>
-          <h1 className="text-2xl font-semibold text-slate-900">มหาหมอดู</h1>
-          <p className="text-slate-500 text-sm mt-1">เข้าสู่ระบบจัดการ</p>
+    <div className="cms-login-shell">
+      <div className="cms-login-stack">
+        <div className="cms-login-brand">
+          <p className="cms-login-brand-eyebrow">CMS Admin</p>
+          <h1 className="cms-login-brand-title">มหาหมอดู</h1>
+          <p className="cms-login-brand-sub">เข้าสู่ระบบจัดการ</p>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">อีเมล</label>
+        <div className="cms-login-card">
+          <form onSubmit={handleSubmit} className="cms-login-form">
+            <div className="cms-login-field">
+              <label htmlFor="cms-login-email" className="cms-login-label">
+                อีเมล
+              </label>
               <input
+                id="cms-login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="superadmin@mahamordo.com"
                 required
-                className="mt-2 w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-shadow"
+                autoComplete="email"
+                className="cms-login-input"
               />
             </div>
-            <div>
-              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">รหัสผ่าน</label>
+
+            <div className="cms-login-field">
+              <label htmlFor="cms-login-password" className="cms-login-label">
+                รหัสผ่าน
+              </label>
               <input
+                id="cms-login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="mt-2 w-full text-sm border border-slate-200 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-shadow"
+                autoComplete="current-password"
+                className="cms-login-input"
               />
             </div>
 
-            {error && (
-              <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-2.5 text-sm text-red-600">
-                {error}
-              </div>
-            )}
+            {error && <p className="cms-login-error">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-700 disabled:opacity-50 transition-all duration-150 mt-2"
+              className="cms-login-submit"
             >
               {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
             </button>
           </form>
         </div>
+
+        <p className="cms-login-footer">เฉพาะผู้ดูแลระบบเท่านั้น</p>
       </div>
     </div>
   );

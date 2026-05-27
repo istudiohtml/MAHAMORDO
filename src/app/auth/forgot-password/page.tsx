@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
           {sent ? (
             <div className="auth-success-box">
               <div className="auth-success-icon">✦</div>
-              <h2 className="auth-card-title">ตรวจสอบอีเมล</h2>
+              <h2 className="auth-card-title thai-font">ตรวจสอบอีเมล</h2>
               <p className="auth-success-text">
                 หากอีเมล <strong>{email}</strong> มีในระบบ<br />
                 เราจะส่งลิงก์รีเซ็ตรหัสผ่านให้คุณ<br />
@@ -62,13 +62,13 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <div className="auth-card-header">
-                <h2 className="auth-card-title">ลืมรหัสผ่าน</h2>
+                <h2 className="auth-card-title thai-font">ลืมรหัสผ่าน</h2>
                 <p className="auth-card-sub">กรอกอีเมลเพื่อรับลิงก์รีเซ็ตรหัสผ่าน</p>
               </div>
 
               <form onSubmit={handleSubmit} className="auth-form">
                 <div className="auth-field">
-                  <label className="auth-label">อีเมล</label>
+                  <label className="auth-label thai-font">อีเมล</label>
                   <input
                     type="email"
                     value={email}
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="auth-back">
-            <Link href="/auth/login" className="auth-back-link">← กลับหน้าเข้าสู่ระบบ</Link>
+            <Link href="/auth/login" className="auth-back-link thai-font">← กลับหน้าเข้าสู่ระบบ</Link>
           </div>
         </div>
       </div>
