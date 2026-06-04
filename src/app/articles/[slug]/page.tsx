@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { getCategory } from "@/lib/article-content";
 import { getArticleSettings } from "@/lib/system-settings";
 import { renderMarkdown } from "@/lib/markdown";
+import { parseTags } from "@/lib/article-tags";
 
 export const dynamic = "force-dynamic";
 
@@ -138,20 +139,23 @@ export default async function ArticleDetailPage({ params }: Params) {
           dangerouslySetInnerHTML={{ __html: html }}
         />
 
-        {article.tags.length > 0 && (
-          <ul className="article-detail-tags">
-            {article.tags.map((t) => (
-              <li key={t}>
-                <Link
-                  href={`/articles?tag=${encodeURIComponent(t)}`}
-                  className="articles-pill articles-pill-sm"
-                >
-                  #{t}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+        {(() => {
+          const tagList = parseTags(article.tags);
+          return tagList.length > 0 ? (
+            <ul className="article-detail-tags">
+              {tagList.map((t) => (
+                <li key={t}>
+                  <Link
+                    href={`/articles?tag=${encodeURIComponent(t)}`}
+                    className="articles-pill articles-pill-sm"
+                  >
+                    #{t}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null;
+        })()}
       </article>
 
       {related.length > 0 && (

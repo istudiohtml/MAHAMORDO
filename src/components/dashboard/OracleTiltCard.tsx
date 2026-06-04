@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { oracles, OracleId } from '@/data/oracles'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 import { useOraclePosters } from '@/hooks/useOraclePosters'
+import { useActiveOracleIds } from '@/hooks/useActiveOracleIds'
 
 interface OracleCardData {
   num: string
@@ -79,9 +80,10 @@ function TiltCard({ o }: { o: OracleCardData }) {
 
 export default function OracleTiltCards() {
   const { posters } = useOraclePosters()
+  const { ids: activeIds } = useActiveOracleIds()
 
   const oracleCards = useMemo<OracleCardData[]>(() => {
-    return ([1, 2, 3] as OracleId[]).map((id) => {
+    return activeIds.map((id) => {
       const o = oracles[id]
       const meta = ORACLE_CARD_META[id]
       return {
@@ -96,7 +98,15 @@ export default function OracleTiltCards() {
         theme: meta.theme,
       }
     })
-  }, [posters])
+  }, [posters, activeIds])
+
+  if (oracleCards.length === 0) {
+    return (
+      <div className="dash-oracle-cards-empty thai-font">
+        ยังไม่มีหมอดูเปิดให้บริการในขณะนี้
+      </div>
+    )
+  }
 
   return (
     <div className="dash-oracle-cards">

@@ -4,6 +4,7 @@ import { rateLimit } from '@/lib/rate-limit'
 import { validateCSRF } from '@/lib/csrf'
 import bcrypt from 'bcryptjs'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
+import { grantDailyLoginBonus } from '@/lib/daily-bonus'
 
 const loginLimiter = rateLimit(10, 15 * 60 * 1000) // 10 attempts per 15 minutes
 
@@ -47,9 +48,16 @@ export async function POST(req: NextRequest) {
       data: { token: refreshToken, userId: user.id, expiresAt: refreshTokenExpiresAt() },
     })
 
+    // Daily login bonus — idempotent per Asia/Bangkok day, skips subscribers.
+    const bonus = await grantDailyLoginBonus(user.id)
+    const finalCredits = bonus.granted && bonus.newBalance !== undefined
+      ? bonus.newBalance
+      : user.credits
+
     const res = NextResponse.json({
-      user: { id: user.id, email: user.email, name: user.name, credits: user.credits },
+      user: { id: user.id, email: user.email, name: user.name, credits: finalCredits },
       accessToken,
+      bonus: { granted: bonus.granted, amount: bonus.amount },
     })
 
     res.cookies.set('user_token', accessToken, {

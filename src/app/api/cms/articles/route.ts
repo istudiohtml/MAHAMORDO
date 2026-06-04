@@ -8,6 +8,7 @@ import {
   estimateReadingMinutes,
 } from "@/lib/article-content";
 import { uniqueArticleSlug } from "@/lib/article-slug";
+import { normalizeTags } from "@/lib/article-tags";
 
 export async function GET(req: NextRequest) {
   const deny = await requireRole("ADMIN", "SUPERADMIN")(req);
@@ -22,11 +23,13 @@ export async function GET(req: NextRequest) {
     where: {
       ...(category ? { category } : {}),
       ...(status ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {}),
+      // MySQL `contains` is case-insensitive by default with utf8mb4_unicode_ci.
+      // Prisma's `mode: "insensitive"` is Postgres-only.
       ...(search
         ? {
             OR: [
-              { title: { contains: search, mode: "insensitive" } },
-              { excerpt: { contains: search, mode: "insensitive" } },
+              { title: { contains: search } },
+              { excerpt: { contains: search } },
             ],
           }
         : {}),
@@ -83,12 +86,7 @@ export async function POST(req: NextRequest) {
           excerpt: String(body.excerpt ?? "").slice(0, 220),
           content: content.slice(0, 12000),
           category,
-          tags: Array.isArray(body.tags)
-            ? body.tags
-                .map((t: unknown) => String(t).trim())
-                .filter(Boolean)
-                .slice(0, 10)
-            : [],
+          tags: normalizeTags(body.tags, { max: 10 }),
           status:
             body.status === "PUBLISHED" || body.status === "ARCHIVED"
               ? body.status

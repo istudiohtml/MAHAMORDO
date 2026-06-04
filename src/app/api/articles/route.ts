@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     status: "PUBLISHED" as const,
     publishedAt: { lte: new Date() },
     ...(category ? { category } : {}),
-    ...(tag ? { tags: { has: tag } } : {}),
+    ...(tag ? { tags: { array_contains: tag } } : {}),
   };
 
   const [articles, total] = await Promise.all([

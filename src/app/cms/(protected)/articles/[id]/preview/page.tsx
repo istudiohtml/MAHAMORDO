@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCategory } from "@/lib/article-content";
 import { renderMarkdown } from "@/lib/markdown";
+import { parseTags } from "@/lib/article-tags";
 
 export const dynamic = "force-dynamic";
 
@@ -107,15 +108,18 @@ export default async function CmsArticlePreviewPage({ params }: Params) {
           dangerouslySetInnerHTML={{ __html: html }}
         />
 
-        {article.tags.length > 0 && (
-          <ul className="article-detail-tags">
-            {article.tags.map((t) => (
-              <li key={t}>
-                <span className="articles-pill articles-pill-sm">#{t}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        {(() => {
+          const tagList = parseTags(article.tags);
+          return tagList.length > 0 ? (
+            <ul className="article-detail-tags">
+              {tagList.map((t) => (
+                <li key={t}>
+                  <span className="articles-pill articles-pill-sm">#{t}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null;
+        })()}
       </article>
     </div>
   );

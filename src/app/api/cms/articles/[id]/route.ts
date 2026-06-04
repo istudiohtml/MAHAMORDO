@@ -9,6 +9,7 @@ import {
 } from "@/lib/article-storage";
 import { estimateReadingMinutes } from "@/lib/article-content";
 import { uniqueArticleSlug, slugifyTitle } from "@/lib/article-slug";
+import { normalizeTags } from "@/lib/article-tags";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -66,11 +67,7 @@ async function parsePatchRequest(req: NextRequest): Promise<PatchFields> {
 
     const tags = form.get("tags");
     if (typeof tags === "string") {
-      fields.tags = tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
-        .slice(0, 10);
+      fields.tags = normalizeTags(tags, { max: 10 });
     }
 
     const status = form.get("status");
@@ -103,10 +100,7 @@ async function parsePatchRequest(req: NextRequest): Promise<PatchFields> {
     }
   }
   if (Array.isArray(body.tags)) {
-    fields.tags = body.tags
-      .map((t: unknown) => String(t).trim())
-      .filter(Boolean)
-      .slice(0, 10);
+    fields.tags = normalizeTags(body.tags, { max: 10 });
   }
   if (
     body.status === "DRAFT" ||

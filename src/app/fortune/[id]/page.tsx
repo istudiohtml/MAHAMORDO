@@ -5,8 +5,10 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { oracles, OracleId } from '@/data/oracles'
 import { getAllCards, TarotCard } from '@/data/tarot-cards'
 import ParticleBackground from '@/components/landing/ParticleBackground'
+import TarotPickArea, { SelectedTarotCard } from '@/components/fortune/TarotPickArea'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 import { useOraclePosters } from '@/hooks/useOraclePosters'
+import { useActiveOracleIds } from '@/hooks/useActiveOracleIds'
 const ORACLE_THEME: Record<OracleId, string> = {
   1: 'theme-maemor',
   2: 'theme-son',
@@ -67,6 +69,15 @@ function FortuneChatPageInner() {
   const oracleId = (rawId >= 1 && rawId <= 3 ? rawId : 1) as OracleId
   const oracle = oracles[oracleId]
   const { posters } = useOraclePosters()
+  const { ids: activeIds, loaded: activeIdsLoaded } = useActiveOracleIds()
+
+  // Redirect away when this oracle is disabled in CMS.
+  useEffect(() => {
+    if (!activeIdsLoaded) return
+    if (!activeIds.includes(oracleId)) {
+      router.replace('/fortune')
+    }
+  }, [activeIds, activeIdsLoaded, oracleId, router])
 
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [displayText, setDisplayText] = useState('')
@@ -103,7 +114,7 @@ function FortuneChatPageInner() {
   // Tarot card selection (for oracle 3 only)
   const [askingForCard, setAskingForCard] = useState(false)
   const [tarotCards, setTarotCards] = useState<TarotCard[]>([])
-  const [selectedCards, setSelectedCards] = useState<Array<{ position: 'past' | 'present' | 'future', card: TarotCard }>>([])
+  const [selectedCards, setSelectedCards] = useState<SelectedTarotCard[]>([])
   const TOPICS = [
     { id: 'love', emoji: '❤️', name: 'ความรัก', description: 'ความสัมพันธ์ การรักษา ความรักแท้' },
     { id: 'health', emoji: '💚', name: 'สุขภาพ', description: 'สุขภาพกาย จิตใจ การแคร์ตัวเอง' },
@@ -729,69 +740,63 @@ function FortuneChatPageInner() {
         </div>
       </div>
 
-      {/* Tarot card selection - MODAL OVERLAY (outside frame container) */}
+      {/* Tarot card selection — fancy modal (outside frame container) */}
       {askingForCard && oracleId === 3 && (
-        <div className="vn-tarot-overlay">
+        <div className="vn-tarot-overlay" role="dialog" aria-modal="true" aria-label="เลือกไพ่ทาโรต์">
           <div className="vn-tarot-box">
             <div className="vn-tarot-header">
-              <div className="vn-tarot-title">◆ เลือกไพ่ ◆</div>
+              <div className="vn-tarot-eyebrow">Tarot Reading</div>
+              <div className="vn-tarot-title">◆ เลือกไพ่ทาโรต์ ◆</div>
               <div className="vn-tarot-subtitle">
-                {selectedCards.length === 0 && 'เลือกไพ่ 3 ใบ'}
-                {selectedCards.length === 1 && 'เลือกอีก 2 ใบ'}
-                {selectedCards.length === 2 && 'เลือกอีก 1 ใบ'}
-                {selectedCards.length === 3 && '✨ ไพ่เปิดเผยแล้ว ✨'}
-              </div>
-              <div className="vn-tarot-dots">
-                {[0, 1, 2].map(idx => (
-                  <div key={idx} className={`vn-tarot-dot${selectedCards.length > idx ? ' filled' : ''}`} />
-                ))}
+                {selectedCards.length === 0 && 'จดจ่อกับคำถามของคุณ แล้วเลือก 3 ใบ'}
+                {selectedCards.length === 1 && 'ดี… เลือกอีก 2 ใบเพื่อปัจจุบัน และอนาคต'}
+                {selectedCards.length === 2 && 'อีก 1 ใบสุดท้าย เพื่อเปิดเผยอนาคต'}
+                {selectedCards.length === 3 && '✨ ไพ่ทั้งสามใบเผยตัวแล้ว ✨'}
               </div>
             </div>
 
-            <div className="vn-tarot-grid">
-              {tarotCards.map(card => {
-                const isSelected = selectedCards.some(sc => sc.card.id === card.id)
-                return (
-                  <button
-                    key={card.id}
-                    className={`vn-tarot-card${isSelected ? ' selected' : ''}`}
-                    onClick={async () => {
-                      if (selectedCards.length >= 3 || isSelected) return
+            <TarotPickArea
+              cards={tarotCards}
+              selected={selectedCards}
+              onSelect={async (card, position) => {
+                const newSelected: SelectedTarotCard[] = [
+                  ...selectedCards,
+                  { position, card },
+                ]
+                setSelectedCards(newSelected)
 
-                      const newSelected = [...selectedCards, {
-                        position: (selectedCards.length === 0 ? 'past' : selectedCards.length === 1 ? 'present' : 'future') as 'past' | 'present' | 'future',
-                        card,
-                      }]
-                      setSelectedCards(newSelected)
+                if (sessionId) {
+                  const posLabels: Record<typeof position, string> = {
+                    past: 'อดีต',
+                    present: 'ปัจจุบัน',
+                    future: 'อนาคต',
+                  }
+                  await fetch('/api/fortune/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      sessionId,
+                      content: `🃏 [${posLabels[position]}] ${card.nameThai}`,
+                      role: 'USER',
+                    }),
+                  })
+                }
 
-                      if (sessionId) {
-                        const posLabels = ['อดีต', 'ปัจจุบัน', 'อนาคต']
-                        await fetch('/api/fortune/message', {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({
-                            sessionId,
-                            content: `🃏 [${posLabels[selectedCards.length]}] ${card.nameThai}`,
-                            role: 'USER',
-                          }),
-                        })
-                      }
+                if (newSelected.length === 3) {
+                  // Hold a beat so the user can savour the third reveal.
+                  setTimeout(() => {
+                    setAskingForCard(false)
+                    const reading = buildTarotReading(newSelected, birthData, userName)
+                    typeText(reading)
+                  }, 1400)
+                }
+              }}
+            />
 
-                      if (newSelected.length === 3) {
-                        setTimeout(() => {
-                          setAskingForCard(false)
-                          const reading = buildTarotReading(newSelected, birthData, userName)
-                          typeText(reading)
-                        }, 600)
-                      }
-                    }}
-                    disabled={selectedCards.length >= 3 || isSelected}
-                  >
-                    <span className="vn-tarot-card-emoji">{card.emoji}</span>
-                    <span className="vn-tarot-card-name">{card.nameThai.substring(0, 9)}</span>
-                  </button>
-                )
-              })}
+            <div className={`vn-tarot-footer${selectedCards.length === 3 ? ' is-done' : ''}`}>
+              {selectedCards.length === 3
+                ? '✦ กำลังเชื่อมโยงพลังของไพ่ ✦'
+                : `เลือกแล้ว ${selectedCards.length} / 3 ใบ`}
             </div>
           </div>
         </div>

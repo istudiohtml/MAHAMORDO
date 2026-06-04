@@ -13,6 +13,8 @@ interface Props {
   onNavigate: (dir: -1 | 1) => void
   onScrollTop: () => void
   onStartFortune: (id: OracleId) => void
+  // Hide prev/next arrows when only one oracle is active.
+  activeIds?: OracleId[]
 }
 
 export default function DetailView({
@@ -22,10 +24,12 @@ export default function DetailView({
   onNavigate,
   onScrollTop,
   onStartFortune,
+  activeIds,
 }: Props) {
   const viewRef = useRef<HTMLDivElement>(null)
   const o = oracles[oracleId]
   const { posters } = useOraclePosters()
+  const canNavigate = !activeIds || activeIds.length > 1
 
   // Reset scroll when oracle changes
   useEffect(() => {
@@ -144,16 +148,20 @@ export default function DetailView({
             <div className="footer-bottom">
               <span className="footer-tagline thai-font">มหาหมอดู · โหราศาสตร์ไทย</span>
               <div className="footer-nav-group">
-                <button className="footer-nav-btn thai-font" onClick={() => onNavigate(-1)}>
-                  &lt;&lt; &nbsp;หมอดูก่อนหน้า
-                </button>
+                {canNavigate && (
+                  <button className="footer-nav-btn thai-font" onClick={() => onNavigate(-1)}>
+                    &lt;&lt; &nbsp;หมอดูก่อนหน้า
+                  </button>
+                )}
                 <button className="footer-nav-btn thai-font footer-back-top" onClick={onScrollTop}>
                   <div className="footer-back-top-arrow" />
                   กลับขึ้น
                 </button>
-                <button className="footer-nav-btn thai-font" onClick={() => onNavigate(1)}>
-                  หมอดูถัดไป &nbsp;&gt;&gt;
-                </button>
+                {canNavigate && (
+                  <button className="footer-nav-btn thai-font" onClick={() => onNavigate(1)}>
+                    หมอดูถัดไป &nbsp;&gt;&gt;
+                  </button>
+                )}
               </div>
               <span className="footer-copyright">© 2026 &nbsp;Mahamordo</span>
             </div>
@@ -169,20 +177,24 @@ export default function DetailView({
       </div>
 
       {/* SIDE NAV */}
-      <div
-        className={`detail-nav-side nav-prev${slideIn ? ' visible' : ''}`}
-        onClick={() => onNavigate(-1)}
-      >
-        <div className="side-nav-line" />
-        <span className="side-nav-label thai-font">ก่อนหน้า</span>
-      </div>
-      <div
-        className={`detail-nav-side nav-next${slideIn ? ' visible' : ''}`}
-        onClick={() => onNavigate(1)}
-      >
-        <span className="side-nav-label thai-font">ถัดไป</span>
-        <div className="side-nav-line" />
-      </div>
+      {canNavigate && (
+        <>
+          <div
+            className={`detail-nav-side nav-prev${slideIn ? ' visible' : ''}`}
+            onClick={() => onNavigate(-1)}
+          >
+            <div className="side-nav-line" />
+            <span className="side-nav-label thai-font">ก่อนหน้า</span>
+          </div>
+          <div
+            className={`detail-nav-side nav-next${slideIn ? ' visible' : ''}`}
+            onClick={() => onNavigate(1)}
+          >
+            <span className="side-nav-label thai-font">ถัดไป</span>
+            <div className="side-nav-line" />
+          </div>
+        </>
+      )}
     </>
   )
 }

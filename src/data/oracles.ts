@@ -22,6 +22,31 @@ export interface Oracle {
 
 export type OracleId = 1 | 2 | 3
 
+export const ALL_ORACLE_IDS: OracleId[] = [1, 2, 3]
+
+// Map slug ↔ OracleId so we can mirror DB `isActive` against the static config.
+export const ORACLE_SLUG_BY_ID: Record<OracleId, string> = {
+  1: 'mae-mor-jan',
+  2: 'por-mor-son',
+  3: 'ajarn-rahu',
+}
+
+export const ORACLE_ID_BY_SLUG: Record<string, OracleId> = {
+  'mae-mor-jan': 1,
+  'por-mor-son': 2,
+  'ajarn-rahu': 3,
+}
+
+/** Map a list of active slugs (from DB) to OracleIds, sorted ascending. */
+export function activeIdsFromSlugs(slugs: string[]): OracleId[] {
+  const ids = new Set<OracleId>()
+  for (const slug of slugs) {
+    const id = ORACLE_ID_BY_SLUG[slug]
+    if (id) ids.add(id)
+  }
+  return [...ids].sort((a, b) => a - b)
+}
+
 export const oracles: Record<OracleId, Oracle> = {
   1: {
     number: 'I',

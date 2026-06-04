@@ -36,9 +36,17 @@ export async function POST(req: NextRequest) {
     }
 
     // หัก credit ตาม oracle.creditCost + สร้าง session (ถ้ามี subscription จะไม่หักเครดิต)
+    const sessionExpiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
     const [session] = await prisma.$transaction([
       prisma.fortuneSession.create({
-        data: { userId, oracleId, topic, birthDate: birthDate ? new Date(birthDate) : null, birthTime },
+        data: {
+          userId,
+          oracleId,
+          topic,
+          birthDate: birthDate ? new Date(birthDate) : null,
+          birthTime,
+          expiresAt: sessionExpiresAt,
+        },
       }),
       hasActiveSubscription
         ? prisma.user.update({

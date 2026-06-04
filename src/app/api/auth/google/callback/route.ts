@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
+import { grantDailyLoginBonus } from '@/lib/daily-bonus'
 
 export async function GET(req: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -44,8 +45,10 @@ export async function GET(req: NextRequest) {
 
     // Find or create user
     let user = await prisma.user.findUnique({ where: { email: profile.email } })
+    let isNewUser = false
 
     if (!user) {
+      isNewUser = true
       user = await prisma.user.create({
         data: {
           email: profile.email,
@@ -76,7 +79,16 @@ export async function GET(req: NextRequest) {
       data: { token: refreshToken, userId: user.id, expiresAt: refreshTokenExpiresAt() },
     })
 
-    const res = NextResponse.redirect(`${appUrl}/dashboard`)
+    // Skip the daily bonus on the first ever login — they just got the
+    // larger signup_bonus and the toast would feel redundant.
+    const bonus = isNewUser
+      ? { granted: false, amount: 0 }
+      : await grantDailyLoginBonus(user.id)
+
+    const dashboardUrl = new URL('/dashboard', appUrl)
+    if (bonus.granted) dashboardUrl.searchParams.set('bonus', '1')
+
+    const res = NextResponse.redirect(dashboardUrl)
     res.cookies.delete('oauth_state')
     res.cookies.set('user_token', accessToken, {
       httpOnly: true,

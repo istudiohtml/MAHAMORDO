@@ -3,6 +3,8 @@ import { verifyAccessToken } from '@/lib/jwt'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import OracleTiltCards from '@/components/dashboard/OracleTiltCard'
+import DailyBonusBanner from '@/components/dashboard/DailyBonusBanner'
+import { DAILY_LOGIN_BONUS_AMOUNT } from '@/lib/daily-bonus'
 import { formatThaiDate } from '@/lib/format-date'
 import {
   getEffectiveSessionStatus,
@@ -10,7 +12,16 @@ import {
   getSessionStatusDescription,
 } from '@/lib/session-status'
 
-export default async function DashboardPage() {
+type DashboardSearchParams = { bonus?: string }
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<DashboardSearchParams>
+}) {
+  const params = await searchParams
+  const showBonus = params.bonus === '1'
+
   const cookieStore = await cookies()
   const token = cookieStore.get('user_token')?.value!
   const payload = await verifyAccessToken(token)
@@ -33,6 +44,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="dash-page">
+      {showBonus && <DailyBonusBanner amount={DAILY_LOGIN_BONUS_AMOUNT} />}
+
       <div className="dash-page-header">
         <p className="dash-page-eyebrow">Overview</p>
         <h1 className="dash-page-title thai-font">สวัสดี{user?.name ? `, ${user.name}` : ''}</h1>

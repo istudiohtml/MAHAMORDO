@@ -37,7 +37,14 @@ function LoginForm() {
     const data = await res.json()
     setLoading(false)
     if (!res.ok) { setError(data.error ?? 'เกิดข้อผิดพลาด'); return }
-    router.replace(redirect)
+
+    // Append ?bonus=1 so the destination can show the daily-login toast.
+    let target = redirect
+    if (data.bonus?.granted) {
+      const sep = redirect.includes('?') ? '&' : '?'
+      target = `${redirect}${sep}bonus=1`
+    }
+    router.replace(target)
   }
 
   return (

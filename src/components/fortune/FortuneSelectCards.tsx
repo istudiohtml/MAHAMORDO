@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { oracles, OracleId } from '@/data/oracles'
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 import { useOraclePosters } from '@/hooks/useOraclePosters'
+import { useActiveOracleIds } from '@/hooks/useActiveOracleIds'
 
 const themes: Record<OracleId, string> = { 1: 'moon', 2: 'saju', 3: 'rahu' }
 const numerals: Record<OracleId, string> = { 1: 'I', 2: 'II', 3: 'III' }
@@ -77,10 +78,19 @@ function TiltPoster({ id, index, posterUrl }: { id: OracleId; index: number; pos
 
 export default function FortuneSelectCards() {
   const { posters } = useOraclePosters()
+  const { ids: activeIds, loaded } = useActiveOracleIds()
+
+  if (loaded && activeIds.length === 0) {
+    return (
+      <div className="fs-empty thai-font">
+        ยังไม่มีหมอดูเปิดให้บริการในขณะนี้
+      </div>
+    )
+  }
 
   return (
     <div className="fs-grid">
-      {([1, 2, 3] as OracleId[]).map((id, i) => (
+      {activeIds.map((id, i) => (
         <TiltPoster key={id} id={id} index={i} posterUrl={posters[oracles[id].slug]} />
       ))}
     </div>
