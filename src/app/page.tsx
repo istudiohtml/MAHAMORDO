@@ -1,129 +1,168 @@
-'use client'
+import type { Metadata } from 'next'
+import HomeClient from './HomeClient'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ALL_ORACLE_IDS, OracleId, oracles } from '@/data/oracles'
-import { useActiveOracleIds } from '@/hooks/useActiveOracleIds'
-import LoadingScreen from '@/components/landing/LoadingScreen'
-import Nav, { NavMode } from '@/components/landing/Nav'
-import HomeView from '@/components/landing/HomeView'
-import DetailView from '@/components/landing/DetailView'
-import ConfirmModal from '@/components/landing/ConfirmModal'
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.NEXT_PUBLIC_APP_URL ||
+  'https://mahamordo.com'
 
-export default function Home() {
-  const router = useRouter()
-  const [navReady, setNavReady] = useState(false)
-  const [homeAnimated, setHomeAnimated] = useState(false)
-  const [homeSlideUp, setHomeSlideUp] = useState(false)
-  const [detailSlideIn, setDetailSlideIn] = useState(false)
-  const [detailContentVisible, setDetailContentVisible] = useState(false)
-  const [navMode, setNavMode] = useState<NavMode>('home')
-  const [oracleId, setOracleId] = useState<OracleId>(1)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const detailViewRef = useRef<HTMLDivElement>(null)
-  const [confirmModal, setConfirmModal] = useState<{ open: boolean; targetId?: OracleId }>({ open: false })
-  const { ids: activeIds, loaded: activeLoaded } = useActiveOracleIds()
-  // Fall back to all oracles until the active list arrives, then track DB.
-  const visibleIds = useMemo<OracleId[]>(
-    () => (activeLoaded ? activeIds : ALL_ORACLE_IDS),
-    [activeIds, activeLoaded]
-  )
+export const metadata: Metadata = {
+  title:
+    'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มหาหมอดู MAHAMORDO',
+  description:
+    'ดูดวงออนไลน์กับ AI หมอดู 3 สำนัก: แม่หมอจันทร์ (โหราศาสตร์ไทย นพเคราะห์), พ่อหมอซอน (ดูดวงเกาหลี ซาจู 사주팔자) และอาจารย์ราหู (ไพ่ทาโรต์) — ตอบทุกคำถามเรื่องความรัก การงาน การเงิน สุขภาพ แม่นยำ ละเอียด ปรึกษาได้ทุกวัน',
+  keywords: [
+    'ดูดวง',
+    'ดูดวงออนไลน์',
+    'ดูดวงฟรี',
+    'ดูดวงเกาหลี',
+    'ดูดวงซาจู',
+    'ซาจู',
+    'ซาจูเกาหลี',
+    'Saju',
+    '사주팔자',
+    'ดูไพ่ทาโรต์',
+    'ทาโรต์',
+    'Tarot',
+    'ดูดวงทาโรต์',
+    'โหราศาสตร์ไทย',
+    'นพเคราะห์',
+    'ดูดวงความรัก',
+    'ดูดวงการงาน',
+    'ดูดวงการเงิน',
+    'ดูดวงสุขภาพ',
+    'ดูดวงราหู',
+    'ดวงราหู',
+    'หมอดู AI',
+    'ดูดวงด้วย AI',
+    'ดวงชะตา',
+    'ดวงเกิด',
+    'ดูดวงวันเกิด',
+    'มหาหมอดู',
+    'MAHAMORDO',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'th_TH',
+    url: SITE_URL,
+    siteName: 'มหาหมอดู MAHAMORDO',
+    title:
+      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มหาหมอดู',
+    description:
+      'AI หมอดู 3 สำนัก: โหราศาสตร์ไทย, ซาจูเกาหลี, ไพ่ทาโรต์ — ปรึกษาความรัก การงาน การเงิน สุขภาพ',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title:
+      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ — มหาหมอดู',
+    description:
+      'AI หมอดู 3 สำนัก: โหราศาสตร์ไทย, ซาจูเกาหลี, ไพ่ทาโรต์ — ปรึกษาทุกเรื่องในชีวิต',
+  },
+}
 
-  const handleLoadingComplete = useCallback((loggedIn: boolean) => {
-    setIsLoggedIn(loggedIn)
-    setNavReady(true)
-    setTimeout(() => setHomeAnimated(true), 400)
-  }, [])
+// JSON-LD: Organization + WebSite (with SearchAction) + Service catalog.
+// Helps Google understand the brand and surface a sitelinks search box.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'มหาหมอดู MAHAMORDO',
+    alternateName: ['MAHAMORDO', 'มหาหมอดู'],
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.svg`,
+    sameAs: [] as string[],
+    description:
+      'แพลตฟอร์มดูดวงออนไลน์ด้วย AI ผสมโหราศาสตร์ไทย ซาจูเกาหลี และไพ่ทาโรต์',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'มหาหมอดู MAHAMORDO',
+    url: SITE_URL,
+    inLanguage: 'th-TH',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/articles?tag={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    serviceType: 'ดูดวงออนไลน์ด้วย AI',
+    provider: {
+      '@type': 'Organization',
+      name: 'มหาหมอดู MAHAMORDO',
+      url: SITE_URL,
+    },
+    areaServed: { '@type': 'Country', name: 'Thailand' },
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      serviceUrl: SITE_URL,
+      availableLanguage: ['th', 'en', 'ko'],
+    },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'หมอดู 3 สำนัก',
+      itemListElement: [
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'แม่หมอจันทร์ — โหราศาสตร์ไทย นพเคราะห์',
+            description:
+              'ดูดวงโหราศาสตร์ไทย ดาวประจำตัว ทิศมงคล ฤกษ์งามยามดี ความรัก การงาน',
+          },
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'พ่อหมอซอน — ดูดวงเกาหลี ซาจู 사주팔자',
+            description:
+              'ดูดวงเกาหลี ซาจู 4 เสา แผนภูมิธาตุ 5 ทำนายดวงชะตา 10 ปี',
+          },
+        },
+        {
+          '@type': 'Offer',
+          itemOffered: {
+            '@type': 'Service',
+            name: 'อาจารย์ราหู — ไพ่ทาโรต์ Major Arcana',
+            description:
+              'ดูไพ่ทาโรต์ 22 ใบ ผูกดาวราหู-เกตุในชาตา ค้นหาสิ่งที่ซ่อนอยู่',
+          },
+        },
+      ],
+    },
+  },
+]
 
-  const openOracle = useCallback((id: OracleId) => {
-    setOracleId(id)
-    setDetailContentVisible(false)
-    setHomeSlideUp(true)
-    setDetailSlideIn(true)
-    setNavMode('detail')
-    setTimeout(() => setDetailContentVisible(true), 500)
-  }, [])
-
-  const goHome = useCallback(() => {
-    setHomeSlideUp(false)
-    setDetailSlideIn(false)
-    setNavMode('home')
-    setTimeout(() => setDetailContentVisible(false), 750)
-  }, [])
-
-  const navigateOracle = useCallback((dir: -1 | 1) => {
-    if (visibleIds.length === 0) return
-    const idx = visibleIds.indexOf(oracleId)
-    // If the current oracle was just disabled, jump to the first available.
-    const baseIdx = idx === -1 ? 0 : idx
-    const next = visibleIds[(baseIdx + dir + visibleIds.length) % visibleIds.length]
-    setDetailContentVisible(false)
-    setTimeout(() => {
-      setOracleId(next)
-      setDetailContentVisible(true)
-    }, 300)
-  }, [oracleId, visibleIds])
-
-  const scrollDetailTop = useCallback(() => {
-    document.querySelector('.view-detail')?.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [])
-
-  const handleStartFortune = useCallback((id?: OracleId) => {
-    // Block opening a session for an oracle that's been disabled in CMS.
-    if (id && !visibleIds.includes(id)) return
-    if (isLoggedIn) {
-      setConfirmModal({ open: true, targetId: id ?? undefined })
-    } else {
-      const redirect = id ? `/fortune/${id}` : '/fortune'
-      router.push(`/auth/login?redirect=${redirect}`)
-    }
-  }, [isLoggedIn, router, visibleIds])
-
-  // Keep the detail view focused on a still-active oracle.
-  useEffect(() => {
-    if (!activeLoaded || visibleIds.length === 0) return
-    if (!visibleIds.includes(oracleId)) {
-      setOracleId(visibleIds[0])
-    }
-  }, [activeLoaded, visibleIds, oracleId])
-
-  const handleConfirm = useCallback(() => {
-    const id = confirmModal.targetId
-    setConfirmModal({ open: false })
-    router.push(id ? `/fortune/${id}` : '/fortune')
-  }, [confirmModal.targetId, router])
-
-  const handleCancel = useCallback(() => {
-    setConfirmModal({ open: false })
-  }, [])
-
+export default function HomePage() {
   return (
     <>
-      <LoadingScreen onComplete={handleLoadingComplete} />
-      <Nav mode={navMode} ready={navReady} onHome={goHome} isLoggedIn={isLoggedIn} />
-      <HomeView
-        slideUp={homeSlideUp}
-        animated={homeAnimated}
-        onOpenOracle={openOracle}
-        onStartFortune={handleStartFortune}
-        activeIds={visibleIds}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <DetailView
-        slideIn={detailSlideIn}
-        contentVisible={detailContentVisible}
-        oracleId={oracleId}
-        onNavigate={navigateOracle}
-        onScrollTop={scrollDetailTop}
-        onStartFortune={handleStartFortune}
-        activeIds={visibleIds}
-      />
-      <ConfirmModal
-        open={confirmModal.open}
-        oracleName={confirmModal.targetId ? oracles[confirmModal.targetId].name : undefined}
-        creditCost={confirmModal.targetId ? oracles[confirmModal.targetId].creditCost : 1}
-        onConfirm={handleConfirm}
-        onCancel={handleCancel}
-      />
+      {/* SEO content readable by crawlers but visually hidden — the rich
+          animated landing UI lives inside <HomeClient />. */}
+      <h1 className="sr-only">
+        ดูดวงออนไลน์ AI — ดูดวงเกาหลี (ซาจู) ไพ่ทาโรต์ และโหราศาสตร์ไทย
+      </h1>
+      <p className="sr-only">
+        มหาหมอดู MAHAMORDO คือแพลตฟอร์มดูดวงออนไลน์ด้วย AI หมอดู 3 สำนัก —
+        แม่หมอจันทร์ใช้โหราศาสตร์ไทยและนพเคราะห์,
+        พ่อหมอซอนใช้ซาจูเกาหลี (사주팔자) วิเคราะห์ธาตุ 5 และดวงชะตา 10 ปี,
+        อาจารย์ราหูใช้ไพ่ทาโรต์ Major Arcana 22 ใบ ปรึกษาเรื่องความรัก
+        การงาน การเงิน สุขภาพ ดวงราหู และอนาคตได้ทุกวัน
+      </p>
+      <HomeClient />
     </>
   )
 }
