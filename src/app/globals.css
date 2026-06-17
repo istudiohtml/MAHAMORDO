@@ -9263,3 +9263,46 @@ button {
   font-size: 16px;
   font-family: var(--font-prompt), sans-serif;
 }
+
+/* ── DAILY FORTUNE DASHBOARD BANNER ──────────────────────── */
+.dash-daily-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  background: linear-gradient(135deg, rgba(45,27,110,0.35), rgba(13,8,32,0.5));
+  border: 1px solid rgba(240,192,96,0.22);
+  border-radius: 14px;
+  text-decoration: none;
+  transition: border-color 0.22s, background 0.22s;
+  cursor: pointer;
+}
+.dash-daily-banner:hover {
+  border-color: rgba(240,192,96,0.55);
+  background: linear-gradient(135deg, rgba(45,27,110,0.5), rgba(13,8,32,0.65));
+}
+.dash-daily-icon {
+  font-size: 1.5rem;
+  color: #f0c060;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.dash-daily-text { flex: 1; min-width: 0; }
+.dash-daily-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f0c060;
+  margin: 0 0 0.15rem;
+}
+.dash-daily-sub {
+  font-size: 0.75rem;
+  color: rgba(240,192,96,0.5);
+  margin: 0;
+}
+.dash-daily-arrow {
+  color: rgba(240,192,96,0.5);
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.dash-daily-banner:hover .dash-daily-arrow { transform: translateX(4px); }

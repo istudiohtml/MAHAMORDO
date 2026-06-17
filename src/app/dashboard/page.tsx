@@ -73,6 +73,18 @@ export default async function DashboardPage({
         </div>
       </div>
 
+      {/* Daily Fortune Banner */}
+      <div className="dash-section">
+        <Link href="/fortune/daily" className="dash-daily-banner">
+          <span className="dash-daily-icon">✦</span>
+          <div className="dash-daily-text">
+            <p className="dash-daily-title thai-font">ดวงวันนี้ของคุณ</p>
+            <p className="dash-daily-sub thai-font">ดูดวงรายวันฟรี · รีเซตทุกเที่ยงคืน</p>
+          </div>
+          <span className="dash-daily-arrow">→</span>
+        </Link>
+      </div>
+
       {/* Recent sessions */}
       <div className="dash-section">
         <div className="dash-section-header">

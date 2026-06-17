@@ -86,6 +86,7 @@ model User {
   passwordResets   PasswordReset[]
   quotaUsages      QuotaUsage[]
   subscriptionLogs SubscriptionLog[]
+  dailyFortunes    DailyFortune[]
 
   @@map("users")
 }
@@ -361,4 +362,24 @@ model SubscriptionLog {
   @@index([userId])
   @@index([createdAt])
   @@map("subscription_logs")
+}
+
+// ── DAILY FORTUNE ────────────────────────────────────────────
+// ดวงรายวัน — generated once per user per day, cached to save API costs
+model DailyFortune {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime @db.Date // YYYY-MM-DD (Thailand timezone)
+  introLine   String   @db.Text // e.g. "ดวงวันนี้ของคุณมุ่งไปที่..."
+  zoomWord    String   // highlight word e.g. "ความรัก"
+  bodyText    String   @db.Text // main fortune reading
+  luckyNumber String   // e.g. "3, 7"
+  luckyColor  String   // e.g. "สีทอง"
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId, date(sort: Desc)])
+  @@map("daily_fortunes")
 }
