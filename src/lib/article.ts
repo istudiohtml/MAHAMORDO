@@ -116,6 +116,7 @@ export type CronGenerateResult = {
 export async function runDailyArticleCron(opts: {
   categoriesCsv: string;
   autoPublish: boolean;
+  withImage?: boolean;
   authorId?: string;
   styleSuffix?: string;
   now?: Date;
@@ -177,6 +178,7 @@ export async function runDailyArticleCron(opts: {
     source: "cron",
     authorId: opts.authorId,
     status: opts.autoPublish ? "PUBLISHED" : "DRAFT",
+    withImage: opts.withImage !== false,
     generateOptions: {
       category,
       topicHint: `บทความ${cat.label}สำหรับ ${dateLabel}`,

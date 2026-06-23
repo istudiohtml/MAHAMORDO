@@ -163,6 +163,11 @@ async function main() {
       value: "true",
       label: "publish ทันทีเมื่อ cron สร้างบทความ (true/false)",
     },
+    {
+      key: "articles_cron_with_image",
+      value: "false",
+      label: "สร้างภาพปก AI เมื่อ cron รัน (true/false)",
+    },
   ];
 
   for (const s of settings) {

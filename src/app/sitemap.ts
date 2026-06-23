@@ -19,6 +19,18 @@ const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[numb
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ]
 
+// Cache sitemap for crawlers; static routes always included even if DB is slow.
+export const revalidate = 3600
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error('sitemap db timeout')), ms)
+    }),
+  ])
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date()
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((r) => ({
@@ -32,15 +44,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // failures should never break crawling. Fall back to just the static set.
   let articleEntries: MetadataRoute.Sitemap = []
   try {
-    const articles = await prisma.article.findMany({
-      where: {
-        status: 'PUBLISHED',
-        publishedAt: { lte: new Date() },
-      },
-      select: { slug: true, updatedAt: true, publishedAt: true },
-      orderBy: { publishedAt: 'desc' },
-      take: 1000,
-    })
+    const articles = await withTimeout(
+      prisma.article.findMany({
+        where: {
+          status: 'PUBLISHED',
+          publishedAt: { lte: new Date() },
+        },
+        select: { slug: true, updatedAt: true, publishedAt: true },
+        orderBy: { publishedAt: 'desc' },
+        take: 1000,
+      }),
+      3000
+    )
     articleEntries = articles.map((a) => ({
       url: `${SITE_URL}/articles/${encodeURIComponent(a.slug)}`,
       lastModified: a.updatedAt ?? a.publishedAt ?? now,

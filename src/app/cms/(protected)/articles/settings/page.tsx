@@ -15,6 +15,7 @@ const BOOL_KEYS = new Set([
   "articles_enabled",
   "articles_cron_enabled",
   "articles_cron_auto_publish",
+  "articles_cron_with_image",
 ]);
 
 export default function CmsArticlesSettingsPage() {

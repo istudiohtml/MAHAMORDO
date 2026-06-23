@@ -34,6 +34,7 @@ export type ArticleSettings = {
   cronHour: number;
   cronCategoriesCsv: string;
   cronAutoPublish: boolean;
+  cronWithImage: boolean;
 };
 
 export async function getArticleSettings(): Promise<ArticleSettings> {
@@ -45,6 +46,7 @@ export async function getArticleSettings(): Promise<ArticleSettings> {
     "articles_cron_hour",
     "articles_cron_categories",
     "articles_cron_auto_publish",
+    "articles_cron_with_image",
   ];
   const rows = await prisma.systemSetting.findMany({
     where: { key: { in: keys } },
@@ -64,5 +66,6 @@ export async function getArticleSettings(): Promise<ArticleSettings> {
       map.articles_cron_categories ??
       "horoscope,tarot,feng_shui,lucky,general",
     cronAutoPublish: map.articles_cron_auto_publish !== "false",
+    cronWithImage: map.articles_cron_with_image === "true",
   };
 }

@@ -10,6 +10,7 @@ const ARTICLE_SETTING_KEYS = [
   "articles_cron_hour",
   "articles_cron_categories",
   "articles_cron_auto_publish",
+  "articles_cron_with_image",
 ];
 
 export async function GET(req: NextRequest) {

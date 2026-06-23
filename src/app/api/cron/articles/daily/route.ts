@@ -60,6 +60,7 @@ async function runCron(req: NextRequest) {
     const result = await runDailyArticleCron({
       categoriesCsv: settings.cronCategoriesCsv,
       autoPublish: settings.cronAutoPublish,
+      withImage: settings.cronWithImage,
       authorId: author?.id,
       styleSuffix: settings.imageStyleSuffix,
     });

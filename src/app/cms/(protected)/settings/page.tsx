@@ -18,6 +18,7 @@ const BOOL_KEYS = new Set([
   "articles_enabled",
   "articles_cron_enabled",
   "articles_cron_auto_publish",
+  "articles_cron_with_image",
 ]);
 
 const NUMBER_KEYS = new Set([
