@@ -42,7 +42,7 @@ function LoginForm() {
     let target = redirect
     if (data.bonus?.granted) {
       const sep = redirect.includes('?') ? '&' : '?'
-      target = `${redirect}${sep}bonus=1`
+      target = `${redirect}${sep}bonus=1&bonus_amount=${data.bonus.amount}`
     }
     router.replace(target)
   }

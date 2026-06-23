@@ -73,6 +73,8 @@ export default async function CreditsPage({
   // Extract purchase prefix for dynamic labels
   const getReasonLabel = (reason: string) => {
     if (reasonLabel[reason]) return reasonLabel[reason]
+    if (reason.startsWith('daily_login_bonus:')) return 'โบนัสเข้าสู่ระบบรายวัน'
+    if (reason.startsWith('session_reply:')) return 'การดูดวงกับหมอดู'
     if (reason.startsWith('purchase_stripe_')) return 'ซื้อเครดิต'
     if (reason.startsWith('subscription_')) return `สมาชิก - ${reason.split('_').slice(1).join(' ')}`
     return reason

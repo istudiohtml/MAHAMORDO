@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
 import { grantDailyLoginBonus } from '@/lib/daily-bonus'
+import { grantSignupBonus } from '@/lib/signup-bonus'
 
 export async function GET(req: NextRequest) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
@@ -55,12 +56,11 @@ export async function GET(req: NextRequest) {
           name: profile.name ?? null,
           image: profile.picture ?? null,
           provider: 'google',
-          credits: 3,
+          credits: 0,
         },
       })
-      await prisma.creditLog.create({
-        data: { userId: user.id, amount: 3, reason: 'signup_bonus' },
-      })
+      await grantSignupBonus(user.id)
+      user = await prisma.user.findUniqueOrThrow({ where: { id: user.id } })
     } else {
       // Link existing email user to Google (update image if missing)
       user = await prisma.user.update({
@@ -79,14 +79,16 @@ export async function GET(req: NextRequest) {
       data: { token: refreshToken, userId: user.id, expiresAt: refreshTokenExpiresAt() },
     })
 
-    // Skip the daily bonus on the first ever login — they just got the
-    // larger signup_bonus and the toast would feel redundant.
+    // New users skip daily bonus on first login — signup bonus is separate.
     const bonus = isNewUser
       ? { granted: false, amount: 0 }
       : await grantDailyLoginBonus(user.id)
 
     const dashboardUrl = new URL('/dashboard', appUrl)
-    if (bonus.granted) dashboardUrl.searchParams.set('bonus', '1')
+    if (bonus.granted) {
+      dashboardUrl.searchParams.set('bonus', '1')
+      dashboardUrl.searchParams.set('bonus_amount', String(bonus.amount))
+    }
 
     const res = NextResponse.redirect(dashboardUrl)
     res.cookies.delete('oauth_state')

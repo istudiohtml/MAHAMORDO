@@ -4,6 +4,7 @@ import { rateLimit } from '@/lib/rate-limit'
 import { validateCSRF } from '@/lib/csrf'
 import bcrypt from 'bcryptjs'
 import { signAccessToken, generateRefreshToken, refreshTokenExpiresAt } from '@/lib/jwt'
+import { grantSignupBonus } from '@/lib/signup-bonus'
 
 const registerLimiter = rateLimit(5, 60 * 60 * 1000) // 5 attempts per hour
 
@@ -58,13 +59,16 @@ export async function POST(req: NextRequest) {
 
     const hashed = await bcrypt.hash(password, 12)
     const user = await prisma.user.create({
-      data: { email, password: hashed, name: name ?? null, role: 'USER', credits: 3 },
+      data: { email, password: hashed, name: name ?? null, role: 'USER', credits: 0 },
     })
 
-    // credit log สำหรับ signup bonus
-    await prisma.creditLog.create({
-      data: { userId: user.id, amount: 3, reason: 'signup_bonus' },
-    })
+    const signupBonus = await grantSignupBonus(user.id)
+    const userWithCredits = signupBonus.granted
+      ? await prisma.user.findUnique({
+          where: { id: user.id },
+          select: { credits: true },
+        })
+      : null
 
     const accessToken = await signAccessToken({ userId: user.id, role: user.role })
     const refreshToken = generateRefreshToken()
@@ -73,8 +77,14 @@ export async function POST(req: NextRequest) {
     })
 
     const res = NextResponse.json({
-      user: { id: user.id, email: user.email, name: user.name, credits: user.credits },
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        credits: userWithCredits?.credits ?? user.credits,
+      },
       accessToken,
+      signupBonus,
     })
 
     res.cookies.set('user_token', accessToken, {

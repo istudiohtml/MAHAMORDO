@@ -116,6 +116,7 @@ const jsonLd = [
           itemOffered: {
             '@type': 'Service',
             name: 'แม่หมอจันทร์ — โหราศาสตร์ไทย นพเคราะห์',
+            url: `${SITE_URL}/thai-astrology`,
             description:
               'ดูดวงโหราศาสตร์ไทย ดาวประจำตัว ทิศมงคล ฤกษ์งามยามดี ความรัก การงาน',
           },
@@ -125,6 +126,7 @@ const jsonLd = [
           itemOffered: {
             '@type': 'Service',
             name: 'พ่อหมอซอน — ดูดวงเกาหลี ซาจู 사주팔자',
+            url: `${SITE_URL}/saju`,
             description:
               'ดูดวงเกาหลี ซาจู 4 เสา แผนภูมิธาตุ 5 ทำนายดวงชะตา 10 ปี',
           },
@@ -134,6 +136,7 @@ const jsonLd = [
           itemOffered: {
             '@type': 'Service',
             name: 'อาจารย์ราหู — ไพ่ทาโรต์ Major Arcana',
+            url: `${SITE_URL}/tarot`,
             description:
               'ดูไพ่ทาโรต์ 22 ใบ ผูกดาวราหู-เกตุในชาตา ค้นหาสิ่งที่ซ่อนอยู่',
           },

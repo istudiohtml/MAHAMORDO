@@ -10,6 +10,9 @@ const SITE_URL =
 // excluded — robots.ts disallows them as well.
 const STATIC_ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
   { path: '/', changeFrequency: 'daily', priority: 1.0 },
+  { path: '/thai-astrology', changeFrequency: 'weekly', priority: 0.85 },
+  { path: '/saju', changeFrequency: 'weekly', priority: 0.85 },
+  { path: '/tarot', changeFrequency: 'weekly', priority: 0.85 },
   { path: '/articles', changeFrequency: 'daily', priority: 0.9 },
   { path: '/pricing', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/pdpa', changeFrequency: 'yearly', priority: 0.3 },

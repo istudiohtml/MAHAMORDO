@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import OracleTiltCards from '@/components/dashboard/OracleTiltCard'
 import DailyBonusBanner from '@/components/dashboard/DailyBonusBanner'
-import { DAILY_LOGIN_BONUS_AMOUNT } from '@/lib/daily-bonus'
 import { formatThaiDate } from '@/lib/format-date'
 import {
   getEffectiveSessionStatus,
@@ -12,7 +11,7 @@ import {
   getSessionStatusDescription,
 } from '@/lib/session-status'
 
-type DashboardSearchParams = { bonus?: string }
+type DashboardSearchParams = { bonus?: string; bonus_amount?: string }
 
 export default async function DashboardPage({
   searchParams,
@@ -21,6 +20,10 @@ export default async function DashboardPage({
 }) {
   const params = await searchParams
   const showBonus = params.bonus === '1'
+  const bonusAmount = Math.max(
+    1,
+    Number.parseInt(params.bonus_amount ?? '1', 10) || 1
+  )
 
   const cookieStore = await cookies()
   const token = cookieStore.get('user_token')?.value!
@@ -44,7 +47,7 @@ export default async function DashboardPage({
 
   return (
     <div className="dash-page">
-      {showBonus && <DailyBonusBanner amount={DAILY_LOGIN_BONUS_AMOUNT} />}
+      {showBonus && <DailyBonusBanner amount={bonusAmount} />}
 
       <div className="dash-page-header">
         <p className="dash-page-eyebrow">Overview</p>

@@ -99,7 +99,26 @@ async function main() {
 
   const settings = [
     { key: "credit_price_thb", value: "10", label: "ราคา 1 credit (บาท)" },
-    { key: "free_credits_on_signup", value: "3", label: "credit ฟรีเมื่อสมัครสมาชิก" },
+    {
+      key: "signup_bonus_enabled",
+      value: "false",
+      label: "เปิดโบนัสเครดิตเมื่อสมัครสมาชิก (true/false)",
+    },
+    {
+      key: "free_credits_on_signup",
+      value: "0",
+      label: "จำนวนเครดิตฟรีเมื่อสมัคร (ใช้เมื่อเปิด signup_bonus_enabled)",
+    },
+    {
+      key: "daily_login_bonus_enabled",
+      value: "false",
+      label: "เปิดโบนัสเครดิตเมื่อเข้าสู่ระบบรายวัน (true/false)",
+    },
+    {
+      key: "daily_login_bonus_amount",
+      value: "1",
+      label: "จำนวนเครดิตฟรีต่อวันเมื่อเข้าสู่ระบบ (ใช้เมื่อเปิด daily_login_bonus_enabled)",
+    },
     { key: "max_messages_per_session", value: "20", label: "จำนวนข้อความสูงสุดต่อ session" },
     { key: "site_maintenance", value: "false", label: "ปิดปรับปรุงชั่วคราว" },
     { key: "fortune_post_enabled", value: "true", label: "เปิดฟีเจอร์โพสต์ดูดวง" },

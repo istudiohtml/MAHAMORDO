@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import {
+  DEFAULT_DAILY_LOGIN_BONUS_AMOUNT,
+  getCreditSettings,
+} from "@/lib/credit-settings";
 
-/**
- * Free credit users earn for logging in once per calendar day.
- * Subscribers (active MONTHLY/YEARLY) are skipped — their plan is unlimited.
- */
-export const DAILY_LOGIN_BONUS_AMOUNT = 1;
+/** @deprecated Use getCreditSettings().dailyLoginBonusAmount */
+export const DAILY_LOGIN_BONUS_AMOUNT = DEFAULT_DAILY_LOGIN_BONUS_AMOUNT;
 
 const REASON_PREFIX = "daily_login_bonus";
 
@@ -30,7 +31,12 @@ export interface DailyBonusResult {
   granted: boolean;
   amount: number;
   /** Skip reasons surfaced for telemetry / UI debugging. */
-  skipped?: "subscribed" | "already_claimed" | "missing_user";
+  skipped?:
+    | "disabled"
+    | "subscribed"
+    | "already_claimed"
+    | "missing_user"
+    | "zero_amount";
   /** Updated balance after grant — only meaningful when `granted=true`. */
   newBalance?: number;
 }
@@ -39,7 +45,20 @@ export interface DailyBonusResult {
  * Grant the daily login bonus exactly once per Asia/Bangkok day.
  * Safe to call on every login; subsequent calls in the same day are no-ops.
  */
-export async function grantDailyLoginBonus(userId: string): Promise<DailyBonusResult> {
+export async function grantDailyLoginBonus(
+  userId: string
+): Promise<DailyBonusResult> {
+  const settings = await getCreditSettings();
+
+  if (!settings.dailyLoginBonusEnabled) {
+    return { granted: false, amount: 0, skipped: "disabled" };
+  }
+
+  const bonusAmount = settings.dailyLoginBonusAmount;
+  if (bonusAmount <= 0) {
+    return { granted: false, amount: 0, skipped: "zero_amount" };
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { subscriptionPlan: true, subscriptionExpiresAt: true },
@@ -71,18 +90,18 @@ export async function grantDailyLoginBonus(userId: string): Promise<DailyBonusRe
   // Atomic: increment + log together so we never end up with a phantom log.
   const [, updated] = await prisma.$transaction([
     prisma.creditLog.create({
-      data: { userId, amount: DAILY_LOGIN_BONUS_AMOUNT, reason },
+      data: { userId, amount: bonusAmount, reason },
     }),
     prisma.user.update({
       where: { id: userId },
-      data: { credits: { increment: DAILY_LOGIN_BONUS_AMOUNT } },
+      data: { credits: { increment: bonusAmount } },
       select: { credits: true },
     }),
   ]);
 
   return {
     granted: true,
-    amount: DAILY_LOGIN_BONUS_AMOUNT,
+    amount: bonusAmount,
     newBalance: updated.credits,
   };
 }
