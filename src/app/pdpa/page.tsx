@@ -25,7 +25,7 @@ export default function PdpaPage() {
         <section className="legal-section">
           <h2>1. ผู้ควบคุมข้อมูลส่วนบุคคล</h2>
           <p>
-            <strong>MAHAMORDO (มหาหมอดู)</strong> ("เรา" / "ผู้ให้บริการ")
+            <strong>MAHAMORDO (มาหาหมอดู)</strong> ("เรา" / "ผู้ให้บริการ")
             เป็นผู้ควบคุมข้อมูลส่วนบุคคลของท่านตาม
             พระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)
             สามารถติดต่อเราได้ที่{' '}

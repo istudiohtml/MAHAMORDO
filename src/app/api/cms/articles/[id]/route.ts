@@ -9,7 +9,7 @@ import {
 } from "@/lib/article-storage";
 import { estimateReadingMinutes } from "@/lib/article-content";
 import { uniqueArticleSlug, slugifyTitle } from "@/lib/article-slug";
-import { normalizeTags } from "@/lib/article-tags";
+import { normalizeTags, serializeArticleTags } from "@/lib/article-tags";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -130,7 +130,7 @@ export async function GET(req: NextRequest, { params }: Params) {
   if (!article) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
-  return NextResponse.json(article);
+  return NextResponse.json(serializeArticleTags(article));
 }
 
 export async function PATCH(req: NextRequest, { params }: Params) {
@@ -228,7 +228,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     data,
     include: { author: { select: { email: true, name: true } } },
   });
-  return NextResponse.json(article);
+  return NextResponse.json(serializeArticleTags(article));
 }
 
 /**

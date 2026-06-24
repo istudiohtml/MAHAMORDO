@@ -30,7 +30,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "มหาหมอดู AI Fortune Telling App",
+  "description": "มาหาหมอดู AI Fortune Telling App",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
     "@fontsource/prompt": "^5.2.8",

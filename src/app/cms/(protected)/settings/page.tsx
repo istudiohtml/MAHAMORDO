@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { cmsFetch } from "@/components/cms/CmsProvider";
+import CmsSettingToggle from "@/components/cms/CmsSettingToggle";
+import { normalizeBoolSetting } from "@/lib/setting-bool";
 
 interface Setting {
   id: string;
@@ -44,50 +46,108 @@ function sortSettings(a: Setting, b: Setting): number {
   return a.key.localeCompare(b.key);
 }
 
+function initEdited(settings: Setting[]): Record<string, string> {
+  const init: Record<string, string> = {};
+  settings.forEach((s) => {
+    init[s.key] = BOOL_KEYS.has(s.key)
+      ? normalizeBoolSetting(s.value)
+      : s.value;
+  });
+  return init;
+}
+
 export default function SettingsPage() {
   const [settings, setSettings] = useState<Setting[]>([]);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [boolSavingKey, setBoolSavingKey] = useState<string | null>(null);
+
+  const loadSettings = useCallback(async () => {
+    setLoadError("");
+    const r = await cmsFetch("/api/cms/settings");
+    const data = await r.json().catch(() => null);
+    if (!r.ok) {
+      throw new Error(
+        typeof data?.error === "string"
+          ? data.error
+          : `โหลดไม่สำเร็จ (${r.status})`
+      );
+    }
+    if (!Array.isArray(data)) {
+      throw new Error("รูปแบบข้อมูลการตั้งค่าไม่ถูกต้อง");
+    }
+    const sorted = [...data].sort(sortSettings);
+    setSettings(sorted);
+    setEdited(initEdited(sorted));
+  }, []);
 
   useEffect(() => {
-    cmsFetch("/api/cms/settings")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          const sorted = [...data].sort(sortSettings);
-          setSettings(sorted);
-          const init: Record<string, string> = {};
-          sorted.forEach((s: Setting) => {
-            init[s.key] = s.value;
-          });
-          setEdited(init);
-        }
+    loadSettings()
+      .catch((err) => {
+        setLoadError(
+          err instanceof Error ? err.message : "โหลดการตั้งค่าไม่สำเร็จ"
+        );
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [loadSettings]);
 
   const hasChanges = useMemo(
     () => settings.some((s) => edited[s.key] !== s.value),
     [settings, edited]
   );
 
-  async function handleSave() {
-    setSaving(true);
-    const payload = Object.entries(edited).map(([key, value]) => ({
+  async function persistSettings(
+    nextEdited: Record<string, string>
+  ): Promise<boolean> {
+    const payload = Object.entries(nextEdited).map(([key, value]) => ({
       key,
-      value,
+      value: BOOL_KEYS.has(key) ? normalizeBoolSetting(value) : value,
     }));
     const res = await cmsFetch("/api/cms/settings", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (res.ok) {
-      setSettings((prev) =>
-        prev.map((s) => ({ ...s, value: edited[s.key] ?? s.value }))
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      alert(
+        `บันทึกไม่สำเร็จ (${res.status})\n${
+          typeof data?.error === "string" ? data.error : "ลองใหม่อีกครั้ง"
+        }`
       );
+      return false;
+    }
+    if (Array.isArray(data)) {
+      const sorted = [...data].sort(sortSettings);
+      setSettings(sorted);
+      setEdited(initEdited(sorted));
+    }
+    return true;
+  }
+
+  async function handleBoolToggle(key: string, next: boolean) {
+    if (boolSavingKey) return;
+    const nextValue = next ? "true" : "false";
+    const prevEdited = edited;
+    const nextEdited = { ...edited, [key]: nextValue };
+    setEdited(nextEdited);
+    setBoolSavingKey(key);
+    const ok = await persistSettings(nextEdited);
+    if (!ok) setEdited(prevEdited);
+    else {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1500);
+    }
+    setBoolSavingKey(null);
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    const ok = await persistSettings(edited);
+    if (ok) {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -96,29 +156,14 @@ export default function SettingsPage() {
 
   function renderInput(s: Setting) {
     if (BOOL_KEYS.has(s.key)) {
-      const on = edited[s.key] === "true";
+      const on = normalizeBoolSetting(edited[s.key]) === "true";
       return (
-        <label className="cms-settings-switch">
-          <input
-            type="checkbox"
-            className="cms-settings-switch-input"
-            checked={on}
-            onChange={(e) =>
-              setEdited((prev) => ({
-                ...prev,
-                [s.key]: e.target.checked ? "true" : "false",
-              }))
-            }
-          />
-          <span className="cms-settings-switch-track" aria-hidden="true">
-            <span className="cms-settings-switch-thumb" />
-          </span>
-          <span
-            className={`cms-settings-switch-status${on ? " is-on" : " is-off"}`}
-          >
-            {on ? "เปิดใช้งาน" : "ปิดอยู่"}
-          </span>
-        </label>
+        <CmsSettingToggle
+          id={s.key}
+          checked={on}
+          disabled={boolSavingKey === s.key}
+          onChange={(next) => handleBoolToggle(s.key, next)}
+        />
       );
     }
 
@@ -156,9 +201,7 @@ export default function SettingsPage() {
                 className={`cms-settings-card${changed ? " is-dirty" : ""}`}
               >
                 <div className="cms-settings-card-head">
-                  <label className="cms-settings-card-label" htmlFor={s.key}>
-                    {s.label}
-                  </label>
+                  <p className="cms-settings-card-label">{s.label}</p>
                   {changed && (
                     <span className="cms-settings-card-dirty-flag">
                       มีการแก้ไข
@@ -182,7 +225,8 @@ export default function SettingsPage() {
           <p className="cms-page-eyebrow">System Settings</p>
           <h1 className="cms-page-title">ตั้งค่าระบบ</h1>
           <p className="cms-page-sub">
-            เครดิตฟรีและค่าคงที่ของระบบ — SUPERADMIN เท่านั้น
+            เครดิตฟรีและค่าคงที่ของระบบ — SUPERADMIN เท่านั้น · toggle
+            บันทึกทันที
           </p>
         </div>
         {hasChanges && (
@@ -211,7 +255,20 @@ export default function SettingsPage() {
 
       {loading && <p className="cms-loading-text">กำลังโหลด...</p>}
 
-      {!loading && settings.length === 0 && (
+      {!loading && loadError && (
+        <div className="cms-empty">
+          <p className="cms-posts-error">{loadError}</p>
+          <button
+            type="button"
+            className="cms-btn cms-btn-ghost"
+            onClick={() => window.location.reload()}
+          >
+            ลองใหม่
+          </button>
+        </div>
+      )}
+
+      {!loading && !loadError && settings.length === 0 && (
         <div className="cms-empty">
           <span className="cms-empty-icon">◇</span>
           <h3>ยังไม่มีการตั้งค่า</h3>
@@ -219,7 +276,7 @@ export default function SettingsPage() {
         </div>
       )}
 
-      {!loading && settings.length > 0 && (
+      {!loading && !loadError && settings.length > 0 && (
         <>
           {renderSection(
             "เครดิตฟรี",

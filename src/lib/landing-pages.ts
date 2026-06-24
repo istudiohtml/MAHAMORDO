@@ -26,7 +26,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
     oracleId: 1,
     path: "/thai-astrology",
     seoTitle:
-      "ดูดวงโหราศาสตร์ไทย นพเคราะห์ ออนไลน์ — แม่หมอจันทร์ | มหาหมอดู",
+      "ดูดวงโหราศาสตร์ไทย นพเคราะห์ ออนไลน์ — แม่หมอจันทร์ | มาหาหมอดู",
     seoDescription:
       "ดูดวงโหราศาสตร์ไทยแท้กับ AI แม่หมอจันทร์ วิเคราะห์ดาวประจำตัว ทิศมงคล ฤกษ์งามยามดี นพเคราะห์ ความรัก การงาน — ดูดวงวันนี้ฟรีทุกวัน",
     keywords: [
@@ -37,7 +37,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
       "ทิศมงคล",
       "ดูดวงความรัก",
       "ดูดวงการงาน",
-      "มหาหมอดู",
+      "มาหาหมอดู",
     ],
     h1: "ดูดวงโหราศาสตร์ไทย นพเคราะห์ ออนไลน์",
     intro:
@@ -54,7 +54,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
     oracleId: 2,
     path: "/saju",
     seoTitle:
-      "ดูดวงซาจูเกาหลี 사주팔자 ออนไลน์ — พ่อหมอซอน | มหาหมอดู",
+      "ดูดวงซาจูเกาหลี 사주팔자 ออนไลน์ — พ่อหมอซอน | มาหาหมอดู",
     seoDescription:
       "ดูดวงเกาหลี ซาจู 4 เสา แผนภูมิธาตุ 5 ดวงชะตา 10 ปี กับ AI พ่อหมอซอน ตรงไปตรงมา แม่นเรื่องชะตาชีวิต — ดูดวงวันนี้ฟรีทุกวัน",
     keywords: [
@@ -65,7 +65,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
       "Saju",
       "ดวงชะตา",
       "ธาตุ 5",
-      "มหาหมอดู",
+      "มาหาหมอดู",
     ],
     h1: "ดูดวงซาจูเกาหลี 사주팔자 ออนไลน์",
     intro:
@@ -82,7 +82,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
     oracleId: 3,
     path: "/tarot",
     seoTitle:
-      "ดูไพ่ทาโรต์ ออนไลน์ Major Arcana — อาจารย์ราหู | มหาหมอดู",
+      "ดูไพ่ทาโรต์ ออนไลน์ Major Arcana — อาจารย์ราหู | มาหาหมอดู",
     seoDescription:
       "ดูไพ่ทาโรต์ 22 ใบ กับ AI อาจารย์ราหู เชื่อมดาวราหู-เกตุในชาตา ค้นหาคำตอบเชิงลึก ความรัก การงาน อนาคต — ดูดวงวันนี้ฟรีทุกวัน",
     keywords: [
@@ -93,7 +93,7 @@ export const LANDING_PAGES: Record<LandingSlug, LandingPageConfig> = {
       "ดวงราหู",
       "Major Arcana",
       "ดูดวงความรัก",
-      "มหาหมอดู",
+      "มาหาหมอดู",
     ],
     h1: "ดูไพ่ทาโรต์ ออนไลน์ Major Arcana",
     intro:
@@ -121,7 +121,7 @@ export function landingMetadata(slug: LandingSlug): Metadata {
       type: "website",
       locale: "th_TH",
       url: `${SITE_URL}${page.path}`,
-      siteName: "มหาหมอดู MAHAMORDO",
+      siteName: "มาหาหมอดู MAHAMORDO",
       title: page.seoTitle,
       description: page.seoDescription,
     },
@@ -145,7 +145,7 @@ export function landingJsonLd(slug: LandingSlug) {
     url: `${SITE_URL}${page.path}`,
     provider: {
       "@type": "Organization",
-      name: "มหาหมอดู MAHAMORDO",
+      name: "มาหาหมอดู MAHAMORDO",
       url: SITE_URL,
     },
     areaServed: { "@type": "Country", name: "Thailand" },

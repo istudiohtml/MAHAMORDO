@@ -21,6 +21,13 @@ export function parseTags(value: Prisma.JsonValue | null | undefined): string[] 
  * Normalize an arbitrary input (CSV string or array) into the JSON-storable
  * string[] used by the `tags` column.
  */
+/** Coerce API/client article payloads to string[] for tags. */
+export function serializeArticleTags<T extends { tags: Prisma.JsonValue }>(
+  article: T
+): Omit<T, "tags"> & { tags: string[] } {
+  return { ...article, tags: parseTags(article.tags) };
+}
+
 export function normalizeTags(
   input: unknown,
   { max = 8 }: { max?: number } = {}

@@ -8,7 +8,7 @@ const SITE_URL =
 
 export const metadata: Metadata = {
   title:
-    'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มหาหมอดู MAHAMORDO',
+    'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มาหาหมอดู MAHAMORDO',
   description:
     'ดูดวงออนไลน์กับ AI หมอดู 3 สำนัก: แม่หมอจันทร์ (โหราศาสตร์ไทย นพเคราะห์), พ่อหมอซอน (ดูดวงเกาหลี ซาจู 사주팔자) และอาจารย์ราหู (ไพ่ทาโรต์) — ตอบทุกคำถามเรื่องความรัก การงาน การเงิน สุขภาพ แม่นยำ ละเอียด ปรึกษาได้ทุกวัน',
   keywords: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     'ดวงชะตา',
     'ดวงเกิด',
     'ดูดวงวันเกิด',
-    'มหาหมอดู',
+    'มาหาหมอดู',
     'MAHAMORDO',
   ],
   alternates: {
@@ -48,16 +48,16 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'th_TH',
     url: SITE_URL,
-    siteName: 'มหาหมอดู MAHAMORDO',
+    siteName: 'มาหาหมอดู MAHAMORDO',
     title:
-      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มหาหมอดู',
+      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ · โหราศาสตร์ไทย — มาหาหมอดู',
     description:
       'AI หมอดู 3 สำนัก: โหราศาสตร์ไทย, ซาจูเกาหลี, ไพ่ทาโรต์ — ปรึกษาความรัก การงาน การเงิน สุขภาพ',
   },
   twitter: {
     card: 'summary_large_image',
     title:
-      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ — มหาหมอดู',
+      'ดูดวงออนไลน์ AI · ดูดวงเกาหลี ซาจู · ทาโรต์ — มาหาหมอดู',
     description:
       'AI หมอดู 3 สำนัก: โหราศาสตร์ไทย, ซาจูเกาหลี, ไพ่ทาโรต์ — ปรึกษาทุกเรื่องในชีวิต',
   },
@@ -69,8 +69,8 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'มหาหมอดู MAHAMORDO',
-    alternateName: ['MAHAMORDO', 'มหาหมอดู'],
+    name: 'มาหาหมอดู MAHAMORDO',
+    alternateName: ['MAHAMORDO', 'มาหาหมอดู'],
     url: SITE_URL,
     logo: `${SITE_URL}/icon.svg`,
     sameAs: [] as string[],
@@ -80,7 +80,7 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'มหาหมอดู MAHAMORDO',
+    name: 'มาหาหมอดู MAHAMORDO',
     url: SITE_URL,
     inLanguage: 'th-TH',
     potentialAction: {
@@ -98,7 +98,7 @@ const jsonLd = [
     serviceType: 'ดูดวงออนไลน์ด้วย AI',
     provider: {
       '@type': 'Organization',
-      name: 'มหาหมอดู MAHAMORDO',
+      name: 'มาหาหมอดู MAHAMORDO',
       url: SITE_URL,
     },
     areaServed: { '@type': 'Country', name: 'Thailand' },
@@ -159,7 +159,7 @@ export default function HomePage() {
         ดูดวงออนไลน์ AI — ดูดวงเกาหลี (ซาจู) ไพ่ทาโรต์ และโหราศาสตร์ไทย
       </h1>
       <p className="sr-only">
-        มหาหมอดู MAHAMORDO คือแพลตฟอร์มดูดวงออนไลน์ด้วย AI หมอดู 3 สำนัก —
+        มาหาหมอดู MAHAMORDO คือแพลตฟอร์มดูดวงออนไลน์ด้วย AI หมอดู 3 สำนัก —
         แม่หมอจันทร์ใช้โหราศาสตร์ไทยและนพเคราะห์,
         พ่อหมอซอนใช้ซาจูเกาหลี (사주팔자) วิเคราะห์ธาตุ 5 และดวงชะตา 10 ปี,
         อาจารย์ราหูใช้ไพ่ทาโรต์ Major Arcana 22 ใบ ปรึกษาเรื่องความรัก

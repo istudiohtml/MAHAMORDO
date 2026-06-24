@@ -178,7 +178,7 @@ export async function runDailyArticleCron(opts: {
     source: "cron",
     authorId: opts.authorId,
     status: opts.autoPublish ? "PUBLISHED" : "DRAFT",
-    withImage: opts.withImage !== false,
+    withImage: opts.withImage === true,
     generateOptions: {
       category,
       topicHint: `บทความ${cat.label}สำหรับ ${dateLabel}`,

@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   // No `template` here — existing pages already include the brand in their
   // titles. Each page's `title` fully overrides this default.
-  title: 'มหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI โหราศาสตร์ไทย ซาจูเกาหลี ทาโรต์',
+  title: 'มาหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI โหราศาสตร์ไทย ซาจูเกาหลี ทาโรต์',
   description:
     'ดูดวงออนไลน์กับ AI หมอดู 3 สำนัก: โหราศาสตร์ไทย (นพเคราะห์), ซาจูเกาหลี (사주팔자) และไพ่ทาโรต์ — แม่นยำ ละเอียด ปรึกษาความรัก การงาน การเงิน สุขภาพ ตอบทุกคำถามแบบส่วนตัว',
   applicationName: 'MAHAMORDO',
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     'ดูดวงด้วย AI',
     'ดวงชะตา',
     'ดวงเกิด',
-    'มหาหมอดู',
+    'มาหาหมอดู',
     'MAHAMORDO',
   ],
   authors: [{ name: 'MAHAMORDO' }],
@@ -86,14 +86,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'th_TH',
     url: SITE_URL,
-    siteName: 'มหาหมอดู MAHAMORDO',
-    title: 'มหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI โหราศาสตร์ไทย ซาจูเกาหลี ทาโรต์',
+    siteName: 'มาหาหมอดู MAHAMORDO',
+    title: 'มาหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI โหราศาสตร์ไทย ซาจูเกาหลี ทาโรต์',
     description:
       'ดูดวงออนไลน์กับ AI หมอดู 3 สำนัก: โหราศาสตร์ไทย (นพเคราะห์), ซาจูเกาหลี (사주팔자) และไพ่ทาโรต์ — ตอบทุกคำถามเรื่องความรัก การงาน การเงิน สุขภาพ',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'มหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI',
+    title: 'มาหาหมอดู MAHAMORDO — ดูดวงออนไลน์ AI',
     description:
       'ดูดวงออนไลน์กับ AI หมอดู 3 สำนัก: โหราศาสตร์ไทย, ซาจูเกาหลี และทาโรต์',
   },

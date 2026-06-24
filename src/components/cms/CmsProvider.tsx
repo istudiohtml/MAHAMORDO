@@ -78,8 +78,16 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="cms-shell">
-        <div className="cms-main" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-          <p className="text-slate-500 text-sm">กำลังโหลด...</p>
+        <div
+          className="cms-main"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minHeight: "100vh",
+          }}
+        >
+          <p className="cms-loading-text">กำลังโหลด...</p>
         </div>
       </div>
     );

@@ -71,7 +71,10 @@ export default function CmsArticleDetailPage() {
         if (data.error) setError(data.error);
         else {
           setArticle(data);
-          setForm(data);
+          setForm({
+            ...data,
+            tags: Array.isArray(data.tags) ? data.tags : [],
+          });
         }
       })
       .finally(() => setLoading(false));

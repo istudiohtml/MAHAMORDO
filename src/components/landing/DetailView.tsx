@@ -146,7 +146,7 @@ export default function DetailView({
             </div>
 
             <div className="footer-bottom">
-              <span className="footer-tagline thai-font">มหาหมอดู · โหราศาสตร์ไทย</span>
+              <span className="footer-tagline thai-font">มาหาหมอดู · โหราศาสตร์ไทย</span>
               <div className="footer-nav-group">
                 {canNavigate && (
                   <button className="footer-nav-btn thai-font" onClick={() => onNavigate(-1)}>

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { ensureArticleSettings } from "@/lib/ensure-article-settings";
 
 export async function getSettingValue(
   key: string,
@@ -38,6 +39,8 @@ export type ArticleSettings = {
 };
 
 export async function getArticleSettings(): Promise<ArticleSettings> {
+  await ensureArticleSettings();
+
   const keys = [
     "articles_enabled",
     "articles_default_status",

@@ -68,7 +68,7 @@ export type ArticleDraft = {
   seoDescription: string;
 };
 
-const SYSTEM_PROMPT = `You are a Thai mystic columnist for "มหาหมอดู" (Mahamordo), a Thai fortune-telling app.
+const SYSTEM_PROMPT = `You are a Thai mystic columnist for "มาหาหมอดู" (Mahamordo), a Thai fortune-telling app.
 Write warm, modern Thai blog articles about astrology, tarot, feng shui, and mysticism.
 
 Return ONLY valid JSON (no markdown fences) with EXACTLY these keys:
@@ -112,7 +112,7 @@ export async function generateArticleDraft(
   if (process.env.E2E_MOCK_AI === "true") {
     return {
       title: `${cat.label} ประจำ ${dateLabel}`,
-      excerpt: `บทความ${cat.label}สำหรับวันนี้ มาฟังคำแนะนำดีๆ จากมหาหมอดูกัน`,
+      excerpt: `บทความ${cat.label}สำหรับวันนี้ มาฟังคำแนะนำดีๆ จากมาหาหมอดูกัน`,
       content: [
         `วันนี้พลังจักรวาลเอื้อให้คุณกล้าตัดสินใจในเรื่องที่ค้างคา หัวข้อ${cat.label}ของวันนี้พร้อมแล้วเจ้าค่ะ`,
         "",
@@ -123,10 +123,10 @@ export async function generateArticleDraft(
         "## คำแนะนำ",
         "ลองให้เวลาตัวเองหายใจช้าๆ แล้วเริ่มจากสิ่งเล็กที่ทำได้ก่อน",
       ].join("\n"),
-      tags: [cat.label, "ดูดวง", "มหาหมอดู"],
+      tags: [cat.label, "ดูดวง", "มาหาหมอดู"],
       imagePrompt: `${cat.imageHint}, mystical Thai editorial cover, no text`,
-      seoTitle: `${cat.label} ${dateLabel} | มหาหมอดู`,
-      seoDescription: `อ่านบทความ${cat.label}ประจำวัน${dateLabel} จากมหาหมอดู ครบทุกคำแนะนำจากหมอดูดิจิทัล`,
+      seoTitle: `${cat.label} ${dateLabel} | มาหาหมอดู`,
+      seoDescription: `อ่านบทความ${cat.label}ประจำวัน${dateLabel} จากมาหาหมอดู ครบทุกคำแนะนำจากหมอดูดิจิทัล`,
     };
   }
 
@@ -140,7 +140,7 @@ export async function generateArticleDraft(
     `แนวภาพปก: ${cat.imageHint}`,
     `หัวข้อ: ${resolvedHint}`,
     "",
-    "กรุณาเขียนบทความใหม่ ห้ามคัดลอกจากที่อื่น เน้นเป็นเอกลักษณ์ของมหาหมอดู",
+    "กรุณาเขียนบทความใหม่ ห้ามคัดลอกจากที่อื่น เน้นเป็นเอกลักษณ์ของมาหาหมอดู",
   ].join("\n");
 
   const response = await anthropic.messages.create({

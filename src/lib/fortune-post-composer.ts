@@ -198,7 +198,7 @@ export async function createPostFromComposer(
       imagePrompt: storedImagePrompt,
       quoteLine,
       topic: payload.focus,
-      oracleName: "มหาหมอดู CMS",
+      oracleName: "มาหาหมอดู CMS",
       visibility,
       zodiac: payload.zodiac,
       tradition: payload.tradition,

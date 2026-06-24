@@ -26,14 +26,14 @@ async function findPublishedArticle(slug: string) {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const article = await findPublishedArticle(slug);
-  if (!article) return { title: "ไม่พบบทความ — มหาหมอดู" };
+  if (!article) return { title: "ไม่พบบทความ — มาหาหมอดู" };
 
   const title = article.seoTitle ?? article.title;
   const description = article.seoDescription ?? article.excerpt;
   const image = article.coverImageUrl ?? undefined;
 
   return {
-    title: `${title} — มหาหมอดู`,
+    title: `${title} — มาหาหมอดู`,
     description,
     openGraph: {
       title,
@@ -199,7 +199,7 @@ export default async function ArticleDetailPage({ params }: Params) {
 
       <footer className="articles-footer">
         <Link href="/" className="articles-footer-link">
-          ← กลับสู่มหาหมอดู
+          ← กลับสู่มาหาหมอดู
         </Link>
       </footer>
     </main>

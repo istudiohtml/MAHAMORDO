@@ -84,7 +84,7 @@ function LoginForm() {
       <div className="cms-login-stack">
         <div className="cms-login-brand">
           <p className="cms-login-brand-eyebrow">CMS Admin</p>
-          <h1 className="cms-login-brand-title">มหาหมอดู</h1>
+          <h1 className="cms-login-brand-title">มาหาหมอดู</h1>
           <p className="cms-login-brand-sub">เข้าสู่ระบบจัดการ</p>
         </div>
 

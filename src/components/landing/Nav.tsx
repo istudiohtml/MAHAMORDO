@@ -18,7 +18,7 @@ export default function Nav({ mode, ready, onHome, isLoggedIn }: Props) {
         <span className="nav-logo-dot" />
         <div className="nav-logo-text">
           <div className="nav-logo-en">Mahamordo</div>
-          <div className="nav-logo-th">มหาหมอดู</div>
+          <div className="nav-logo-th">มาหาหมอดู</div>
         </div>
       </div>
       <div className="nav-right">

@@ -69,7 +69,7 @@ export default function Sidebar() {
         <span className="cms-sidebar-brand-dot" />
         <div>
           <p className="cms-sidebar-brand-label">CMS Admin</p>
-          <h1 className="cms-sidebar-brand-title">มหาหมอดู</h1>
+          <h1 className="cms-sidebar-brand-title">มาหาหมอดู</h1>
         </div>
       </div>
 

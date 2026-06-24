@@ -58,7 +58,7 @@ function LoginForm() {
         <div className="auth-hero-text">
           <p className="auth-tagline">✦ &nbsp; The Grand Oracle &nbsp; ✦</p>
           <h1 className="auth-title">MAHA<br />MORDO</h1>
-          <p className="auth-subtitle">มหาหมอดู — เข้าสู่โลกแห่งโชคชะตา</p>
+          <p className="auth-subtitle">มาหาหมอดู — เข้าสู่โลกแห่งโชคชะตา</p>
         </div>
         <div className="auth-oracles-hint">
           <span>☽ &nbsp; แม่หมอจันทร์</span>

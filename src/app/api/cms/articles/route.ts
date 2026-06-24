@@ -8,7 +8,7 @@ import {
   estimateReadingMinutes,
 } from "@/lib/article-content";
 import { uniqueArticleSlug } from "@/lib/article-slug";
-import { normalizeTags } from "@/lib/article-tags";
+import { normalizeTags, serializeArticleTags } from "@/lib/article-tags";
 
 export async function GET(req: NextRequest) {
   const deny = await requireRole("ADMIN", "SUPERADMIN")(req);
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
   });
 
   return NextResponse.json({
-    articles,
+    articles: articles.map(serializeArticleTags),
     categories: ARTICLE_CATEGORIES,
   });
 }

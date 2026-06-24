@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-const DAILY_FORTUNE_PROMPT = `คุณคือ "มหาหมอดู" ผู้เชี่ยวชาญโหราศาสตร์ไทย
+const DAILY_FORTUNE_PROMPT = `คุณคือ "มาหาหมอดู" ผู้เชี่ยวชาญโหราศาสตร์ไทย
 ให้ดูดวงรายวันสั้นๆ โดยตอบเป็น JSON ตามโครงสร้างนี้เท่านั้น ไม่ต้องมีข้อความอื่น:
 
 {

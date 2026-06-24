@@ -24,6 +24,13 @@ function isAuthorized(req: NextRequest): boolean {
 }
 
 async function runCron(req: NextRequest) {
+  if (!process.env.CRON_SECRET) {
+    return NextResponse.json(
+      { error: "CRON_SECRET is not configured on the server" },
+      { status: 503 }
+    );
+  }
+
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -64,11 +71,17 @@ async function runCron(req: NextRequest) {
       authorId: author?.id,
       styleSuffix: settings.imageStyleSuffix,
     });
-    return NextResponse.json(result);
+    return NextResponse.json({
+      ok: true,
+      cronEnabled: settings.cronEnabled,
+      cronWithImage: settings.cronWithImage,
+      ...result,
+    });
   } catch (error) {
     console.error("[cron/articles/daily] failed:", error);
     return NextResponse.json(
       {
+        ok: false,
         error:
           error instanceof Error ? error.message : "cron failed",
       },

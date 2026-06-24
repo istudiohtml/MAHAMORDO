@@ -337,7 +337,7 @@ export default function DailyFortunePage() {
             ) : !fortune ? (
               /* No fortune yet — show CTA */
               <>
-                <div ref={headerRef} className="df-header" style={{ opacity: 1 }}>✦ มหาหมอดู ✦</div>
+                <div ref={headerRef} className="df-header" style={{ opacity: 1 }}>✦ มาหาหมอดู ✦</div>
                 <div ref={dateRef} className="df-date" style={{ opacity: 1 }}>ดวงประจำวัน</div>
                 <div ref={dividerRef} className="df-divider" style={{ width: '55%' }} />
                 <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1rem', lineHeight: 1.9, fontWeight: 300, marginBottom: '0.5rem' }}>
@@ -357,7 +357,7 @@ export default function DailyFortunePage() {
             ) : (
               /* Fortune revealed */
               <>
-                <div ref={headerRef} className="df-header">✦ มหาหมอดู ✦</div>
+                <div ref={headerRef} className="df-header">✦ มาหาหมอดู ✦</div>
                 <div ref={dateRef} className="df-date">{todayLabel}</div>
                 <div ref={dividerRef} className="df-divider" />
 

@@ -39,7 +39,7 @@ export default async function ArticlesIndexPage({
       <main className="articles-page">
         <section className="articles-empty">
           <h1>ยังไม่เปิดให้บริการบทความ</h1>
-          <p>กลับไปที่หน้าแรกได้ที่ <Link href="/">มหาหมอดู</Link></p>
+          <p>กลับไปที่หน้าแรกได้ที่ <Link href="/">มาหาหมอดู</Link></p>
         </section>
       </main>
     );
@@ -84,13 +84,13 @@ export default async function ArticlesIndexPage({
     <main className="articles-page">
       <header className="articles-hero">
         <div className="articles-hero-inner">
-          <p className="articles-eyebrow thai-font">บทความ · มหาหมอดู</p>
+          <p className="articles-eyebrow thai-font">บทความ · มาหาหมอดู</p>
           <h1 className="articles-hero-title thai-font">
             อ่านดวง วันใหม่ ทุกเช้า
           </h1>
           <p className="articles-hero-sub">
             บทความดูดวง ทาโรต์ ฮวงจุ้ย และเสริมโชค คัดสรรโดยทีมงานและ AI
-            ของมหาหมอดู — อัปเดตใหม่ทุกวัน
+            ของมาหาหมอดู — อัปเดตใหม่ทุกวัน
           </p>
 
           <nav className="articles-cats" aria-label="หมวดบทความ">
@@ -231,7 +231,7 @@ export default async function ArticlesIndexPage({
 
         <footer className="articles-footer">
           <Link href="/" className="articles-footer-link">
-            ← กลับสู่มหาหมอดู
+            ← กลับสู่มาหาหมอดู
           </Link>
         </footer>
       </section>

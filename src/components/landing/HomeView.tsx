@@ -53,13 +53,13 @@ export default function HomeView({ slideUp, animated, onOpenOracle, onStartFortu
         <ParticleBackground />
         <div className="hero-left-content">
           <p className={`hero-eyebrow thai-font${animated ? ' animate' : ''}`}>
-            ✦ &nbsp; มหาหมอดู · Thailand &nbsp; ✦
+            ✦ &nbsp; มาหาหมอดู · Thailand &nbsp; ✦
           </p>
           <h1 className={`hero-title${animated ? ' animate' : ''}`}>
             MAHA<br />MORDO
           </h1>
           <p className={`hero-subtitle${animated ? ' animate' : ''}`}>
-            มหาหมอดู — The Grand Oracle of Thailand
+            มาหาหมอดู — The Grand Oracle of Thailand
           </p>
           <div className={`hero-divider${animated ? ' animate' : ''}`} />
           <p className={`hero-body${animated ? ' animate' : ''}`}>
