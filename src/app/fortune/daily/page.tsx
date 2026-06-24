@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import FortuneShareModal, { type SharePayload } from '@/components/fortune/FortuneShareModal'
 
 type DailyFortune = {
   id: string
@@ -48,6 +49,8 @@ export default function DailyFortunePage() {
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState('')
   const [animated, setAnimated] = useState(false)
+  const [animationDone, setAnimationDone] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
 
   // Animation refs
   const headerRef = useRef<HTMLDivElement>(null)
@@ -78,7 +81,8 @@ export default function DailyFortunePage() {
   useEffect(() => {
     if (fortune && !animated) {
       setAnimated(true)
-      runAnimation()
+      setAnimationDone(false)
+      runAnimation().then(() => setAnimationDone(true))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fortune])
@@ -217,6 +221,30 @@ export default function DailyFortunePage() {
     month: 'long',
     day: 'numeric',
   })
+
+  function buildDailySharePreset(f: DailyFortune): SharePayload {
+    const site =
+      typeof window !== 'undefined'
+        ? window.location.origin
+        : 'https://mahamordo.com'
+    const shareText = [
+      `✦ ${f.zoomWord}`,
+      '',
+      f.bodyText,
+      '',
+      `เลขมงคล: ${f.luckyNumber} · สีมงคล: ${f.luckyColor}`,
+      '',
+      '— มาหาหมอดู · ดวงประจำวัน',
+      site,
+    ].join('\n')
+    return {
+      quoteLine: f.zoomWord,
+      summary: f.bodyText.slice(0, 220),
+      shareText,
+      oracleName: 'มาหาหมอดู',
+      topicLabel: 'ดวงประจำวัน',
+    }
+  }
 
   return (
     <>
@@ -378,11 +406,32 @@ export default function DailyFortunePage() {
                 <div ref={closingRef} className="df-closing" style={{ opacity: 0 }}>
                   ✦ ขอให้โชคดีในทุกวัน ✦
                 </div>
+                {animationDone && (
+                  <button
+                    type="button"
+                    className="df-share-btn"
+                    onClick={() => setShareOpen(true)}
+                  >
+                    ↗ แชร์ดวงวันนี้
+                  </button>
+                )}
               </>
             )}
           </div>
         </div>
       </div>
+
+      {fortune && (
+        <FortuneShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          oracleId={1}
+          oracleName="มาหาหมอดู"
+          oracleSubtitle="ดวงประจำวัน"
+          preset={buildDailySharePreset(fortune)}
+          dailyMode
+        />
+      )}
     </>
   )
 }
