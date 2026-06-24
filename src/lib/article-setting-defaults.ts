@@ -26,7 +26,7 @@ export const ARTICLE_SETTING_DEFAULTS: Record<
   },
   articles_cron_categories: {
     value: "horoscope,tarot,feng_shui,lucky,general",
-    label: "หมวดหมู่หมุนเวียนสำหรับ cron (คั่นด้วย ,)",
+    label: "หมวดหมู่สำหรับ cron (คั่นด้วย ,) — สุ่มจาก 3 หมวดที่มีบทความน้อยสุด",
   },
   articles_cron_auto_publish: {
     value: "true",

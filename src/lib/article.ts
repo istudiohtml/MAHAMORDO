@@ -107,11 +107,36 @@ export type CronGenerateResult = {
   id: string | null;
   category: string;
   skipped?: string;
+  /** Categories with the fewest articles that were eligible for random pick */
+  categoryPool?: string[];
 };
 
+/** Pick randomly from up to 3 configured categories with the lowest article counts. */
+async function pickCronCategory(categories: string[]): Promise<{
+  category: string;
+  pool: string[];
+}> {
+  const rows = await prisma.article.groupBy({
+    by: ["category"],
+    where: { category: { in: categories } },
+    _count: { id: true },
+  });
+  const countByCategory = new Map(
+    rows.map((row) => [row.category, row._count.id])
+  );
+
+  const ranked = categories
+    .map((cat) => ({ cat, count: countByCategory.get(cat) ?? 0 }))
+    .sort((a, b) => a.count - b.count || a.cat.localeCompare(b.cat));
+
+  const pool = ranked.slice(0, Math.min(3, ranked.length)).map((r) => r.cat);
+  const category = pool[Math.floor(Math.random() * pool.length)];
+
+  return { category, pool };
+}
+
 /**
- * Pick the next category by rotating based on day-of-year, then create one article.
- * Returns null id if cron disabled or all errors handled gracefully.
+ * Create one cron article — category is random among the 3 least-used configured categories.
  */
 export async function runDailyArticleCron(opts: {
   categoriesCsv: string;
@@ -130,41 +155,9 @@ export async function runDailyArticleCron(opts: {
   }
 
   const now = opts.now ?? new Date();
-
-  // Skip if any article already created by cron today (Bangkok)
   const bangkok = new Date(now.getTime() + 7 * 3600 * 1000);
-  const start = new Date(
-    Date.UTC(
-      bangkok.getUTCFullYear(),
-      bangkok.getUTCMonth(),
-      bangkok.getUTCDate(),
-      -7
-    )
-  );
-  const end = new Date(start.getTime() + 24 * 3600 * 1000);
 
-  const existing = await prisma.article.findFirst({
-    where: { source: "cron", createdAt: { gte: start, lt: end } },
-    select: { id: true, category: true },
-  });
-  if (existing) {
-    return {
-      id: existing.id,
-      category: existing.category,
-      skipped: "already created today",
-    };
-  }
-
-  const dayOfYear = Math.floor(
-    (Date.UTC(
-      bangkok.getUTCFullYear(),
-      bangkok.getUTCMonth(),
-      bangkok.getUTCDate()
-    ) -
-      Date.UTC(bangkok.getUTCFullYear(), 0, 0)) /
-      86400000
-  );
-  const category = cats[dayOfYear % cats.length];
+  const { category, pool } = await pickCronCategory(cats);
 
   const dateLabel = bangkok.toLocaleDateString("th-TH", {
     weekday: "long",
@@ -187,5 +180,5 @@ export async function runDailyArticleCron(opts: {
     },
   });
 
-  return { id, category };
+  return { id, category, categoryPool: pool };
 }
