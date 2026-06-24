@@ -4,6 +4,7 @@ import sharp from "sharp";
 import {
   getOraclesUploadDir,
   oraclePosterPublicPath,
+  withUploadVersion,
 } from "@/lib/upload-path";
 
 export const MAX_ORACLE_POSTER_BYTES = 5 * 1024 * 1024;
@@ -52,7 +53,7 @@ export async function saveOraclePoster(
   const filename = `${slug}.jpg`;
   await fs.writeFile(path.join(dir, filename), buffer);
 
-  return oraclePosterPublicPath(slug);
+  return withUploadVersion(oraclePosterPublicPath(slug));
 }
 
 export async function readOraclePoster(

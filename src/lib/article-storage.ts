@@ -4,6 +4,7 @@ import sharp from "sharp";
 import {
   articleCoverPublicPath,
   getArticlesUploadDir,
+  withUploadVersion,
 } from "@/lib/upload-path";
 
 export const MAX_ARTICLE_COVER_BYTES = 5 * 1024 * 1024;
@@ -56,7 +57,7 @@ export async function saveArticleCover(
   const filename = `${articleId}.jpg`;
   await fs.writeFile(path.join(dir, filename), buffer);
 
-  return articleCoverPublicPath(articleId);
+  return withUploadVersion(articleCoverPublicPath(articleId));
 }
 
 /** Read saved article cover bytes (for public uploads route) */

@@ -7794,12 +7794,11 @@ button {
   background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16 / 9;
 }
 .cms-article-cover img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 .cms-article-cover-empty {
   position: absolute;
@@ -8292,13 +8291,12 @@ button {
   margin: 24px -24px 32px;
   border-radius: 0;
   overflow: hidden;
-  background: var(--ink);
-  aspect-ratio: 16 / 9;
+  background: transparent;
 }
 .article-detail-cover img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
 }
 @media (min-width: 768px) {
   .article-detail-cover {

@@ -133,6 +133,7 @@ export default function CmsArticleDetailPage() {
       setError(e instanceof Error ? e.message : "อัปโหลดไม่สำเร็จ");
     } finally {
       setSaving(false);
+      if (fileRef.current) fileRef.current.value = "";
     }
   }
 
@@ -310,6 +311,7 @@ export default function CmsArticleDetailPage() {
         <div className="cms-article-cover">
           {article.coverImageUrl ? (
             <Image
+              key={article.coverImageUrl}
               src={article.coverImageUrl}
               alt={article.title}
               width={1200}

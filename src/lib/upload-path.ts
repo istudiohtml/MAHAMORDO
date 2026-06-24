@@ -41,3 +41,12 @@ export function oraclePosterPublicPath(slug: string): string {
 export function articleCoverPublicPath(articleId: string): string {
   return `/api/uploads/articles/${articleId}.jpg`;
 }
+
+/** Append ?v=… so browsers fetch a fresh file after overwrite on disk */
+export function withUploadVersion(
+  publicPath: string,
+  version: number = Date.now()
+): string {
+  const base = publicPath.split("?")[0]!;
+  return `${base}?v=${version}`;
+}

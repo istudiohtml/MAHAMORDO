@@ -9,6 +9,7 @@ import {
 import {
   getPostsUploadDir,
   postImagePublicPath,
+  withUploadVersion,
 } from "@/lib/upload-path";
 
 const PENDING_SIZE_PX: Record<DallESize, { width: number; height: number }> = {
@@ -75,7 +76,7 @@ export async function savePostImage(
   await fs.writeFile(filePath, buffer);
   await clearPostImagePending(postId);
 
-  return postImagePublicPath(postId);
+  return withUploadVersion(postImagePublicPath(postId));
 }
 
 /** Mark post image as awaiting a real upload (prompt/post modes) */
