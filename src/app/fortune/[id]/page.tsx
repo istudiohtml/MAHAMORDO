@@ -9,6 +9,7 @@ import TarotPickArea, { SelectedTarotCard } from '@/components/fortune/TarotPick
 import { getOracleTemplateAvatar } from '@/lib/oracle-assets'
 import { useOraclePosters } from '@/hooks/useOraclePosters'
 import { useActiveOracleIds } from '@/hooks/useActiveOracleIds'
+import FortuneShareModal from '@/components/fortune/FortuneShareModal'
 const ORACLE_THEME: Record<OracleId, string> = {
   1: 'theme-maemor',
   2: 'theme-son',
@@ -115,6 +116,7 @@ function FortuneChatPageInner() {
   const [askingForCard, setAskingForCard] = useState(false)
   const [tarotCards, setTarotCards] = useState<TarotCard[]>([])
   const [selectedCards, setSelectedCards] = useState<SelectedTarotCard[]>([])
+  const [shareOpen, setShareOpen] = useState(false)
   const TOPICS = [
     { id: 'love', emoji: '❤️', name: 'ความรัก', description: 'ความสัมพันธ์ การรักษา ความรักแท้' },
     { id: 'health', emoji: '💚', name: 'สุขภาพ', description: 'สุขภาพกาย จิตใจ การแคร์ตัวเอง' },
@@ -348,6 +350,19 @@ function FortuneChatPageInner() {
   }
 
   const theme = ORACLE_THEME[oracleId]
+
+  const canShare =
+    Boolean(sessionId) &&
+    !starting &&
+    !error &&
+    !askingSubject &&
+    !showBirthForm &&
+    !askingTopic &&
+    !askingForCard &&
+    displayText.length >= 40 &&
+    !displayText.startsWith('คุณ:') &&
+    !isTyping &&
+    !loading
 
   return (
     <div className="fortune-vn-bg" style={{ background: ORACLE_BG[oracleId] }}>
@@ -734,6 +749,15 @@ function FortuneChatPageInner() {
                 {credits > 0 && (
                   <div className="fortune-vn-credits thai-font">{credits} เครดิตคงเหลือ</div>
                 )}
+                {canShare && (
+                  <button
+                    type="button"
+                    className="fortune-vn-share-btn thai-font"
+                    onClick={() => setShareOpen(true)}
+                  >
+                    ↗ แชร์คำทำนาย
+                  </button>
+                )}
               </div>
             </>
           )}
@@ -801,6 +825,17 @@ function FortuneChatPageInner() {
           </div>
         </div>
       )}
+
+      <FortuneShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        oracleId={oracleId}
+        oracleName={oracle.name}
+        oracleSubtitle={oracle.subtitle}
+        posterUrl={getOracleTemplateAvatar(oracle.slug, posters[oracle.slug])}
+        sessionId={sessionId ?? undefined}
+        readingText={displayText.startsWith('คุณ:') ? undefined : displayText}
+      />
     </div>
   )
 }

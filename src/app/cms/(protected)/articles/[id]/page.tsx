@@ -308,37 +308,44 @@ export default function CmsArticleDetailPage() {
       </section>
 
       <section className="cms-article-form-card">
-        <div className="cms-article-cover">
-          {article.coverImageUrl ? (
-            <Image
-              key={article.coverImageUrl}
-              src={article.coverImageUrl}
-              alt={article.title}
-              width={1200}
-              height={675}
-              unoptimized
+        <div className="cms-article-cover-block">
+          <div className="cms-article-cover-header">
+            <span className="cms-article-cover-label">รูปปก</span>
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              hidden
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleUploadCover(f);
+              }}
             />
-          ) : (
-            <div className="cms-article-cover-empty">ยังไม่มีรูปปก</div>
-          )}
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            hidden
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleUploadCover(f);
-            }}
-          />
-          <button
-            type="button"
-            className="cms-btn cms-btn-ghost cms-article-cover-btn"
-            onClick={() => fileRef.current?.click()}
-            disabled={saving}
-          >
-            อัปโหลดรูปปก
-          </button>
+            <button
+              type="button"
+              className="cms-btn cms-btn-ghost cms-article-cover-btn"
+              onClick={() => fileRef.current?.click()}
+              disabled={saving}
+            >
+              {article.coverImageUrl ? "เปลี่ยนรูปปก" : "อัปโหลดรูปปก"}
+            </button>
+          </div>
+          <div className="cms-article-cover">
+            {article.coverImageUrl ? (
+              <Image
+                key={article.coverImageUrl}
+                src={article.coverImageUrl}
+                alt={article.title}
+                width={1200}
+                height={675}
+                unoptimized
+              />
+            ) : (
+              <div className="cms-article-cover-empty">
+                ยังไม่มีรูปปก — กดปุ่มด้านบนเพื่ออัปโหลด (PNG, JPEG, WebP สูงสุด 5 MB)
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="cms-article-form-row">

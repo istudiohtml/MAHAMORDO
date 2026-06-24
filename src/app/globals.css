@@ -2171,6 +2171,180 @@ button {
   color: rgba(212,168,83,0.35); text-align: center; text-transform: uppercase;
 }
 
+.fortune-vn-share-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 168, 83, 0.45);
+  background: rgba(212, 168, 83, 0.1);
+  color: rgba(253, 251, 247, 0.85);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.fortune-vn-share-btn:hover {
+  background: rgba(212, 168, 83, 0.2);
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+
+/* Share modal */
+.fortune-share-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.fortune-share-modal {
+  width: min(440px, 100%);
+  max-height: min(92vh, 820px);
+  overflow-y: auto;
+  background: linear-gradient(160deg, #1a1208 0%, #0d0a06 100%);
+  border: 1px solid rgba(212, 168, 83, 0.35);
+  border-radius: 20px;
+  padding: 20px 20px 24px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  color: var(--cream);
+}
+.fortune-share-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.fortune-share-title {
+  font-family: var(--font-cinzel), serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin: 0;
+}
+.fortune-share-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(212, 168, 83, 0.25);
+  background: transparent;
+  color: rgba(253, 251, 247, 0.6);
+  cursor: pointer;
+  font-size: 16px;
+}
+.fortune-share-close:hover {
+  color: var(--gold-light);
+  border-color: var(--gold-light);
+}
+.fortune-share-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 12px;
+  color: rgba(253, 251, 247, 0.65);
+  font-size: 16px;
+}
+.fortune-share-error {
+  color: #fca5a5;
+  font-size: 16px;
+  text-align: center;
+  padding: 12px 0;
+}
+.fortune-share-preview {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  margin-bottom: 16px;
+  background: #0a0a0a;
+}
+.fortune-share-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.fortune-share-quote {
+  font-family: var(--font-cinzel), serif;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--gold-light);
+  margin: 0 0 10px;
+  text-align: center;
+}
+.fortune-share-summary {
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(253, 251, 247, 0.75);
+  margin: 0 0 18px;
+  text-align: center;
+}
+.fortune-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.fortune-share-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 168, 83, 0.35);
+  background: transparent;
+  color: rgba(253, 251, 247, 0.85);
+  font-family: var(--font-prompt), sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fortune-share-btn:hover:not(:disabled) {
+  border-color: var(--gold-light);
+  color: var(--gold-light);
+}
+.fortune-share-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.fortune-share-btn-primary {
+  background: var(--gold);
+  border-color: var(--gold-light);
+  color: #1a0800;
+  font-weight: 600;
+}
+.fortune-share-btn-primary:hover:not(:disabled) {
+  background: var(--gold2);
+  color: #1a0800;
+}
+.fortune-share-info {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--gold-light);
+}
+
+.df-share-btn {
+  display: inline-block;
+  margin-top: 1.25rem;
+  padding: 0.65rem 1.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 192, 96, 0.45);
+  background: rgba(240, 192, 96, 0.08);
+  color: rgba(240, 192, 96, 0.9);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  transition: background 0.2s, border-color 0.2s;
+}
+.df-share-btn:hover {
+  background: rgba(240, 192, 96, 0.16);
+  border-color: rgba(240, 192, 96, 0.75);
+}
+
 /* Switch oracle link */
 .fortune-vn-nav {
   position: absolute; top: 10px; left: 12px; right: 12px; z-index: 20;
@@ -3213,6 +3387,51 @@ button {
   color: var(--ink3);
   margin-top: 4px;
 }
+
+/* Daily fortune CTA — keep with dashboard stats (not at EOF; avoids stale dev CSS cache) */
+.dash-daily-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.4rem;
+  background: #ffffff;
+  border: 1px solid var(--gold);
+  border-top-width: 2px;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+  cursor: pointer;
+}
+.dash-daily-banner:hover {
+  border-color: var(--gold-light);
+  box-shadow: 0 8px 24px rgba(26, 21, 16, 0.06);
+  transform: translateY(-2px);
+}
+.dash-daily-icon {
+  font-size: 1.5rem;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.dash-daily-text { flex: 1; min-width: 0; }
+.dash-daily-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.15rem;
+}
+.dash-daily-sub {
+  font-size: 0.75rem;
+  color: var(--ink3);
+  margin: 0;
+}
+.dash-daily-arrow {
+  color: var(--gold);
+  font-size: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.dash-daily-banner:hover .dash-daily-arrow { transform: translateX(4px); }
 
 /* Sections */
 .dash-section { margin-bottom: 48px; }
@@ -7512,13 +7731,15 @@ button {
 .cms-article-card-media {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  background: var(--cream);
   overflow: hidden;
 }
 .cms-article-card-media img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 .cms-article-card-media-empty {
   position: absolute;
@@ -7788,10 +8009,31 @@ button {
   margin: 4px 0 0;
 }
 
+.cms-article-cover-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cms-article-cover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.cms-article-cover-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
 .cms-article-cover {
   position: relative;
   width: 100%;
+  min-height: 180px;
   background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+  border: 1px dashed #cbd5e1;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -7801,18 +8043,18 @@ button {
   height: auto;
 }
 .cms-article-cover-empty {
-  position: absolute;
-  inset: 0;
+  min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
+  padding: 24px;
+  text-align: center;
+  color: #64748b;
   font-size: 16px;
+  line-height: 1.5;
 }
 .cms-article-cover-btn {
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
+  position: static;
 }
 
 .cms-article-actions {
@@ -7902,21 +8144,39 @@ button {
    PUBLIC — ARTICLES (blog)
 ══════════════════════════════════════ */
 .articles-layout {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
+  position: relative;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
+  flex-direction: column;
 }
 
 .articles-page {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1 0 auto;
   overflow-x: hidden;
   background:
     radial-gradient(ellipse at top, rgba(184, 134, 11, 0.06) 0%, transparent 55%),
     var(--cream);
   color: var(--ink);
   font-family: var(--font-prompt), sans-serif;
+}
+
+.articles-layout .mini-legal-footer {
+  flex-shrink: 0;
+  margin-top: 0;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(184, 134, 11, 0.15);
+}
+.articles-layout .mini-legal-footer-brand,
+.articles-layout .mini-legal-footer-link {
+  color: rgba(253, 251, 247, 0.45);
+}
+.articles-layout .mini-legal-footer-link:hover {
+  color: var(--gold);
+}
+.articles-layout .mini-legal-footer-sep {
+  color: rgba(253, 251, 247, 0.25);
 }
 
 .articles-hero {
@@ -8049,12 +8309,14 @@ button {
   aspect-ratio: 16 / 11;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--ink2), var(--ink));
+  background: var(--cream);
 }
 .articles-featured-media img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
 }
 .articles-featured-media-empty { position: absolute; inset: 0; }
 .articles-featured-body {
@@ -8116,17 +8378,17 @@ button {
 }
 .articles-card-media {
   aspect-ratio: 16 / 9;
-  background: linear-gradient(135deg, var(--ink2), var(--ink));
+  background: var(--cream);
   overflow: hidden;
   position: relative;
 }
 .articles-card-media img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
+  object-fit: contain;
+  object-position: center;
 }
-.articles-card:hover .articles-card-media img { transform: scale(1.04); }
 .articles-card-media-empty { position: absolute; inset: 0; }
 .articles-card-body {
   padding: 18px 20px 20px;
@@ -9371,49 +9633,6 @@ button {
   font-size: 16px;
   font-family: var(--font-prompt), sans-serif;
 }
-
-/* ── DAILY FORTUNE DASHBOARD BANNER ──────────────────────── */
-.dash-daily-banner {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.1rem 1.4rem;
-  background: linear-gradient(135deg, rgba(45,27,110,0.35), rgba(13,8,32,0.5));
-  border: 1px solid rgba(240,192,96,0.22);
-  border-radius: 14px;
-  text-decoration: none;
-  transition: border-color 0.22s, background 0.22s;
-  cursor: pointer;
-}
-.dash-daily-banner:hover {
-  border-color: rgba(240,192,96,0.55);
-  background: linear-gradient(135deg, rgba(45,27,110,0.5), rgba(13,8,32,0.65));
-}
-.dash-daily-icon {
-  font-size: 1.5rem;
-  color: #f0c060;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.dash-daily-text { flex: 1; min-width: 0; }
-.dash-daily-title {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #f0c060;
-  margin: 0 0 0.15rem;
-}
-.dash-daily-sub {
-  font-size: 0.75rem;
-  color: rgba(240,192,96,0.5);
-  margin: 0;
-}
-.dash-daily-arrow {
-  color: rgba(240,192,96,0.5);
-  font-size: 1rem;
-  flex-shrink: 0;
-  transition: transform 0.2s;
-}
-.dash-daily-banner:hover .dash-daily-arrow { transform: translateX(4px); }
 
 /* ── Oracle SEO landing pages ── */
 .ol-page {
