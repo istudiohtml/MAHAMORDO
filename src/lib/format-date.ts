@@ -39,3 +39,15 @@ export function isExpired(
   const d = typeof value === "string" ? new Date(value) : value;
   return d.getTime() < Date.now();
 }
+
+/** Midnight today in Asia/Bangkok — for daily fortune / coin flip date keys */
+export function todayBangkokDate(): Date {
+  const dateKey = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Bangkok",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+  // UTC noon keeps the calendar day stable for Prisma @db.Date reads/writes
+  return new Date(`${dateKey}T12:00:00.000Z`);
+}

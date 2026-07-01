@@ -87,6 +87,7 @@ model User {
   quotaUsages      QuotaUsage[]
   subscriptionLogs SubscriptionLog[]
   dailyFortunes    DailyFortune[]
+  dailyCoinFlips   DailyCoinFlip[]
 
   @@map("users")
 }
@@ -382,4 +383,23 @@ model DailyFortune {
   @@unique([userId, date])
   @@index([userId, date(sort: Desc)])
   @@map("daily_fortunes")
+}
+
+// ทอยเหรียญหัวก้อย — once per user per day
+model DailyCoinFlip {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  date        DateTime @db.Date
+  userChoice  String   // HEAD | TAIL
+  outcome     String   // HEAD | TAIL
+  matched     Boolean
+  headline    String   @db.VarChar(200)
+  message     String   @db.Text
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, date])
+  @@index([userId, date(sort: Desc)])
+  @@map("daily_coin_flips")
 }
