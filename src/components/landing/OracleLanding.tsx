@@ -17,8 +17,8 @@ export default function OracleLanding({ slug, isLoggedIn }: Props) {
   const otherPages = Object.values(LANDING_PAGES).filter((p) => p.slug !== slug);
 
   const dailyHref = isLoggedIn
-    ? "/fortune/daily"
-    : `/auth/login?redirect=${encodeURIComponent("/fortune/daily")}`;
+    ? "/dashboard/daily"
+    : `/auth/login?redirect=${encodeURIComponent("/dashboard/daily")}`;
   const fortuneHref = isLoggedIn
     ? `/fortune/${page.oracleId}`
     : `/auth/login?redirect=${encodeURIComponent(`/fortune/${page.oracleId}`)}`;

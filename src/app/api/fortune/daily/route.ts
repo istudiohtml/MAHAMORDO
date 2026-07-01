@@ -1,16 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { Prisma } from '@prisma/client'
 import { verifyAccessToken } from '@/lib/jwt'
 import { anthropic, CLAUDE_FAST_MODEL } from '@/lib/anthropic'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
+import { todayBangkokDate } from '@/lib/format-date'
+import { bonusDateKey } from '@/lib/daily-bonus'
 
-function todayDate(): Date {
-  // Use Thai timezone (UTC+7) for date boundary
-  const now = new Date()
-  const thai = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }))
-  thai.setHours(0, 0, 0, 0)
-  return thai
+async function findTodayFortune(userId: string) {
+  const today = todayBangkokDate()
+  const direct = await prisma.dailyFortune.findUnique({
+    where: { userId_date: { userId, date: today } },
+  })
+  if (direct) return direct
+
+  // Fallback for rows stored before date-key fix (compare Bangkok calendar day)
+  const dateKey = bonusDateKey()
+  const recent = await prisma.dailyFortune.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    take: 5,
+  })
+  return (
+    recent.find((row) => row.date.toISOString().slice(0, 10) === dateKey) ??
+    null
+  )
 }
 
 export async function GET(req: NextRequest) {
@@ -22,10 +37,7 @@ export async function GET(req: NextRequest) {
     const payload = await verifyAccessToken(token)
     if (!payload?.userId) return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
 
-    const today = todayDate()
-    const fortune = await prisma.dailyFortune.findUnique({
-      where: { userId_date: { userId: payload.userId, date: today } },
-    })
+    const fortune = await findTodayFortune(payload.userId)
 
     return NextResponse.json({ fortune })
   } catch (error) {
@@ -58,12 +70,10 @@ export async function POST(req: NextRequest) {
     if (!payload?.userId) return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     userId = payload.userId
 
-    const today = todayDate()
+    const today = todayBangkokDate()
 
     // Return cached reading if already generated today
-    const existing = await prisma.dailyFortune.findUnique({
-      where: { userId_date: { userId, date: today } },
-    })
+    const existing = await findTodayFortune(userId)
     if (existing) return NextResponse.json({ fortune: existing })
 
     // Get user birth data for personalization
@@ -111,17 +121,29 @@ export async function POST(req: NextRequest) {
       parsed = JSON.parse(cleaned)
     }
 
-    const fortune = await prisma.dailyFortune.create({
-      data: {
-        userId,
-        date: today,
-        introLine: parsed.introLine,
-        zoomWord: parsed.zoomWord,
-        bodyText: parsed.bodyText,
-        luckyNumber: parsed.luckyNumber,
-        luckyColor: parsed.luckyColor,
-      },
-    })
+    let fortune
+    try {
+      fortune = await prisma.dailyFortune.create({
+        data: {
+          userId,
+          date: today,
+          introLine: parsed.introLine,
+          zoomWord: parsed.zoomWord,
+          bodyText: parsed.bodyText,
+          luckyNumber: parsed.luckyNumber,
+          luckyColor: parsed.luckyColor,
+        },
+      })
+    } catch (createError) {
+      if (
+        createError instanceof Prisma.PrismaClientKnownRequestError &&
+        createError.code === 'P2002'
+      ) {
+        const cached = await findTodayFortune(userId)
+        if (cached) return NextResponse.json({ fortune: cached })
+      }
+      throw createError
+    }
 
     logger.info('Daily fortune generated', userId)
     return NextResponse.json({ fortune })

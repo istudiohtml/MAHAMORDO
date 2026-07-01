@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LegalFooter from "@/components/legal/LegalFooter";
+import ArticlesNav from "@/components/articles/ArticlesNav";
 
 export const metadata: Metadata = {
   title: "บทความ — มาหาหมอดู",
@@ -14,6 +15,7 @@ export default function ArticlesLayout({
 }) {
   return (
     <div className="articles-layout">
+      <ArticlesNav />
       {children}
       <LegalFooter />
     </div>

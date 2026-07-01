@@ -10,6 +10,8 @@ import {
   getSessionStatusLabel,
   getSessionStatusDescription,
 } from '@/lib/session-status'
+import HistoryShareButton from '@/components/dashboard/HistoryShareButton'
+import type { OracleId } from '@/data/oracles'
 
 export const metadata = {
   title: 'รายละเอียดประวัติดูดวง — MAHAMORDO',
@@ -56,6 +58,12 @@ export default async function HistoryDetailPage({ params }: Params) {
   const effectiveStatus = getEffectiveSessionStatus(session.status, session.expiresAt)
   const statusLabel = getSessionStatusLabel(effectiveStatus)
   const statusDescription = getSessionStatusDescription(effectiveStatus)
+
+  const lastAssistant = session.messages
+    .filter((m) => m.role === 'ASSISTANT')
+    .pop()
+  const readingText = lastAssistant?.content ?? null
+  const oracleId = (SLUG_TO_ORACLE_ID[session.oracle.slug ?? ''] ?? 1) as OracleId
 
   return (
     <div className="dash-page">
@@ -111,6 +119,16 @@ export default async function HistoryDetailPage({ params }: Params) {
               {session.messages.length}
             </span>
           </div>
+        </div>
+        <div className="history-meta-actions">
+          <HistoryShareButton
+            sessionId={session.id}
+            oracleId={oracleId}
+            oracleName={session.oracle.name}
+            oracleSubtitle={session.oracle.speciality ?? undefined}
+            posterUrl={oracleAvatar}
+            readingText={readingText}
+          />
         </div>
       </section>
 
